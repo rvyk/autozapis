@@ -1,11 +1,9 @@
 import type { TrainingRide } from "./instruktor-kursant-details-types";
+import { formatPlDateTimeShort } from "@/app/_lib/date-format";
 
 export function formatDateTime(value: string) {
   if (!value) return "Do umowienia";
-  return new Intl.DateTimeFormat("pl-PL", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return formatPlDateTimeShort(value);
 }
 
 export function sortRidesDescending(rides: TrainingRide[]) {
