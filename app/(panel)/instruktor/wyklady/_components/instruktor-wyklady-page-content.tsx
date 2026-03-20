@@ -17,17 +17,17 @@ import {
   toggleStudentInSelection,
 } from "./instruktor-wyklady-utils";
 
-const LOAD_LECTURES_ERROR = "Nie udalo sie pobrac wykladow.";
-const CREATE_LECTURE_ERROR = "Nie udalo sie utworzyc wykladu.";
-const ATTENDANCE_ERROR = "Nie udalo sie zapisac obecnosci.";
+const LOAD_LECTURES_ERROR = "Nie udało się pobrać wykładów.";
+const CREATE_LECTURE_ERROR = "Nie udało się utworzyć wykładu.";
+const ATTENDANCE_ERROR = "Nie udało się zapisać obecności.";
 
 function mapCreateLectureError(errorCode: string | undefined) {
   if (errorCode === "NO_STUDENTS") {
-    return "Wybierz przynajmniej jednego kursanta przed dodaniem wykladu.";
+    return "Wybierz przynajmniej jednego kursanta przed dodaniem wykładu.";
   }
 
   if (errorCode === "INVALID_PAYLOAD") {
-    return "Uzupelnij wszystkie wymagane pola wykladu (temat, typ, termin, czas).";
+    return "Uzupełnij wszystkie wymagane pola wykładu (temat, typ, termin, czas).";
   }
 
   return CREATE_LECTURE_ERROR;

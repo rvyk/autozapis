@@ -231,8 +231,11 @@ model Question {
   ansC          String?
   correctAnswer String
   categories    String
+  scope         String?
+  points        Int?
   createdAt     DateTime @default(now())
 
   @@index([categories])
+  @@index([scope])
 }
 

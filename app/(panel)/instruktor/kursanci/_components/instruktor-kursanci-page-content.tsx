@@ -14,8 +14,8 @@ import {
   getFilteredUnassignedStudents,
 } from "./instruktor-kursanci-utils";
 
-const LOAD_ERROR = "Nie udalo sie pobrac kursantow. Sprobuj odswiezyc strone.";
-const ASSIGNMENT_ERROR = "Nie udalo sie zmienic przypisania kursanta.";
+const LOAD_ERROR = "Nie udało się pobrać kursantów. Spróbuj odświeżyć stronę.";
+const ASSIGNMENT_ERROR = "Nie udało się zmienić przypisania kursanta.";
 
 export function InstruktorKursanciPageContent() {
   const [students, setStudents] = useState<StudentItem[]>([]);
@@ -32,7 +32,9 @@ export function InstruktorKursanciPageContent() {
       setError(null);
 
       try {
-        const response = await fetch("/api/instructor/students", { cache: "no-store" });
+        const response = await fetch("/api/instructor/students", {
+          cache: "no-store",
+        });
 
         const payload = (await response.json().catch(() => null)) as {
           students?: StudentItem[];
@@ -71,13 +73,16 @@ export function InstruktorKursanciPageContent() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/instructor/students/${student.id}/assignment`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: student.assignedToMe ? "UNASSIGN_FROM_ME" : "ASSIGN_TO_ME",
-        }),
-      });
+      const response = await fetch(
+        `/api/instructor/students/${student.id}/assignment`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: student.assignedToMe ? "UNASSIGN_FROM_ME" : "ASSIGN_TO_ME",
+          }),
+        },
+      );
 
       const payload = (await response.json().catch(() => null)) as {
         assignedToMe?: boolean;
@@ -123,8 +128,10 @@ export function InstruktorKursanciPageContent() {
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <SectionHeader
         title="Moi kursanci"
-        description="Wejdz w profil kursanta, by planowac jazdy, uzupelniac opinie i aktualizowac godziny."
-        actions={<InstruktorKursanciFilterTabs filter={filter} onChange={setFilter} />}
+        description="Wejdź w profil kursanta, by planować jazdy, uzupełniać opinie i aktualizować godziny."
+        actions={
+          <InstruktorKursanciFilterTabs filter={filter} onChange={setFilter} />
+        }
       />
 
       {error ? (

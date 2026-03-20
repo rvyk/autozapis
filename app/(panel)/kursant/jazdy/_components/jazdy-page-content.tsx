@@ -40,7 +40,7 @@ export function JazdyPageContent({
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <div className="border-b border-stone-200 pb-6 sm:flex sm:items-center sm:justify-between">
         <SectionHeader
-          title="Historia Jazd Praktycznych"
+          title="Historia jazd praktycznych"
           description="Przeglądaj swój postęp w jazdach, weryfikuj trasy i czytaj opinie instruktora."
         />
         <div className="mt-4 flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:mt-0">

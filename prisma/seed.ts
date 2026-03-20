@@ -5,7 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../app/generated/prisma/client";
 
 type RawQuestion = {
-  lp: number;
+  lp: string;
   questionId: number;
   content: string;
   ansA: string | null;
@@ -13,6 +13,8 @@ type RawQuestion = {
   ansC: string | null;
   correctAnswer: string;
   categories: string;
+  scope: string | null;
+  points: number | null;
 };
 
 const connectionString = process.env["DATABASE_URL"];
@@ -33,43 +35,47 @@ async function main() {
 
   let created = 0;
   let updated = 0;
+  let skipped = 0;
 
   for (const q of questions) {
+    const qId = q.questionId != null ? Math.round(q.questionId) : null;
+
+    if (qId == null || !q.content) {
+      skipped += 1;
+      continue;
+    }
+
+    const data = {
+      content: q.content,
+      ansA: q.ansA,
+      ansB: q.ansB,
+      ansC: q.ansC,
+      correctAnswer: q.correctAnswer,
+      categories: q.categories,
+      scope: q.scope,
+      points: q.points != null ? Math.round(q.points) : null,
+    };
+
     const existing = await prisma.question.findUnique({
-      where: { questionId: q.questionId },
+      where: { questionId: qId },
     });
 
     if (existing) {
       await prisma.question.update({
-        where: { questionId: q.questionId },
-        data: {
-          content: q.content,
-          ansA: q.ansA,
-          ansB: q.ansB,
-          ansC: q.ansC,
-          correctAnswer: q.correctAnswer,
-          categories: q.categories,
-        },
+        where: { questionId: qId },
+        data,
       });
       updated += 1;
     } else {
       await prisma.question.create({
-        data: {
-          questionId: q.questionId,
-          content: q.content,
-          ansA: q.ansA,
-          ansB: q.ansB,
-          ansC: q.ansC,
-          correctAnswer: q.correctAnswer,
-          categories: q.categories,
-        },
+        data: { questionId: qId, ...data },
       });
       created += 1;
     }
   }
 
   console.log(
-    `Seeding zakończony: ${created} utworzonych, ${updated} zaktualizowanych.`,
+    `Seeding zakończony: ${created} utworzonych, ${updated} zaktualizowanych, ${skipped} pominiętych.`,
   );
 }
 

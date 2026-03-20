@@ -13,6 +13,8 @@ type Question = {
   ansB: string | null;
   ansC: string | null;
   correctAnswer: string;
+  scope: string | null;
+  points: number | null;
 };
 
 export function CwiczeniaClient({

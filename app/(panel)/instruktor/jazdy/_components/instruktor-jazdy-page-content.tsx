@@ -6,10 +6,17 @@ import { InstruktorJazdyCalendar } from "./instruktor-jazdy-calendar";
 import { InstruktorJazdyDayDetails } from "./instruktor-jazdy-day-details";
 import { InstruktorJazdyHeaderActions } from "./instruktor-jazdy-header-actions";
 import { InstruktorJazdySummary } from "./instruktor-jazdy-summary";
-import type { CalendarItem, CalendarLecture, CalendarRide } from "./instruktor-jazdy-types";
-import { getMonthDays, groupCalendarItemsByDay } from "./instruktor-jazdy-utils";
+import type {
+  CalendarItem,
+  CalendarLecture,
+  CalendarRide,
+} from "./instruktor-jazdy-types";
+import {
+  getMonthDays,
+  groupCalendarItemsByDay,
+} from "./instruktor-jazdy-utils";
 
-const LOAD_ERROR = "Nie udalo sie pobrac harmonogramu.";
+const LOAD_ERROR = "Nie udało się pobrać harmonogramu.";
 
 export function InstruktorJazdyPageContent() {
   const [displayDate, setDisplayDate] = useState(() => new Date());
@@ -34,7 +41,9 @@ export function InstruktorJazdyPageContent() {
           rides?: CalendarRide[];
         } | null;
 
-        const lecturesPayload = (await lecturesResponse.json().catch(() => null)) as {
+        const lecturesPayload = (await lecturesResponse
+          .json()
+          .catch(() => null)) as {
           lectures?: {
             id: string;
             title: string;
@@ -44,7 +53,12 @@ export function InstruktorJazdyPageContent() {
           }[];
         } | null;
 
-        if (!ridesResponse.ok || !ridesPayload?.rides || !lecturesResponse.ok || !lecturesPayload?.lectures) {
+        if (
+          !ridesResponse.ok ||
+          !ridesPayload?.rides ||
+          !lecturesResponse.ok ||
+          !lecturesPayload?.lectures
+        ) {
           setError(LOAD_ERROR);
           setPlannedRides([]);
           setPlannedLectures([]);
@@ -58,7 +72,10 @@ export function InstruktorJazdyPageContent() {
             title: lecture.title,
             topicType: lecture.topicType,
             startsAt: lecture.startsAt,
-            durationHours: Math.max(1, Math.round(lecture.durationMinutes / 60)),
+            durationHours: Math.max(
+              1,
+              Math.round(lecture.durationMinutes / 60),
+            ),
           })),
         );
       } catch {
@@ -107,20 +124,28 @@ export function InstruktorJazdyPageContent() {
     [displayDate],
   );
 
-  const selectedItems = selectedDateKey ? (itemsByDay.get(selectedDateKey) ?? []) : [];
+  const selectedItems = selectedDateKey
+    ? (itemsByDay.get(selectedDateKey) ?? [])
+    : [];
 
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <SectionHeader
-        title="Moj harmonogram"
-        description="Przegladaj kalendarz jazd i wykladow i klikaj dzien, aby zobaczyc szczegoly zaplanowanych spotkan."
+        title="Mój harmonogram"
+        description="Przeglądaj kalendarz jazd i wykładów i klikaj dzień, aby zobaczyć szczegóły zaplanowanych spotkań."
         actions={
           <InstruktorJazdyHeaderActions
             onPrevious={() =>
-              setDisplayDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
+              setDisplayDate(
+                (current) =>
+                  new Date(current.getFullYear(), current.getMonth() - 1, 1),
+              )
             }
             onNext={() =>
-              setDisplayDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
+              setDisplayDate(
+                (current) =>
+                  new Date(current.getFullYear(), current.getMonth() + 1, 1),
+              )
             }
           />
         }
@@ -132,7 +157,9 @@ export function InstruktorJazdyPageContent() {
       />
 
       {error ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -146,7 +173,10 @@ export function InstruktorJazdyPageContent() {
           onSelectDay={setSelectedDateKey}
         />
 
-        <InstruktorJazdyDayDetails selectedDateKey={selectedDateKey} selectedItems={selectedItems} />
+        <InstruktorJazdyDayDetails
+          selectedDateKey={selectedDateKey}
+          selectedItems={selectedItems}
+        />
       </div>
     </div>
   );
