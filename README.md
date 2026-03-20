@@ -16,6 +16,29 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment variables
+
+Create a `.env` file with:
+
+```bash
+DATABASE_URL=postgresql://...
+CLERK_WEBHOOK_SIGNING_SECRET=whsec_...
+
+R2_ACCOUNT_ID=...
+R2_ACCESS_KEY_ID=...
+R2_SECRET_ACCESS_KEY=...
+R2_BUCKET_NAME=...
+```
+
+## Prisma
+
+After schema changes, run:
+
+```bash
+pnpm prisma migrate dev --name add-pkk-file-upload
+pnpm prisma generate
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
