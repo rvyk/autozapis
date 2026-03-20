@@ -12,7 +12,8 @@ export function AuthHeader() {
 
   if (
     pathname?.startsWith("/administrator") ||
-    pathname?.startsWith("/kursant")
+    pathname?.startsWith("/kursant") ||
+    pathname?.startsWith("/instruktor")
   ) {
     return null;
   }

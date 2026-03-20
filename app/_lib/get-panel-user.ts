@@ -22,6 +22,7 @@ export async function getPanelUser({
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: userId },
     select: {
+      id: true,
       role: true,
       trainingCategory: true,
       isAccountActive: true,

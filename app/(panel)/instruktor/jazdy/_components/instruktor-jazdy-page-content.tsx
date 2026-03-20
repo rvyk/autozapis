@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { MOCK_TRAINING_STUDENTS } from "@/app/(panel)/_lib/mock-driving-data";
 
 type CalendarRide = {
   id: string;
@@ -14,6 +13,7 @@ type CalendarRide = {
   topic: string;
   route: string;
   durationHours: number;
+  status?: "PLANOWANA" | "ZREALIZOWANA" | "ODWOLANA";
 };
 
 function getMonthDays(year: number, month: number) {
@@ -57,32 +57,44 @@ function toDateKey(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-function flattenPlannedRides(): CalendarRide[] {
-  const rides: CalendarRide[] = [];
-
-  for (const student of MOCK_TRAINING_STUDENTS) {
-    for (const ride of student.rides) {
-      if (ride.status !== "PLANOWANA" || !ride.startsAt) continue;
-      rides.push({
-        id: ride.id,
-        studentId: student.id,
-        studentName: student.fullName,
-        startsAt: ride.startsAt,
-        topic: ride.topic,
-        route: ride.route,
-        durationHours: ride.durationHours,
-      });
-    }
-  }
-
-  return rides;
-}
-
 export function InstruktorJazdyPageContent() {
   const [displayDate, setDisplayDate] = useState(() => new Date());
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
+  const [plannedRides, setPlannedRides] = useState<CalendarRide[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const plannedRides = useMemo(() => flattenPlannedRides(), []);
+  useEffect(() => {
+    async function loadRides() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/instructor/lessons", {
+          cache: "no-store",
+        });
+
+        const payload = (await response.json().catch(() => null)) as {
+          rides?: CalendarRide[];
+        } | null;
+
+        if (!response.ok || !payload?.rides) {
+          setError("Nie udalo sie pobrac harmonogramu jazd.");
+          setPlannedRides([]);
+          return;
+        }
+
+        setPlannedRides(payload.rides);
+      } catch {
+        setError("Nie udalo sie pobrac harmonogramu jazd.");
+        setPlannedRides([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    void loadRides();
+  }, []);
 
   const ridesByDay = useMemo(() => {
     const map = new Map<string, CalendarRide[]>();
@@ -148,20 +160,18 @@ export function InstruktorJazdyPageContent() {
         </div>
       </div>
 
+      {error ? (
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      ) : null}
+
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-stone-900">{formatMonthLabel(displayDate)}</h2>
 
           <div className="mt-4 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-stone-500">
-            {[
-              "Pon",
-              "Wt",
-              "Sr",
-              "Czw",
-              "Pt",
-              "Sob",
-              "Nd",
-            ].map((day) => (
+            {["Pon", "Wt", "Sr", "Czw", "Pt", "Sob", "Nd"].map((day) => (
               <div key={day}>{day}</div>
             ))}
           </div>
@@ -215,12 +225,16 @@ export function InstruktorJazdyPageContent() {
               );
             })}
           </div>
+
+          {loading ? <p className="mt-3 text-sm text-stone-500">Ladowanie jazd...</p> : null}
         </div>
 
         <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-stone-900">Szczegoly dnia</h2>
           {!selectedDateKey ? (
-            <p className="mt-3 text-sm text-stone-500">Kliknij dzien w kalendarzu, aby zobaczyc zaplanowane jazdy.</p>
+            <p className="mt-3 text-sm text-stone-500">
+              Kliknij dzien w kalendarzu, aby zobaczyc zaplanowane jazdy.
+            </p>
           ) : null}
 
           {selectedDateKey ? (
@@ -238,7 +252,7 @@ export function InstruktorJazdyPageContent() {
                   <div key={ride.id} className="rounded-xl border border-stone-200 p-3">
                     <p className="text-sm font-semibold text-stone-900">{ride.studentName}</p>
                     <p className="text-xs text-stone-500">
-                      {formatTime(ride.startsAt)} • {ride.durationHours}h
+                      {formatTime(ride.startsAt)} - {ride.durationHours}h
                     </p>
                     <p className="mt-1 text-sm text-stone-600">{ride.topic}</p>
                     {ride.route ? (

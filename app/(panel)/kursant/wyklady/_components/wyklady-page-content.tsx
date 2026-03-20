@@ -34,9 +34,13 @@ export function WykladyPageContent() {
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">Harmonogram wykładów</h1>
-          <p className="mt-2 text-stone-500">Bierz udział w zajęciach teoretycznych i zdobądź wymaganą wiedzę.</p>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-stone-900">
+            Harmonogram wykładów
+          </h1>
+          <p className="text-stone-500">
+            Bierz udział w zajęciach teoretycznych i zdobądź wymaganą wiedzę.
+          </p>
         </div>
       </div>
 
@@ -48,10 +52,20 @@ export function WykladyPageContent() {
           >
             <div className="w-full sm:w-1/2">
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-red-600">{lecture.type}</span>
-                <h3 className="text-lg font-semibold text-stone-900">{lecture.topic}</h3>
+                <span className="text-xs font-semibold uppercase tracking-wider text-red-600">
+                  {lecture.type}
+                </span>
+                <h3 className="text-lg font-semibold text-stone-900">
+                  {lecture.topic}
+                </h3>
                 <p className="mt-1 flex items-center gap-2 text-sm text-stone-500">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -77,7 +91,9 @@ export function WykladyPageContent() {
                 {lecture.status}
               </span>
 
-              {lecture.status === "Dostępny" ? <Button>Zapisz się</Button> : null}
+              {lecture.status === "Dostępny" ? (
+                <Button>Zapisz się</Button>
+              ) : null}
             </div>
           </div>
         ))}

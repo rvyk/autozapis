@@ -18,15 +18,22 @@ model User {
   email     String?  @unique
   firstName String?
   lastName  String?
+  phoneNumber String?
   birthDate DateTime?
   role      UserRole @default(USER)
   trainingCategory      TrainingCategory @default(B)
   isAccountActive       Boolean @default(false)
   isRegistrationComplete Boolean @default(false)
+  trainingHoursCompleted Int @default(0)
+  trainingHoursRequired  Int @default(30)
   imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   pkkFile   PkkFile?
+  instructorAssignmentsAsInstructor InstructorStudentAssignment[] @relation("InstructorAssignments")
+  instructorAssignmentsAsStudent InstructorStudentAssignment[] @relation("StudentAssignments")
+  drivingLessonsAsInstructor DrivingLesson[] @relation("InstructorLessons")
+  drivingLessonsAsStudent DrivingLesson[] @relation("StudentLessons")
 
   @@index([clerkId])
 }
@@ -104,5 +111,50 @@ model Course {
   updatedAt     DateTime     @updatedAt
 
   @@index([createdAt])
+  @@index([status])
+}
+
+enum DrivingLessonStatus {
+  PLANOWANA
+  ZREALIZOWANA
+  ODWOLANA
+}
+
+model InstructorStudentAssignment {
+  id           String   @id @default(cuid())
+  instructorId String
+  studentId    String
+  note         String?
+  isActive     Boolean  @default(true)
+  assignedAt   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  instructor User @relation("InstructorAssignments", fields: [instructorId], references: [id], onDelete: Cascade)
+  student    User @relation("StudentAssignments", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([instructorId, studentId])
+  @@index([instructorId, isActive])
+  @@index([studentId, isActive])
+}
+
+model DrivingLesson {
+  id               String            @id @default(cuid())
+  studentId        String
+  instructorId     String
+  startsAt         DateTime?
+  durationMinutes  Int               @default(60)
+  topic            String
+  routeSummary     String?
+  instructorFeedback String?
+  routeScore       Int?
+  status           DrivingLessonStatus @default(PLANOWANA)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  student    User @relation("StudentLessons", fields: [studentId], references: [id], onDelete: Cascade)
+  instructor User @relation("InstructorLessons", fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, startsAt])
+  @@index([instructorId, startsAt])
   @@index([status])
 }

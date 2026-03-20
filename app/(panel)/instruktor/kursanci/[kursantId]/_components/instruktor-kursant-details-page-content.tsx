@@ -4,10 +4,26 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type {
-  TrainingRide,
-  TrainingStudent,
-} from "@/app/(panel)/_lib/mock-driving-data";
+
+type TrainingRide = {
+  id: string;
+  startsAt: string;
+  durationHours: number;
+  topic: string;
+  route: string;
+  status: "PLANOWANA" | "ZREALIZOWANA" | "ODWOLANA";
+  instructorNote: string;
+  routeScore: 1 | 2 | 3 | 4 | 5;
+};
+
+type TrainingStudent = {
+  id: string;
+  fullName: string;
+  phone: string;
+  category: "A" | "B";
+  hoursTarget: number;
+  rides: TrainingRide[];
+};
 
 function formatDateTime(value: string) {
   if (!value) return "Do umówienia";
@@ -17,16 +33,16 @@ function formatDateTime(value: string) {
   }).format(new Date(value));
 }
 
-function makeRideId() {
-  return `r-${Math.random().toString(36).slice(2, 9)}`;
-}
-
 export function InstruktorKursantDetailsPageContent({
   initialStudent,
 }: {
   initialStudent: TrainingStudent;
 }) {
   const [student, setStudent] = useState(initialStudent);
+  const [saving, setSaving] = useState(false);
+  const [savingRideId, setSavingRideId] = useState<string | null>(null);
+  const [dirtyRideIds, setDirtyRideIds] = useState<Set<string>>(() => new Set());
+  const [error, setError] = useState<string | null>(null);
 
   const sortedRides = useMemo(
     () =>
@@ -39,46 +55,141 @@ export function InstruktorKursantDetailsPageContent({
     [student.rides],
   );
 
-  function updateRide(rideId: string, patch: Partial<TrainingRide>) {
-    setStudent((current) => ({
-      ...current,
-      rides: current.rides.map((ride) =>
-        ride.id === rideId ? { ...ride, ...patch } : ride,
-      ),
-    }));
+  const completedHours = useMemo(
+    () =>
+      student.rides.reduce((total, ride) => {
+        if (ride.status === "ODWOLANA") return total;
+        return total + Math.max(0, ride.durationHours);
+      }, 0),
+    [student.rides],
+  );
+
+  async function persistRide(nextRide: TrainingRide) {
+    setSavingRideId(nextRide.id);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/instructor/lessons/${nextRide.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nextRide),
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        ride?: TrainingRide;
+      } | null;
+
+      if (!response.ok || !payload?.ride) {
+        setError("Nie udało się zapisać jazdy.");
+        return;
+      }
+
+      setStudent((current) => ({
+        ...current,
+        rides: current.rides.map((ride) =>
+          ride.id === nextRide.id ? payload.ride ?? ride : ride,
+        ),
+      }));
+
+      setDirtyRideIds((current) => {
+        const next = new Set(current);
+        next.delete(nextRide.id);
+        return next;
+      });
+    } catch {
+      setError("Nie udało się zapisać jazdy.");
+    } finally {
+      setSavingRideId(null);
+    }
   }
 
-  function addRide() {
+  function updateRide(rideId: string, patch: Partial<TrainingRide>) {
+    const nextRide = student.rides.find((ride) => ride.id === rideId);
+    if (!nextRide) return;
+
+    const merged = { ...nextRide, ...patch };
+
     setStudent((current) => ({
       ...current,
-      rides: [
-        {
-          id: makeRideId(),
-          startsAt: "",
+      rides: current.rides.map((ride) => (ride.id === rideId ? merged : ride)),
+    }));
+    setDirtyRideIds((current) => {
+      const next = new Set(current);
+      next.add(rideId);
+      return next;
+    });
+  }
+
+  function saveRide(rideId: string) {
+    const ride = student.rides.find((currentRide) => currentRide.id === rideId);
+    if (!ride) return;
+    void persistRide(ride);
+  }
+
+  async function addRide() {
+    setSaving(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/instructor/students/${student.id}/lessons`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          startsAt: new Date().toISOString().slice(0, 16),
           durationHours: 1,
           topic: "Nowa jazda",
           route: "",
-          status: "PLANOWANA",
-          instructorNote: "",
-          routeScore: 3,
-        },
-        ...current.rides,
-      ],
-    }));
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        ride?: TrainingRide;
+      } | null;
+
+      if (!response.ok || !payload?.ride) {
+        setError("Nie udało się dodać jazdy.");
+        return;
+      }
+
+      setStudent((current) => ({
+        ...current,
+        rides: [payload.ride as TrainingRide, ...current.rides],
+      }));
+    } catch {
+      setError("Nie udało się dodać jazdy.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function removeRide(rideId: string) {
-    setStudent((current) => ({
-      ...current,
-      rides: current.rides.filter((ride) => ride.id !== rideId),
-    }));
-  }
+  async function removeRide(rideId: string) {
+    setSaving(true);
+    setError(null);
 
-  function updateHours(delta: number) {
-    setStudent((current) => ({
-      ...current,
-      hoursDone: Math.max(0, current.hoursDone + delta),
-    }));
+    try {
+      const response = await fetch(`/api/instructor/lessons/${rideId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        setError("Nie udało się usunąć jazdy.");
+        return;
+      }
+
+      setStudent((current) => ({
+        ...current,
+        rides: current.rides.filter((ride) => ride.id !== rideId),
+      }));
+      setDirtyRideIds((current) => {
+        const next = new Set(current);
+        next.delete(rideId);
+        return next;
+      });
+    } catch {
+      setError("Nie udało się usunąć jazdy.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -97,37 +208,25 @@ export function InstruktorKursantDetailsPageContent({
         </div>
         <div className="flex gap-2">
           <Button asChild variant="ghost" size="sm">
-            <Link href="/instruktor/kursanci">Powrot do listy</Link>
+            <Link href="/instruktor/kursanci">Powrót do listy</Link>
           </Button>
-          <Button size="sm" onClick={addRide}>Dodaj jazde</Button>
+          <Button size="sm" onClick={addRide} disabled={saving}>Dodaj jazdę</Button>
         </div>
       </div>
 
+      {error ? (
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      ) : null}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Godziny</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Postep godzin</p>
           <p className="mt-2 text-2xl font-bold text-stone-900">
-            {student.hoursDone}/{student.hoursTarget}h
+            {completedHours}/{student.hoursTarget}h
           </p>
-          <div className="mt-3 flex gap-2">
-            <Button size="sm" variant="ghost" onClick={() => updateHours(-1)}>
-              -1h
-            </Button>
-            <Button size="sm" variant="secondary" onClick={() => updateHours(1)}>
-              +1h
-            </Button>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:col-span-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Opinia ogolna</p>
-          <textarea
-            rows={3}
-            value={student.note}
-            onChange={(event) =>
-              setStudent((current) => ({ ...current, note: event.target.value }))
-            }
-            className="mt-2 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-          />
+          <p className="mt-2 text-xs text-stone-500">Godziny sa liczone automatycznie z dodanych jazd (z wyjatkiem odwolanych).</p>
         </div>
       </div>
 
@@ -150,6 +249,7 @@ export function InstruktorKursantDetailsPageContent({
                 <Button
                   size="sm"
                   variant={ride.status === "PLANOWANA" ? "primary" : "ghost"}
+                  disabled={saving || savingRideId === ride.id}
                   onClick={() => updateRide(ride.id, { status: "PLANOWANA" })}
                 >
                   Planowana
@@ -157,17 +257,26 @@ export function InstruktorKursantDetailsPageContent({
                 <Button
                   size="sm"
                   variant={ride.status === "ZREALIZOWANA" ? "primary" : "ghost"}
+                  disabled={saving || savingRideId === ride.id}
                   onClick={() => updateRide(ride.id, { status: "ZREALIZOWANA" })}
                 >
                   Zrealizowana
                 </Button>
-                <Button size="sm" variant="destructiveOutline" onClick={() => removeRide(ride.id)}>
-                  Usun
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={saving || savingRideId === ride.id || !dirtyRideIds.has(ride.id)}
+                  onClick={() => saveRide(ride.id)}
+                >
+                  {savingRideId === ride.id ? "Zapisywanie..." : "Zapisz zmiany"}
+                </Button>
+                <Button size="sm" variant="destructiveOutline" disabled={saving || savingRideId === ride.id} onClick={() => removeRide(ride.id)}>
+                  Usuń
                 </Button>
               </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
                   Termin
@@ -176,6 +285,26 @@ export function InstruktorKursantDetailsPageContent({
                   type="datetime-local"
                   value={ride.startsAt}
                   onChange={(event) => updateRide(ride.id, { startsAt: event.target.value })}
+                  className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  Czas trwania (h)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={8}
+                  step={1}
+                  value={ride.durationHours}
+                  onChange={(event) => {
+                    const parsed = Number(event.target.value);
+                    const durationHours = Number.isFinite(parsed)
+                      ? Math.min(8, Math.max(1, Math.floor(parsed)))
+                      : 1;
+                    updateRide(ride.id, { durationHours });
+                  }}
                   className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
                 />
               </div>
@@ -214,7 +343,7 @@ export function InstruktorKursantDetailsPageContent({
 
             <div className="mt-4">
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
-                Opinia po jezdzie
+                Opinia po jeździe
               </label>
               <textarea
                 rows={3}
@@ -223,9 +352,15 @@ export function InstruktorKursantDetailsPageContent({
                   updateRide(ride.id, { instructorNote: event.target.value })
                 }
                 className="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm outline-none focus:border-red-500"
-                placeholder="Wpisz ocene i zalecenia dla kursanta..."
+                placeholder="Wpisz ocenę i zalecenia dla kursanta..."
               />
             </div>
+
+            {dirtyRideIds.has(ride.id) ? (
+              <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                <p className="text-xs font-medium text-amber-700">Masz niezapisane zmiany w tej jezdzie.</p>
+              </div>
+            ) : null}
           </div>
         ))}
       </div>

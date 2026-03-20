@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 type RegistrationFormProps = {
   onSubmit: (formData: FormData) => Promise<void>;
   emailError?: string;
+  phoneError?: string;
   passwordError?: string;
   isLoading: boolean;
 };
@@ -12,6 +13,7 @@ type RegistrationFormProps = {
 export function RegistrationForm({
   onSubmit,
   emailError,
+  phoneError,
   passwordError,
   isLoading,
 }: RegistrationFormProps) {
@@ -26,6 +28,17 @@ export function RegistrationForm({
           autoComplete="email"
         />
         {emailError && <FieldError>{emailError}</FieldError>}
+      </Field>
+
+      <Field className="space-y-2">
+        <FieldLabel>Numer telefonu</FieldLabel>
+        <Input
+          name="phone"
+          type="tel"
+          placeholder="600123456"
+          autoComplete="tel"
+        />
+        {phoneError && <FieldError>{phoneError}</FieldError>}
       </Field>
 
       <Field className="space-y-2">

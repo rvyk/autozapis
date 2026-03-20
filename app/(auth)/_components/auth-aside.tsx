@@ -2,12 +2,12 @@ const REGISTRATION_STEPS = [
   {
     n: 1,
     title: "Utwórz konto",
-    desc: "Email, hasło i weryfikacja",
+    desc: "Email, numer telefonu, hasło i weryfikacja",
   },
   {
     n: 2,
-    title: "Wypełnij prawo jazdy",
-    desc: "Dane bezpośrednio na dokumencie",
+    title: "Wypełnij swoje dane",
+    desc: "Dane bezpośrednio na przyszłym prawojazdy",
   },
   {
     n: 3,
@@ -57,8 +57,12 @@ export function AuthAside() {
       </div>
 
       <div className="mt-10 border-t border-stone-800 pt-6">
-        <p className="text-xs font-medium text-stone-600">© 2026 OSK Józefa Majkuta</p>
-        <p className="mt-0.5 text-xs text-stone-700">Leżajsk, woj. podkarpackie</p>
+        <p className="text-xs font-medium text-stone-600">
+          © 2026 OSK Józefa Majkuta
+        </p>
+        <p className="mt-0.5 text-xs text-stone-700">
+          Leżajsk, woj. podkarpackie
+        </p>
       </div>
     </aside>
   );

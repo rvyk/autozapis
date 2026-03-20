@@ -19,6 +19,12 @@ function parseTrainingCategory(value: unknown): TrainingCategory {
   return value === "A" ? "A" : "B";
 }
 
+function parsePhoneNumber(value: unknown) {
+  if (typeof value !== "string") return null;
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : null;
+}
+
 function getPrimaryEmail(data: {
   email_addresses?: Array<{ id: string; email_address: string }>;
   primary_email_address_id?: string | null;
@@ -46,6 +52,7 @@ export async function POST(request: NextRequest) {
         const trainingCategory = parseTrainingCategory(
           user.unsafe_metadata?.trainingCategory,
         );
+        const phoneNumber = parsePhoneNumber(user.unsafe_metadata?.phoneNumber);
 
         await prisma.user.upsert({
           where: { clerkId: user.id },
@@ -57,6 +64,7 @@ export async function POST(request: NextRequest) {
             birthDate,
             trainingCategory,
             isRegistrationComplete: false,
+            phoneNumber,
             imageUrl: user.image_url,
           },
           update: {
@@ -65,6 +73,7 @@ export async function POST(request: NextRequest) {
             lastName: user.last_name,
             birthDate,
             trainingCategory,
+            phoneNumber,
             imageUrl: user.image_url,
           },
         });
