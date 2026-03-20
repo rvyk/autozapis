@@ -17,6 +17,13 @@ export type CourseItem = {
 export const COURSE_FILTERS = ["WSZYSTKIE", "NABOR", "PLANOWANE", "STALA_OFERTA"] as const;
 export type CourseFilter = (typeof COURSE_FILTERS)[number];
 
+export type CourseStats = {
+  all: number;
+  nabor: number;
+  planowane: number;
+  stala: number;
+};
+
 export type CourseDraft = {
   title: string;
   category: CourseCategory;
