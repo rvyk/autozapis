@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PanelSidebar } from "./_components/panel-sidebar";
 
@@ -9,18 +10,42 @@ export default async function PanelLayout({
 }) {
   const { userId } = await auth();
 
+  if (!userId) {
+    redirect("/logowanie");
+  }
+
   // We fetch minimal data to check status inside layout
   let dbUser = null;
   if (userId) {
     dbUser = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { isAccountActive: true, role: true },
+      select: {
+        isAccountActive: true,
+        role: true,
+        isRegistrationComplete: true,
+        birthDate: true,
+      },
     });
+
+    if (dbUser?.role === "ADMINISTRATOR") {
+      redirect("/administrator");
+    }
+
+    if (dbUser?.role === "INSTRUKTOR") {
+      redirect("/");
+    }
+
+    if (!dbUser?.isRegistrationComplete) {
+      if (dbUser?.birthDate) {
+        redirect("/rejestracja/dokument");
+      }
+
+      redirect("/rejestracja/prawo-jazdy");
+    }
   }
 
   // If user is active (and not admin), they get the complex dashboard wrapper
-  const isActiveKursant =
-    dbUser?.isAccountActive && dbUser?.role !== "OSK_ADMINISTRATOR_ROLE";
+  const isActiveKursant = dbUser?.isAccountActive && dbUser?.role === "USER";
 
   return (
     <div className="relative min-h-dvh bg-stone-50">

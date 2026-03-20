@@ -20,7 +20,8 @@ model User {
   lastName  String?
   birthDate DateTime?
   role      UserRole @default(USER)
-  isAccountActive Boolean @default(false)
+  isAccountActive       Boolean @default(false)
+  isRegistrationComplete Boolean @default(false)
   imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -31,7 +32,8 @@ model User {
 
 enum UserRole {
   USER
-  OSK_ADMINISTRATOR_ROLE
+  ADMINISTRATOR
+  INSTRUKTOR
 }
 
 model PkkFile {

@@ -1,52 +1,44 @@
-"use client";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { RejestracjaPageContent } from "./_components/rejestracja-page-content";
 
-import { useSignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { AuthCard, AuthCardHeader } from "@/components/auth";
-import { RegistrationFooter } from "./_components/registration-footer";
-import { RegistrationForm } from "./_components/registration-form";
-import { RegistrationIntro } from "./_components/registration-intro";
+export default async function RejestracjaPage() {
+  const { userId } = await auth();
 
-export default function RejestracjaPage() {
-  const { signUp, errors, fetchStatus } = useSignUp();
-  const router = useRouter();
-
-  async function handleSubmit(formData: FormData) {
-    const emailAddress = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    const result = await signUp.password({
-      emailAddress,
-      password,
+  if (userId) {
+    const dbUser = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      select: {
+        role: true,
+        isAccountActive: true,
+        isRegistrationComplete: true,
+        birthDate: true,
+      },
     });
 
-    if (result.error) {
-      return;
+    if (dbUser?.role === "ADMINISTRATOR") {
+      redirect("/administrator");
     }
 
-    await signUp.verifications.sendEmailCode();
-    router.push("/rejestracja/weryfikacja");
+    if (dbUser?.role === "INSTRUKTOR") {
+      redirect("/");
+    }
+
+    if (dbUser?.isAccountActive) {
+      redirect("/kursant");
+    }
+
+    if (dbUser?.isRegistrationComplete) {
+      redirect("/kursant/oczekiwanie");
+    }
+
+    if (dbUser?.birthDate) {
+      redirect("/rejestracja/dokument");
+    }
+
+    redirect("/rejestracja/prawo-jazdy");
   }
 
-  return (
-    <AuthCard>
-      <AuthCardHeader
-        title="Utwórz konto"
-        description="Podaj email i hasło, aby rozpocząć zapis na kurs prawa jazdy w Leżajsku."
-      />
-
-      <RegistrationIntro />
-
-      <RegistrationForm
-        onSubmit={handleSubmit}
-        emailError={errors.fields.emailAddress?.message}
-        passwordError={errors.fields.password?.message}
-        isLoading={fetchStatus === "fetching"}
-      />
-
-      <RegistrationFooter />
-
-      <div id="clerk-captcha" />
-    </AuthCard>
-  );
+  return <RejestracjaPageContent />;
 }

@@ -9,18 +9,35 @@ export default async function HomePage() {
   if (userId) {
     const dbUser = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { role: true, isAccountActive: true },
+      select: {
+        role: true,
+        isAccountActive: true,
+        isRegistrationComplete: true,
+        birthDate: true,
+      },
     });
 
-    if (dbUser?.role === "OSK_ADMINISTRATOR_ROLE") {
+    if (dbUser?.role === "ADMINISTRATOR") {
       redirect("/administrator");
     }
 
-    if (!dbUser?.isAccountActive) {
-      redirect("/panel/oczekiwanie");
+    if (dbUser?.role === "INSTRUKTOR") {
+      redirect("/");
     }
 
-    redirect("/panel");
+    if (!dbUser?.isRegistrationComplete) {
+      if (dbUser?.birthDate) {
+        redirect("/rejestracja/dokument");
+      }
+
+      redirect("/rejestracja/prawo-jazdy");
+    }
+
+    if (!dbUser?.isAccountActive) {
+      redirect("/kursant/oczekiwanie");
+    }
+
+    redirect("/kursant");
   }
 
   return (

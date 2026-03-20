@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   {
-    href: "/panel",
+    href: "/kursant",
     label: "Panel główny",
     icon: (
       <svg
@@ -25,7 +25,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/panel/wyklady",
+    href: "/kursant/wyklady",
     label: "Wykłady",
     icon: (
       <svg
@@ -44,7 +44,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/panel/instruktorzy",
+    href: "/kursant/instruktorzy",
     label: "Instruktorzy",
     icon: (
       <svg
@@ -63,7 +63,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/panel/jazdy",
+    href: "/kursant/jazdy",
     label: "Jazdy praktyczne",
     icon: (
       <svg
@@ -82,7 +82,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/panel/materialy",
+    href: "/kursant/materialy",
     label: "Materiały do nauki",
     icon: (
       <svg
@@ -126,8 +126,8 @@ export function PanelSidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {NAV_ITEMS.map((item) => {
           const isActive =
-            item.href === "/panel"
-              ? pathname === "/panel"
+            item.href === "/kursant"
+              ? pathname === "/kursant"
               : pathname.startsWith(item.href);
 
           return (

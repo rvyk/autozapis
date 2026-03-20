@@ -54,6 +54,10 @@ export async function POST(request: Request) {
         where: { clerkId: string };
         select: { id: true };
       }) => Promise<{ id: string } | null>;
+      update: (args: {
+        where: { id: string };
+        data: { isRegistrationComplete: boolean };
+      }) => Promise<unknown>;
     };
     pkkFile?: {
       findUnique: (args: {
@@ -147,6 +151,11 @@ export async function POST(request: Request) {
       sizeBytes: file.size,
       sha256,
     },
+  });
+
+  await userDelegate.update({
+    where: { id: dbUser.id },
+    data: { isRegistrationComplete: true },
   });
 
   if (currentPkk?.objectKey && currentPkk.objectKey !== objectKey) {

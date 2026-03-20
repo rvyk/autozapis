@@ -15,8 +15,8 @@ export default async function AdministratorPage() {
     select: { role: true, firstName: true },
   });
 
-  if (dbUser?.role !== "OSK_ADMINISTRATOR_ROLE") {
-    redirect("/panel");
+  if (dbUser?.role !== "ADMINISTRATOR") {
+    redirect("/kursant");
   }
 
   return (

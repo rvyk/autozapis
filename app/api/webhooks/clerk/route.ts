@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
             firstName: user.first_name,
             lastName: user.last_name,
             birthDate,
+            isRegistrationComplete: false,
             imageUrl: user.image_url,
           },
           update: {

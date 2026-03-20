@@ -12,15 +12,33 @@ export default async function PanelPage() {
 
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: userId },
-    select: { role: true, isAccountActive: true, firstName: true },
+    select: {
+      role: true,
+      isAccountActive: true,
+      isRegistrationComplete: true,
+      birthDate: true,
+      firstName: true,
+    },
   });
 
-  if (dbUser?.role === "OSK_ADMINISTRATOR_ROLE") {
+  if (dbUser?.role === "ADMINISTRATOR") {
     redirect("/administrator");
   }
 
+  if (dbUser?.role === "INSTRUKTOR") {
+    redirect("/");
+  }
+
+  if (!dbUser?.isRegistrationComplete) {
+    if (dbUser?.birthDate) {
+      redirect("/rejestracja/dokument");
+    }
+
+    redirect("/rejestracja/prawo-jazdy");
+  }
+
   if (!dbUser?.isAccountActive) {
-    redirect("/panel/oczekiwanie");
+    redirect("/kursant/oczekiwanie");
   }
 
   return (
@@ -116,7 +134,7 @@ export default async function PanelPage() {
             </p>
             <div className="mt-5">
               <Link
-                href="/panel/materialy"
+                href="/kursant/materialy"
                 className="inline-flex w-full items-center justify-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700"
               >
                 Przejdź do teorii
