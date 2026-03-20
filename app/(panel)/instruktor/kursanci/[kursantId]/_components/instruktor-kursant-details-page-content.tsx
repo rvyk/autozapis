@@ -5,12 +5,18 @@ import { InstruktorKursantDetailsHeader } from "./instruktor-kursant-details-hea
 import { InstruktorKursantEmptyRides } from "./instruktor-kursant-empty-rides";
 import { InstruktorKursantProgressCard } from "./instruktor-kursant-progress-card";
 import { InstruktorKursantRideCard } from "./instruktor-kursant-ride-card";
-import type { TrainingRide, TrainingStudent } from "./instruktor-kursant-details-types";
-import { getCompletedHours, sortRidesDescending } from "./instruktor-kursant-details-utils";
+import type {
+  TrainingRide,
+  TrainingStudent,
+} from "./instruktor-kursant-details-types";
+import {
+  getCompletedHours,
+  sortRidesDescending,
+} from "./instruktor-kursant-details-utils";
 
-const SAVE_RIDE_ERROR = "Nie udalo sie zapisac jazdy.";
-const ADD_RIDE_ERROR = "Nie udalo sie dodac jazdy.";
-const REMOVE_RIDE_ERROR = "Nie udalo sie usunac jazdy.";
+const SAVE_RIDE_ERROR = "Nie udało się zapisać jazdy.";
+const ADD_RIDE_ERROR = "Nie udało się dodać jazdy.";
+const REMOVE_RIDE_ERROR = "Nie udało się usunąć jazdy.";
 
 export function InstruktorKursantDetailsPageContent({
   initialStudent,
@@ -20,11 +26,19 @@ export function InstruktorKursantDetailsPageContent({
   const [student, setStudent] = useState(initialStudent);
   const [saving, setSaving] = useState(false);
   const [savingRideId, setSavingRideId] = useState<string | null>(null);
-  const [dirtyRideIds, setDirtyRideIds] = useState<Set<string>>(() => new Set());
+  const [dirtyRideIds, setDirtyRideIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [error, setError] = useState<string | null>(null);
 
-  const sortedRides = useMemo(() => sortRidesDescending(student.rides), [student.rides]);
-  const completedHours = useMemo(() => getCompletedHours(student.rides), [student.rides]);
+  const sortedRides = useMemo(
+    () => sortRidesDescending(student.rides),
+    [student.rides],
+  );
+  const completedHours = useMemo(
+    () => getCompletedHours(student.rides),
+    [student.rides],
+  );
 
   async function persistRide(nextRide: TrainingRide) {
     setSavingRideId(nextRide.id);
@@ -48,7 +62,9 @@ export function InstruktorKursantDetailsPageContent({
 
       setStudent((current) => ({
         ...current,
-        rides: current.rides.map((ride) => (ride.id === nextRide.id ? payload.ride ?? ride : ride)),
+        rides: current.rides.map((ride) =>
+          ride.id === nextRide.id ? (payload.ride ?? ride) : ride,
+        ),
       }));
 
       setDirtyRideIds((current) => {
@@ -71,7 +87,9 @@ export function InstruktorKursantDetailsPageContent({
 
     setStudent((current) => ({
       ...current,
-      rides: current.rides.map((ride) => (ride.id === rideId ? mergedRide : ride)),
+      rides: current.rides.map((ride) =>
+        ride.id === rideId ? mergedRide : ride,
+      ),
     }));
 
     setDirtyRideIds((current) => {
@@ -92,16 +110,19 @@ export function InstruktorKursantDetailsPageContent({
     setError(null);
 
     try {
-      const response = await fetch(`/api/instructor/students/${student.id}/lessons`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          startsAt: new Date().toISOString().slice(0, 16),
-          durationHours: 1,
-          topic: "Nowa jazda",
-          route: "",
-        }),
-      });
+      const response = await fetch(
+        `/api/instructor/students/${student.id}/lessons`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            startsAt: new Date().toISOString().slice(0, 16),
+            durationHours: 1,
+            topic: "Nowa jazda",
+            route: "",
+          }),
+        },
+      );
 
       const payload = (await response.json().catch(() => null)) as {
         ride?: TrainingRide;
@@ -156,16 +177,30 @@ export function InstruktorKursantDetailsPageContent({
 
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <InstruktorKursantDetailsHeader student={student} saving={saving} onAddRide={() => void addRide()} />
+      <InstruktorKursantDetailsHeader
+        student={student}
+        saving={saving}
+        onAddRide={() => void addRide()}
+      />
 
       {error ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
       ) : null}
 
-      <InstruktorKursantProgressCard completedHours={completedHours} hoursTarget={student.hoursTarget} />
+      <InstruktorKursantProgressCard
+        completedHours={completedHours}
+        hoursTarget={student.hoursTarget}
+      />
 
       <div className="space-y-4">
-        {sortedRides.length === 0 ? <InstruktorKursantEmptyRides saving={saving} onAddRide={() => void addRide()} /> : null}
+        {sortedRides.length === 0 ? (
+          <InstruktorKursantEmptyRides
+            saving={saving}
+            onAddRide={() => void addRide()}
+          />
+        ) : null}
 
         {sortedRides.map((ride) => (
           <InstruktorKursantRideCard

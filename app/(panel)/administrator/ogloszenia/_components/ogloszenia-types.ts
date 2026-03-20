@@ -25,7 +25,7 @@ export const TARGET_OPTIONS = [
   { value: "ALL_KURSANCI", label: "Wszyscy kursanci" },
   { value: "KURSANCI_KAT_B", label: "Kursanci kat. B" },
   { value: "KURSANCI_KAT_A", label: "Kursanci kat. A" },
-  { value: "KURSANCI_OCZEKUJACY", label: "Kursanci oczekujacy" },
+  { value: "KURSANCI_OCZEKUJACY", label: "Kursanci oczekujący" },
   { value: "INSTRUKTORZY", label: "Instruktorzy" },
 ] as const;
 
@@ -33,7 +33,7 @@ export const TARGET_LABELS: Record<AnnouncementTarget, string> = {
   ALL_KURSANCI: "Wszyscy kursanci",
   KURSANCI_KAT_A: "Kursanci kat. A",
   KURSANCI_KAT_B: "Kursanci kat. B",
-  KURSANCI_OCZEKUJACY: "Kursanci oczekujacy",
+  KURSANCI_OCZEKUJACY: "Kursanci oczekujący",
   INSTRUKTORZY: "Instruktorzy",
 };
 

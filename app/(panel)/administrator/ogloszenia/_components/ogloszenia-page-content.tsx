@@ -6,14 +6,19 @@ import { Button } from "@/components/ui/button";
 import { AnnouncementCard } from "./announcement-card";
 import { AnnouncementDialog } from "./announcement-dialog";
 import { AnnouncementEmptyState } from "./announcement-empty-state";
-import { DEFAULT_FORM, type Announcement, type AnnouncementForm } from "./ogloszenia-types";
+import {
+  DEFAULT_FORM,
+  type Announcement,
+  type AnnouncementForm,
+} from "./ogloszenia-types";
 
 export function OgloszeniaPageContent({
   initialAnnouncements,
 }: {
   initialAnnouncements: Announcement[];
 }) {
-  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
+  const [announcements, setAnnouncements] =
+    useState<Announcement[]>(initialAnnouncements);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<AnnouncementForm>(DEFAULT_FORM);
@@ -52,7 +57,7 @@ export function OgloszeniaPageContent({
 
   function validateForm() {
     if (!form.title.trim() || !form.target || !form.content.trim()) {
-      setError("Uzupelnij tytul, odbiorcow i tresc wiadomosci.");
+      setError("Uzupełnij tytuł, odbiorców i treść wiadomości.");
       return false;
     }
 
@@ -76,14 +81,17 @@ export function OgloszeniaPageContent({
       } | null;
 
       if (!response.ok || !payload?.announcement) {
-        setError("Nie udalo sie dodac ogloszenia. Sprobuj ponownie.");
+        setError("Nie udało się dodać ogłoszenia. Spróbuj ponownie.");
         return;
       }
 
-      setAnnouncements((current) => [payload.announcement as Announcement, ...current]);
+      setAnnouncements((current) => [
+        payload.announcement as Announcement,
+        ...current,
+      ]);
       closeDialog();
     } catch {
-      setError("Nie udalo sie dodac ogloszenia. Sprobuj ponownie.");
+      setError("Nie udało się dodać ogłoszenia. Spróbuj ponownie.");
     } finally {
       setPending(false);
     }
@@ -108,19 +116,21 @@ export function OgloszeniaPageContent({
       } | null;
 
       if (!response.ok || !payload?.announcement) {
-        setError("Nie udalo sie zaktualizowac ogloszenia. Sprobuj ponownie.");
+        setError("Nie udało się zaktualizować ogłoszenia. Spróbuj ponownie.");
         return;
       }
 
       const updatedAnnouncement = payload.announcement;
       setAnnouncements((current) =>
         current.map((item) =>
-          item.id === updatedAnnouncement.id ? (updatedAnnouncement as Announcement) : item,
+          item.id === updatedAnnouncement.id
+            ? (updatedAnnouncement as Announcement)
+            : item,
         ),
       );
       closeDialog();
     } catch {
-      setError("Nie udalo sie zaktualizowac ogloszenia. Sprobuj ponownie.");
+      setError("Nie udało się zaktualizować ogłoszenia. Spróbuj ponownie.");
     } finally {
       setPending(false);
     }
@@ -129,7 +139,9 @@ export function OgloszeniaPageContent({
   async function deleteAnnouncement(announcementId: string) {
     if (pending) return;
 
-    const shouldDelete = window.confirm("Na pewno usunac to ogloszenie? Tej operacji nie mozna cofnac.");
+    const shouldDelete = window.confirm(
+      "Na pewno usunąć to ogłoszenie? Tej operacji nie można cofnąć.",
+    );
     if (!shouldDelete) return;
 
     setPending(true);
@@ -141,16 +153,18 @@ export function OgloszeniaPageContent({
       });
 
       if (!response.ok) {
-        setError("Nie udalo sie usunac ogloszenia. Sprobuj ponownie.");
+        setError("Nie udało się usunąć ogłoszenia. Spróbuj ponownie.");
         return;
       }
 
-      setAnnouncements((current) => current.filter((item) => item.id !== announcementId));
+      setAnnouncements((current) =>
+        current.filter((item) => item.id !== announcementId),
+      );
       if (editingId === announcementId) {
         closeDialog();
       }
     } catch {
-      setError("Nie udalo sie usunac ogloszenia. Sprobuj ponownie.");
+      setError("Nie udało się usunąć ogłoszenia. Spróbuj ponownie.");
     } finally {
       setPending(false);
     }
@@ -159,11 +173,11 @@ export function OgloszeniaPageContent({
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <SectionHeader
-        title="Ogloszenia"
-        description="Wysylaj wiadomosci i powiadomienia do swoich kursantow."
+        title="Ogłoszenia"
+        description="Wysyłaj wiadomości i powiadomienia do swoich kursantów."
         actions={
           <Button onClick={openCreate} variant="primary">
-            Utworz nowa wiadomosc
+            Utwórz nową wiadomość
           </Button>
         }
       />
@@ -177,7 +191,9 @@ export function OgloszeniaPageContent({
             post={post}
             pending={pending}
             onEdit={openEdit}
-            onDelete={(announcementId) => void deleteAnnouncement(announcementId)}
+            onDelete={(announcementId) =>
+              void deleteAnnouncement(announcementId)
+            }
           />
         ))}
       </div>

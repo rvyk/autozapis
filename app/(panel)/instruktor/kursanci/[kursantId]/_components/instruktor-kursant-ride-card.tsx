@@ -31,7 +31,9 @@ export function InstruktorKursantRideCard({
           </p>
           <input
             value={ride.topic}
-            onChange={(event) => onUpdateRide(ride.id, { topic: event.target.value })}
+            onChange={(event) =>
+              onUpdateRide(ride.id, { topic: event.target.value })
+            }
             className="mt-1 h-10 w-full rounded-lg border border-stone-300 px-3 text-sm font-semibold text-stone-900 outline-none focus:border-red-500"
           />
         </div>
@@ -67,18 +69,22 @@ export function InstruktorKursantRideCard({
             disabled={saving || savingRideId === ride.id}
             onClick={() => onRemoveRide(ride.id)}
           >
-            Usun
+            Usuń
           </Button>
         </div>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div>
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">Termin</label>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Termin
+          </label>
           <input
             type="datetime-local"
             value={ride.startsAt}
-            onChange={(event) => onUpdateRide(ride.id, { startsAt: event.target.value })}
+            onChange={(event) =>
+              onUpdateRide(ride.id, { startsAt: event.target.value })
+            }
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
           />
         </div>
@@ -94,30 +100,42 @@ export function InstruktorKursantRideCard({
             value={ride.durationHours}
             onChange={(event) => {
               const parsed = Number(event.target.value);
-              const durationHours = Number.isFinite(parsed) ? Math.min(8, Math.max(1, Math.floor(parsed))) : 1;
+              const durationHours = Number.isFinite(parsed)
+                ? Math.min(8, Math.max(1, Math.floor(parsed)))
+                : 1;
               onUpdateRide(ride.id, { durationHours });
             }}
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">Trasa</label>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Trasa
+          </label>
           <input
             value={ride.route}
-            onChange={(event) => onUpdateRide(ride.id, { route: event.target.value })}
+            onChange={(event) =>
+              onUpdateRide(ride.id, { route: event.target.value })
+            }
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
           />
         </div>
       </div>
 
       <div className="mt-4">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-stone-500">Ocena trasy</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-stone-500">
+          Ocena trasy
+        </p>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((score) => (
             <button
               key={score}
               type="button"
-              onClick={() => onUpdateRide(ride.id, { routeScore: score as TrainingRide["routeScore"] })}
+              onClick={() =>
+                onUpdateRide(ride.id, {
+                  routeScore: score as TrainingRide["routeScore"],
+                })
+              }
               className={cn(
                 "h-8 w-8 rounded-full text-xs font-semibold transition-colors",
                 ride.routeScore >= score
@@ -132,11 +150,15 @@ export function InstruktorKursantRideCard({
       </div>
 
       <div className="mt-4">
-        <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">Opinia po jezdzie</label>
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+          Opinia po jezdzie
+        </label>
         <textarea
           rows={3}
           value={ride.instructorNote}
-          onChange={(event) => onUpdateRide(ride.id, { instructorNote: event.target.value })}
+          onChange={(event) =>
+            onUpdateRide(ride.id, { instructorNote: event.target.value })
+          }
           className="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm outline-none focus:border-red-500"
           placeholder="Wpisz ocene i zalecenia dla kursanta..."
         />
@@ -144,7 +166,9 @@ export function InstruktorKursantRideCard({
 
       {dirty ? (
         <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-          <p className="text-xs font-medium text-amber-700">Masz niezapisane zmiany w tej jezdzie.</p>
+          <p className="text-xs font-medium text-amber-700">
+            Masz niezapisane zmiany w tej jezdzie.
+          </p>
         </div>
       ) : null}
     </div>

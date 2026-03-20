@@ -40,12 +40,12 @@ export function AnnouncementDialog({
         <div className="mb-6 flex items-start justify-between gap-6">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-stone-900">
-              {mode === "create" ? "Nowe ogloszenie" : "Edytuj ogloszenie"}
+              {mode === "create" ? "Nowe ogłoszenie" : "Edytuj ogłoszenie"}
             </h2>
             <p className="mt-1 text-sm text-stone-500">
               {mode === "create"
-                ? "Napisz wiadomosc i opublikuj ja w panelu kursanta."
-                : "Zmien tresc wiadomosci i zapisz aktualizacje."}
+                ? "Napisz wiadomość i opublikuj ją w panelu kursanta."
+                : "Zmień treść wiadomości i zapisz aktualizacje."}
             </p>
           </div>
 
@@ -57,21 +57,36 @@ export function AnnouncementDialog({
             className="rounded-lg p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
             aria-label="Zamknij okno"
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
+            <svg
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 6l12 12M18 6L6 18"
+              />
             </svg>
           </Button>
         </div>
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-stone-800" htmlFor={`${mode}-announcement-title`}>
-              Tytul
+            <label
+              className="text-sm font-medium text-stone-800"
+              htmlFor={`${mode}-announcement-title`}
+            >
+              Tytuł
             </label>
             <input
               id={`${mode}-announcement-title`}
               value={form.title}
-              onChange={(event) => onChange({ ...form, title: event.target.value })}
+              onChange={(event) =>
+                onChange({ ...form, title: event.target.value })
+              }
               maxLength={120}
               className="h-11 w-full rounded-xl border border-stone-300 px-3 text-sm text-stone-900 outline-none transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500/15"
               placeholder="Np. Zmiana terminu jazd"
@@ -79,7 +94,10 @@ export function AnnouncementDialog({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-stone-800" htmlFor={`${mode}-announcement-target`}>
+            <label
+              className="text-sm font-medium text-stone-800"
+              htmlFor={`${mode}-announcement-target`}
+            >
               Odbiorcy
             </label>
             <select
@@ -102,31 +120,48 @@ export function AnnouncementDialog({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-stone-800" htmlFor={`${mode}-announcement-content`}>
-              Tresc
+            <label
+              className="text-sm font-medium text-stone-800"
+              htmlFor={`${mode}-announcement-content`}
+            >
+              Treść
             </label>
             <textarea
               id={`${mode}-announcement-content`}
               value={form.content}
-              onChange={(event) => onChange({ ...form, content: event.target.value })}
+              onChange={(event) =>
+                onChange({ ...form, content: event.target.value })
+              }
               maxLength={5000}
               rows={7}
               className="w-full rounded-xl border border-stone-300 px-3 py-2.5 text-sm leading-relaxed text-stone-900 outline-none transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500/15"
-              placeholder="Opisz co sie zmienilo i kogo dotyczy komunikat..."
+              placeholder="Opisz co się zmieniło i kogo dotyczy komunikat..."
             />
           </div>
 
-          {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+          {error ? (
+            <p className="text-sm font-medium text-red-600">{error}</p>
+          ) : null}
 
           <div className="flex items-center justify-end gap-3 pt-2">
-            <Button type="button" onClick={onClose} variant="secondary" disabled={pending}>
+            <Button
+              type="button"
+              onClick={onClose}
+              variant="secondary"
+              disabled={pending}
+            >
               Anuluj
             </Button>
-            <Button type="button" onClick={onSubmit} variant="primary" disabled={pending}>
+            <Button
+              type="button"
+              onClick={onSubmit}
+              variant="primary"
+              disabled={pending}
+            >
               {pending
                 ? "Zapisywanie..."
                 : mode === "create"
-                  ? "Opublikuj ogloszenie"
+                  ? "Opublikuj ogłoszenie"
                   : "Zapisz zmiany"}
             </Button>
           </div>

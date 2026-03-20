@@ -21,13 +21,17 @@ export function AnnouncementCard({
         <div>
           <h3 className="text-lg font-bold text-stone-900">{post.title}</h3>
           <div className="mt-1 flex items-center gap-3 text-sm text-stone-500">
-            <span className="font-medium text-stone-700">{post.authorName}</span>
+            <span className="font-medium text-stone-700">
+              {post.authorName}
+            </span>
             <span className="h-1 w-1 rounded-full bg-stone-300" />
             <span>{formatAnnouncementDate(post.createdAt)}</span>
             {post.updatedAt !== post.createdAt ? (
               <>
                 <span className="h-1 w-1 rounded-full bg-stone-300" />
-                <span className="text-xs">edytowano {formatAnnouncementDate(post.updatedAt)}</span>
+                <span className="text-xs">
+                  edytowano {formatAnnouncementDate(post.updatedAt)}
+                </span>
               </>
             ) : null}
           </div>
@@ -52,12 +56,14 @@ export function AnnouncementCard({
             onClick={() => onDelete(post.id)}
             disabled={pending}
           >
-            Usun
+            Usuń
           </Button>
         </div>
       </div>
 
-      <div className="pt-2 text-sm leading-relaxed text-stone-600">{post.content}</div>
+      <div className="pt-2 text-sm leading-relaxed text-stone-600">
+        {post.content}
+      </div>
     </article>
   );
 }

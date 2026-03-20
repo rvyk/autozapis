@@ -33,13 +33,13 @@ export type KursantStats = {
 
 export const FILTER_OPTIONS: { value: KursantStatusFilter; label: string }[] = [
   { value: "WSZYSCY", label: "Wszyscy" },
-  { value: "OCZEKUJACY", label: "Oczekujacy" },
+  { value: "OCZEKUJACY", label: "Oczekujący" },
   { value: "AKTYWNY", label: "Aktywni" },
   { value: "BRAK_PKK", label: "Brak PKK" },
 ];
 
 export const STATUS_LABELS: Record<KursantResolvedStatus, string> = {
-  OCZEKUJACY: "Oczekujacy",
+  OCZEKUJACY: "Oczekujący",
   AKTYWNY: "Aktywny",
   BRAK_PKK: "Brak PKK",
 };
