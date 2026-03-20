@@ -1,16 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { OgloszeniaPageContent } from "./_components/ogloszenia-page-content";
+import type { AnnouncementTarget } from "./_components/ogloszenia-types";
 
 type AnnouncementRecord = {
   id: string;
   title: string;
   content: string;
-  target:
-    | "ALL_KURSANCI"
-    | "KURSANCI_KAT_A"
-    | "KURSANCI_KAT_B"
-    | "KURSANCI_OCZEKUJACY"
-    | "INSTRUKTORZY";
+  target: AnnouncementTarget;
   authorName: string;
   createdAt: Date;
   updatedAt: Date;
