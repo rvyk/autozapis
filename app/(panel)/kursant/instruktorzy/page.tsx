@@ -31,6 +31,16 @@ export default async function InstruktorzyPage() {
     where: {
       role: "INSTRUKTOR",
       isAccountActive: true,
+      canTeachTheory: true,
+      lectureSessionsAsInstructor: {
+        some: {
+          attendances: {
+            some: {
+              studentId: dbUser.id,
+            },
+          },
+        },
+      },
       ...(assignedInstructorId ? { id: { not: assignedInstructorId } } : {}),
     },
     select: {

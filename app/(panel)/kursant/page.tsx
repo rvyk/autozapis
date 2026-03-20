@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getPanelUser } from "@/app/_lib/get-panel-user";
+import { prisma } from "@/lib/prisma";
 import {
   getAnnouncementTargetsForKursant,
   getLatestKursantAnnouncements,
@@ -17,15 +18,62 @@ export default async function PanelPage() {
     dbUser.trainingCategory,
   );
 
-  const latestAnnouncements = await getLatestKursantAnnouncements(
-    allowedTargets,
-    4,
-  );
+  const [
+    latestAnnouncements,
+    theoryAttendances,
+    upcomingLesson,
+  ] = await Promise.all([
+    getLatestKursantAnnouncements(allowedTargets, 4),
+    prisma.lectureAttendance.findMany({
+      where: {
+        studentId: dbUser.id,
+        status: "PRESENT",
+      },
+      select: {
+        creditedMinutes: true,
+      },
+    }),
+    prisma.drivingLesson.findFirst({
+      where: {
+        studentId: dbUser.id,
+        status: "PLANOWANA",
+        startsAt: {
+          gt: new Date(),
+        },
+      },
+      orderBy: {
+        startsAt: "asc",
+      },
+      select: {
+        id: true,
+        startsAt: true,
+        topic: true,
+      },
+    }),
+  ]);
+
+  const theoryMinutesCompleted = theoryAttendances.reduce((acc, curr) => acc + curr.creditedMinutes, 0);
+  const theoryHoursCompleted = Math.floor(theoryMinutesCompleted / 60);
+
+  const stats = {
+    theoryCompleted: theoryHoursCompleted,
+    theoryRequired: dbUser.theoryHoursRequired || 30,
+    practiceCompleted: dbUser.trainingHoursCompleted || 0,
+    practiceRequired: dbUser.trainingHoursRequired || 30,
+  };
+
+  const nextLesson = upcomingLesson?.startsAt ? {
+    id: upcomingLesson.id,
+    date: upcomingLesson.startsAt,
+    topic: upcomingLesson.topic,
+  } : null;
 
   return (
     <PanelPageContent
       firstName={dbUser?.firstName}
       latestAnnouncements={latestAnnouncements}
+      stats={stats}
+      nextLesson={nextLesson}
     />
   );
 }

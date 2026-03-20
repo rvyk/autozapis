@@ -56,8 +56,12 @@ export function InstruktorzyPageContent({
 
         {!assignedInstructor ? (
           <div className="mt-3 rounded-xl border border-dashed border-stone-300 bg-stone-50 px-4 py-5">
-            <p className="text-sm font-medium text-stone-900">Nie masz jeszcze przypisanego instruktora.</p>
-            <p className="mt-1 text-sm text-stone-500">Skontaktuj się z administracją, aby dokończyć przypisanie.</p>
+            <p className="text-sm font-medium text-stone-900">
+              Nie masz jeszcze przypisanego instruktora.
+            </p>
+            <p className="mt-1 text-sm text-stone-500">
+              Skontaktuj się z OSK, aby dokończyć przypisanie.
+            </p>
           </div>
         ) : (
           <div className="mt-4 flex flex-col gap-4 rounded-2xl border border-red-100 bg-red-50/40 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -66,8 +70,12 @@ export function InstruktorzyPageContent({
                 {initialsFromName(assignedInstructor.fullName)}
               </div>
               <div>
-                <p className="text-lg font-semibold text-stone-900">{assignedInstructor.fullName}</p>
-                <p className="text-xs text-stone-500">Przypisano: {formatAssignedAt(assignedInstructor.assignedAt)}</p>
+                <p className="text-lg font-semibold text-stone-900">
+                  {assignedInstructor.fullName}
+                </p>
+                <p className="text-xs text-stone-500">
+                  Przypisano: {formatAssignedAt(assignedInstructor.assignedAt)}
+                </p>
                 <p className="mt-1 text-sm text-stone-600">
                   Telefon: {assignedInstructor.phoneNumber || "Brak numeru"}
                 </p>
@@ -76,7 +84,9 @@ export function InstruktorzyPageContent({
 
             {assignedInstructor.phoneNumber ? (
               <Button asChild>
-                <a href={phoneHref(assignedInstructor.phoneNumber)}>Zadzwoń do instruktora</a>
+                <a href={phoneHref(assignedInstructor.phoneNumber)}>
+                  Zadzwoń do instruktora
+                </a>
               </Button>
             ) : (
               <Button disabled>Brak numeru telefonu</Button>
@@ -90,11 +100,15 @@ export function InstruktorzyPageContent({
           <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
             Pozostali instruktorzy
           </p>
-          <span className="text-xs text-stone-500">{otherInstructors.length}</span>
+          <span className="text-xs text-stone-500">
+            {otherInstructors.length}
+          </span>
         </div>
 
         {otherInstructors.length === 0 ? (
-          <p className="mt-3 text-sm text-stone-500">Brak innych aktywnych instruktorów.</p>
+          <p className="mt-3 text-sm text-stone-500">
+            Brak innych aktywnych instruktorów.
+          </p>
         ) : (
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {otherInstructors.map((instructor) => (
@@ -107,8 +121,12 @@ export function InstruktorzyPageContent({
                     {initialsFromName(instructor.fullName)}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-stone-900">{instructor.fullName}</p>
-                    <p className="text-xs text-stone-500">tel. {instructor.phoneNumber || "brak"}</p>
+                    <p className="text-sm font-semibold text-stone-900">
+                      {instructor.fullName}
+                    </p>
+                    <p className="text-xs text-stone-500">
+                      tel. {instructor.phoneNumber || "brak"}
+                    </p>
                   </div>
                 </div>
 

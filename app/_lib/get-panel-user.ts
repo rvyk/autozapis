@@ -31,6 +31,9 @@ export async function getPanelUser({
       isRegistrationComplete: true,
       birthDate: true,
       firstName: true,
+      trainingHoursCompleted: true,
+      trainingHoursRequired: true,
+      theoryHoursRequired: true,
     },
   });
 

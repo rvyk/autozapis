@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type StudentRide = {
   id: string;
@@ -81,6 +82,8 @@ export function JazdyPageContent() {
     [rides],
   );
 
+  const hasTimeline = sortedRides.length > 0;
+
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <div className="border-b border-stone-200 pb-6 sm:flex sm:items-center sm:justify-between">
@@ -123,7 +126,14 @@ export function JazdyPageContent() {
         </p>
       ) : null}
 
-      <div className="relative flex flex-col gap-6 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-px before:bg-linear-to-b before:from-transparent before:via-stone-200 before:to-transparent md:before:mx-auto md:before:translate-x-0">
+      <div
+        className={cn(
+          "relative flex flex-col gap-6",
+          hasTimeline
+            ? "before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-px before:bg-linear-to-b before:from-transparent before:via-stone-200 before:to-transparent md:before:mx-auto md:before:translate-x-0"
+            : "before:hidden",
+        )}
+      >
         {loading ? (
           <div className="rounded-2xl border border-stone-200 bg-white p-5 text-sm text-stone-500 shadow-sm">
             Ladowanie jazd...
@@ -131,16 +141,29 @@ export function JazdyPageContent() {
         ) : null}
 
         {!loading && sortedRides.length === 0 ? (
-          <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-stone-900">
-              Brak zaplanowanych jazd
+          <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-6 py-10 text-center shadow-sm">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-stone-500 shadow-sm">
+              <svg
+                className="h-6 w-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10m-13 9h16a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a1 1 0 001 1z"
+                />
+              </svg>
+            </div>
+            <p className="mt-4 text-base font-semibold text-stone-900">
+              Nie masz jeszcze żadnych jazd
             </p>
-            <p className="mt-1 text-xs text-stone-500">
-              Skontaktuj sie ze swoim instruktorem, aby umowic termin.
+            <p className="mt-2 text-sm text-stone-500">
+              Gdy instruktor doda pierwszy termin, zobaczysz tutaj pełną
+              historię i statusy przejazdów.
             </p>
-            <Button variant="outline" className="mt-3 w-full" disabled>
-              Umow ten termin
-            </Button>
           </div>
         ) : null}
 
