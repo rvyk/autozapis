@@ -221,3 +221,18 @@ model LectureAttendance {
   @@index([studentId, status])
   @@index([lectureSessionId, status])
 }
+
+model Question {
+  id            String   @id @default(cuid())
+  questionId    Int      @unique
+  content       String
+  ansA          String?
+  ansB          String?
+  ansC          String?
+  correctAnswer String
+  categories    String
+  createdAt     DateTime @default(now())
+
+  @@index([categories])
+}
+

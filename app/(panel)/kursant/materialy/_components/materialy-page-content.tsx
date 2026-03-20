@@ -1,31 +1,117 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { cn } from "@/lib/utils";
 
 const MODULES = [
-  { id: 1, title: "Moduł 1: Przepisy Ogólne", status: "Ukończono", progress: 100 },
-  { id: 2, title: "Moduł 2: Znaki i Sygnały Drogowe", status: "W trakcie", progress: 65 },
+  {
+    id: 1,
+    title: "Moduł 1: Przepisy Ogólne",
+    status: "Ukończono",
+    progress: 100,
+  },
+  {
+    id: 2,
+    title: "Moduł 2: Znaki i Sygnały Drogowe",
+    status: "W trakcie",
+    progress: 65,
+  },
   { id: 3, title: "Moduł 3: Skrzyżowania", status: "Zablokowane", progress: 0 },
-  { id: 4, title: "Moduł 4: Pierwsza Pomoc", status: "Zablokowane", progress: 0 },
+  {
+    id: 4,
+    title: "Moduł 4: Pierwsza Pomoc",
+    status: "Zablokowane",
+    progress: 0,
+  },
 ] as const;
 
-const FILES = ["Instrukcja Plac Manewrowy.pdf", "Opis świateł w Hyundai i20.pdf"] as const;
+const FILES = [
+  "Instrukcja Plac Manewrowy.pdf",
+  "Opis świateł w Hyundai i20.pdf",
+] as const;
+
+const CATEGORY_OPTIONS = [
+  { value: "A", label: "Kategoria A" },
+  { value: "B", label: "Kategoria B" },
+] as const;
+
+type Category = (typeof CATEGORY_OPTIONS)[number]["value"];
 
 export function MaterialyPageContent() {
+  const [category, setCategory] = useState<Category>("B");
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <SectionHeader
         title="Materiały Edukacyjne"
-        description="Ucz się teorii, testuj swoj wiedzę i przygotowuj do egzaminu państwowego."
+        description="Ucz się teorii, testuj swoje wiedzę i przygotowuj do egzaminu państwowego."
       />
+
+      <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-stone-900">Baza pytań egzaminacyjnych</h2>
+        <p className="mt-1 text-sm text-stone-500">
+          Wybierz kategorię i tryb nauki.
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {CATEGORY_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setCategory(opt.value)}
+              className={cn(
+                "rounded-xl border px-4 py-2 text-sm font-medium transition-colors",
+                category === opt.value
+                  ? "border-red-500 bg-red-50 text-red-700"
+                  : "border-stone-200 text-stone-600 hover:bg-stone-50",
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-3 rounded-xl border border-stone-200 p-5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+              <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-stone-900">Egzamin próbny</h3>
+            <p className="text-sm text-stone-500">
+              32 pytania, limit czasu 25 minut. Taki sam format jak egzamin państwowy.
+            </p>
+            <Link href={`/kursant/materialy/egzamin?kat=${category}`}>
+              <Button className="w-full">Rozpocznij egzamin</Button>
+            </Link>
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-xl border border-stone-200 p-5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+              <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-stone-900">Ćwiczenia</h3>
+            <p className="text-sm text-stone-500">
+              Pojedyncze pytania z natychmiastową informacją zwrotną. Ucz się w swoim tempie.
+            </p>
+            <Link href={`/kursant/materialy/cwiczenia?kat=${category}`}>
+              <Button variant="secondary" className="w-full">Zacznij ćwiczyć</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
           <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-bold text-stone-900">Postęp w modułach testowych</h2>
+            <h2 className="mb-4 text-lg font-bold text-stone-900">
+              Postęp w modułach testowych
+            </h2>
             <div className="space-y-4">
               {MODULES.map((module) => (
                 <div
@@ -33,7 +119,13 @@ export function MaterialyPageContent() {
                   className="group flex flex-col gap-2 rounded-xl border border-stone-100 p-4 transition-colors hover:bg-stone-50"
                 >
                   <div className="flex items-center justify-between text-sm font-medium">
-                    <span className={module.status === "Zablokowane" ? "text-stone-400" : "text-stone-900"}>
+                    <span
+                      className={
+                        module.status === "Zablokowane"
+                          ? "text-stone-400"
+                          : "text-stone-900"
+                      }
+                    >
                       {module.title}
                     </span>
                     <span
@@ -66,25 +158,10 @@ export function MaterialyPageContent() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col items-center rounded-2xl border border-red-100 bg-red-50/50 p-6 text-center shadow-sm">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-              <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-red-900">Baza Pytań PWPW</h3>
-            <p className="mt-2 mb-6 text-sm leading-relaxed text-red-800/80">
-              Przetestuj swoją wiedzę rozwiązując darmowy próbny egzamin teoretyczny, taki jak na egzaminie państwowym.
-            </p>
-            <Button className="w-full">Rozpocznij egzamin</Button>
-          </div>
-
           <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-2 font-semibold text-stone-900">Przydatne pliki</h3>
+            <h3 className="mb-2 font-semibold text-stone-900">
+              Przydatne pliki
+            </h3>
             <ul className="space-y-3">
               {FILES.map((file) => (
                 <li key={file}>
@@ -92,7 +169,12 @@ export function MaterialyPageContent() {
                     href="#"
                     className="flex items-center gap-3 text-sm font-medium text-stone-600 transition-colors hover:text-red-600"
                   >
-                    <svg className="h-5 w-5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg
+                      className="h-5 w-5 text-stone-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
