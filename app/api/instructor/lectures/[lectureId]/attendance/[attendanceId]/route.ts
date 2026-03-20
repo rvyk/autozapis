@@ -23,8 +23,8 @@ async function getInstructorIdFromAuth() {
     user?: {
       findUnique: (args: {
         where: { clerkId: string };
-        select: { id: true; role: true };
-      }) => Promise<{ id: string; role: UserRole } | null>;
+        select: { id: true; role: true; canTeachTheory: true };
+      }) => Promise<{ id: string; role: UserRole; canTeachTheory: boolean } | null>;
     };
   };
 
@@ -35,10 +35,10 @@ async function getInstructorIdFromAuth() {
 
   const dbUser = await userDelegate.findUnique({
     where: { clerkId: userId },
-    select: { id: true, role: true },
+    select: { id: true, role: true, canTeachTheory: true },
   });
 
-  if (!dbUser || dbUser.role !== "INSTRUKTOR") {
+  if (!dbUser || dbUser.role !== "INSTRUKTOR" || !dbUser.canTeachTheory) {
     return { error: Response.json({ error: "FORBIDDEN" }, { status: 403 }) };
   }
 

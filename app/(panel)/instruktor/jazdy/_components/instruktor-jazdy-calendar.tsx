@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { formatPlMonthYear, formatPlTime } from "@/app/_lib/date-format";
-import type { CalendarRide } from "./instruktor-jazdy-types";
+import type { CalendarItem } from "./instruktor-jazdy-types";
 import { toDateKey } from "./instruktor-jazdy-utils";
 
 export function InstruktorJazdyCalendar({
@@ -10,7 +10,7 @@ export function InstruktorJazdyCalendar({
   days,
   leadingEmpty,
   selectedDateKey,
-  ridesByDay,
+  itemsByDay,
   loading,
   onSelectDay,
 }: {
@@ -18,7 +18,7 @@ export function InstruktorJazdyCalendar({
   days: Date[];
   leadingEmpty: number;
   selectedDateKey: string | null;
-  ridesByDay: Map<string, CalendarRide[]>;
+  itemsByDay: Map<string, CalendarItem[]>;
   loading: boolean;
   onSelectDay: (dateKey: string) => void;
 }) {
@@ -39,7 +39,7 @@ export function InstruktorJazdyCalendar({
 
         {days.map((day) => {
           const key = toDateKey(day);
-          const rides = ridesByDay.get(key) ?? [];
+          const items = itemsByDay.get(key) ?? [];
           const isSelected = selectedDateKey === key;
           const isToday = key === toDateKey(new Date());
 
@@ -57,14 +57,14 @@ export function InstruktorJazdyCalendar({
             >
               <div className="flex items-center justify-between">
                 <span className={cn("text-xs font-semibold", isToday ? "text-red-700" : "text-stone-700")}>{day.getDate()}</span>
-                {rides.length > 0 ? (
-                  <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">{rides.length}</span>
+                {items.length > 0 ? (
+                  <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">{items.length}</span>
                 ) : null}
               </div>
               <div className="mt-1 space-y-1">
-                {rides.slice(0, 2).map((ride) => (
-                  <p key={ride.id} className="truncate text-[11px] text-stone-600">
-                    {formatPlTime(ride.startsAt)} {ride.studentName}
+                {items.slice(0, 2).map((item) => (
+                  <p key={`${item.kind}-${item.id}`} className="truncate text-[11px] text-stone-600">
+                    {formatPlTime(item.startsAt)} {item.label}
                   </p>
                 ))}
               </div>

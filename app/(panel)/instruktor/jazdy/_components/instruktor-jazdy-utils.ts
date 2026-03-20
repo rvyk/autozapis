@@ -1,4 +1,4 @@
-import type { CalendarRide } from "./instruktor-jazdy-types";
+import type { CalendarItem } from "./instruktor-jazdy-types";
 
 export function toDateKey(date: Date) {
   const year = date.getFullYear();
@@ -20,13 +20,13 @@ export function getMonthDays(year: number, month: number) {
   return { days, leadingEmpty };
 }
 
-export function groupRidesByDay(plannedRides: CalendarRide[]) {
-  const map = new Map<string, CalendarRide[]>();
+export function groupCalendarItemsByDay(items: CalendarItem[]) {
+  const map = new Map<string, CalendarItem[]>();
 
-  for (const ride of plannedRides) {
-    const key = toDateKey(new Date(ride.startsAt));
+  for (const item of items) {
+    const key = toDateKey(new Date(item.startsAt));
     const existing = map.get(key) ?? [];
-    existing.push(ride);
+    existing.push(item);
     map.set(key, existing);
   }
 

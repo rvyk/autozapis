@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatPlDateFull, formatPlTime } from "@/app/_lib/date-format";
-import type { CalendarRide } from "./instruktor-jazdy-types";
+import type { CalendarItem } from "./instruktor-jazdy-types";
 
 export function InstruktorJazdyDayDetails({
   selectedDateKey,
-  selectedRides,
+  selectedItems,
 }: {
   selectedDateKey: string | null;
-  selectedRides: CalendarRide[];
+  selectedItems: CalendarItem[];
 }) {
   return (
     <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -27,19 +27,20 @@ export function InstruktorJazdyDayDetails({
           </p>
 
           <div className="mt-3 space-y-3">
-            {selectedRides.length === 0 ? <p className="text-sm text-stone-500">Brak jazd w tym dniu.</p> : null}
+            {selectedItems.length === 0 ? <p className="text-sm text-stone-500">Brak zaplanowanych zajec w tym dniu.</p> : null}
 
-            {selectedRides.map((ride) => (
-              <div key={ride.id} className="rounded-xl border border-stone-200 p-3">
-                <p className="text-sm font-semibold text-stone-900">{ride.studentName}</p>
+            {selectedItems.map((item) => (
+              <div key={`${item.kind}-${item.id}`} className="rounded-xl border border-stone-200 p-3">
+                <p className="text-sm font-semibold text-stone-900">{item.label}</p>
                 <p className="text-xs text-stone-500">
-                  {formatPlTime(ride.startsAt)} - {ride.durationHours}h
+                  {formatPlTime(item.startsAt)} - {item.details}
                 </p>
-                <p className="mt-1 text-sm text-stone-600">{ride.topic}</p>
-                {ride.route ? <p className="mt-1 text-xs text-stone-500">Trasa: {ride.route}</p> : null}
+                {item.subtitle ? <p className="mt-1 text-sm text-stone-600">{item.subtitle}</p> : null}
                 <div className="mt-2">
                   <Button asChild size="sm" variant="secondary">
-                    <Link href={`/instruktor/kursanci/${ride.studentId}`}>Przejdz do profilu</Link>
+                    <Link href={item.href}>
+                      {item.kind === "ride" ? "Przejdz do profilu" : "Przejdz do wykladow"}
+                    </Link>
                   </Button>
                 </div>
               </div>

@@ -1,4 +1,5 @@
 import { getPanelUser } from "@/app/_lib/get-panel-user";
+import { formatPlTime } from "@/app/_lib/date-format";
 import { prisma } from "@/lib/prisma";
 import { InstruktorDashboardPageContent } from "./_components/instruktor-dashboard-page-content";
 
@@ -12,7 +13,7 @@ export default async function InstruktorPage() {
   const endOfToday = new Date(now);
   endOfToday.setHours(23, 59, 59, 999);
 
-  const [assignedStudentsCount, todayLessons, plannedRidesCount, completedRidesCount] =
+  const [assignedStudentsCount, todayLessons, todayLectures, plannedRidesCount, plannedLecturesCount, completedRidesCount] =
     await Promise.all([
       prisma.instructorStudentAssignment.count({
         where: {
@@ -44,6 +45,23 @@ export default async function InstruktorPage() {
           },
         },
       }),
+      prisma.lectureSession.findMany({
+        where: {
+          instructorId: dbUser.id,
+          startsAt: {
+            gte: startOfToday,
+            lte: endOfToday,
+          },
+        },
+        orderBy: {
+          startsAt: "asc",
+        },
+        select: {
+          id: true,
+          startsAt: true,
+          title: true,
+        },
+      }),
       prisma.drivingLesson.count({
         where: {
           instructorId: dbUser.id,
@@ -56,9 +74,14 @@ export default async function InstruktorPage() {
           status: "ZREALIZOWANA",
         },
       }),
+      prisma.lectureSession.count({
+        where: {
+          instructorId: dbUser.id,
+        },
+      }),
     ]);
 
-  const todayRides = todayLessons.map((lesson) => {
+  const todayRideItems = todayLessons.map((lesson) => {
     const fullName = [lesson.student.firstName, lesson.student.lastName]
       .filter((part) => typeof part === "string" && part.trim().length > 0)
       .join(" ")
@@ -66,22 +89,32 @@ export default async function InstruktorPage() {
 
     return {
       id: lesson.id,
-      time: lesson.startsAt
-        ? new Intl.DateTimeFormat("pl-PL", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(lesson.startsAt)
-        : "--:--",
+      time: lesson.startsAt ? formatPlTime(lesson.startsAt) : "--:--",
       kursant: fullName || "Brak danych",
       type: lesson.topic,
     };
   });
 
+  const todayLectureItems = todayLectures.map((lecture) => ({
+    id: `lecture-${lecture.id}`,
+    time: formatPlTime(lecture.startsAt),
+    kursant: "Wyklad",
+    type: lecture.title,
+  }));
+
+  const todayRides = [...todayRideItems, ...todayLectureItems].sort((a, b) =>
+    a.time.localeCompare(b.time),
+  );
+
   const stats = {
     assignedStudentsCount,
-    todayRidesCount: todayLessons.length,
+    todayRidesCount: todayRideItems.length,
+    todayLecturesCount: todayLectureItems.length,
     plannedRidesCount,
+    plannedLecturesCount,
     completedRidesCount,
+    canTeachPractice: Boolean(dbUser.canTeachPractice),
+    canTeachTheory: Boolean(dbUser.canTeachTheory),
   };
 
   return (

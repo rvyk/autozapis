@@ -27,8 +27,8 @@ async function getInstructorIdFromAuth() {
     user?: {
       findUnique: (args: {
         where: { clerkId: string };
-        select: { id: true; role: true };
-      }) => Promise<{ id: string; role: UserRole } | null>;
+        select: { id: true; role: true; canTeachTheory: true };
+      }) => Promise<{ id: string; role: UserRole; canTeachTheory: boolean } | null>;
     };
   };
 
@@ -39,10 +39,10 @@ async function getInstructorIdFromAuth() {
 
   const dbUser = await userDelegate.findUnique({
     where: { clerkId: userId },
-    select: { id: true, role: true },
+    select: { id: true, role: true, canTeachTheory: true },
   });
 
-  if (!dbUser || dbUser.role !== "INSTRUKTOR") {
+  if (!dbUser || dbUser.role !== "INSTRUKTOR" || !dbUser.canTeachTheory) {
     return { error: Response.json({ error: "FORBIDDEN" }, { status: 403 }) };
   }
 
@@ -194,7 +194,11 @@ export async function POST(request: Request) {
     ? payload?.studentIds.filter((item): item is string => typeof item === "string" && item.length > 0)
     : [];
 
-  if (!title || !topicType || !startsAtRaw || !durationMinutes || studentIds.length === 0) {
+  if (studentIds.length === 0) {
+    return Response.json({ error: "NO_STUDENTS" }, { status: 400 });
+  }
+
+  if (!title || !topicType || !startsAtRaw || !durationMinutes) {
     return Response.json({ error: "INVALID_PAYLOAD" }, { status: 400 });
   }
 
@@ -206,9 +210,15 @@ export async function POST(request: Request) {
   const prismaDelegates = prisma as unknown as {
     instructorStudentAssignment?: {
       findMany: (args: {
-        where: { instructorId: string; isActive: true; studentId: { in: string[] } };
-        select: { studentId: true };
-      }) => Promise<{ studentId: string }[]>;
+        where: { studentId: { in: string[] }; isActive: true };
+        select: { studentId: true; instructorId: true };
+      }) => Promise<{ studentId: string; instructorId: string }[]>;
+    };
+    user?: {
+      findMany: (args: {
+        where: { id: { in: string[] }; role: "USER"; isRegistrationComplete: true; isAccountActive: true };
+        select: { id: true };
+      }) => Promise<{ id: string }[]>;
     };
     lectureSession?: {
       create: (args: {
@@ -248,22 +258,39 @@ export async function POST(request: Request) {
 
   const assignmentDelegate = prismaDelegates.instructorStudentAssignment;
   const lectureDelegate = prismaDelegates.lectureSession;
+  const userDelegate = prismaDelegates.user;
 
-  if (!assignmentDelegate || !lectureDelegate) {
+  if (!assignmentDelegate || !lectureDelegate || !userDelegate) {
     return Response.json({ error: "PRISMA_CLIENT_OUTDATED" }, { status: 500 });
   }
 
-  const assignedStudents = await assignmentDelegate.findMany({
+  const existingStudents = await userDelegate.findMany({
     where: {
-      instructorId: authResult.instructorId,
+      id: { in: studentIds },
+      role: "USER",
+      isRegistrationComplete: true,
+      isAccountActive: true,
+    },
+    select: { id: true },
+  });
+
+  if (existingStudents.length !== studentIds.length) {
+    return Response.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
+  const activeAssignments = await assignmentDelegate.findMany({
+    where: {
       isActive: true,
       studentId: { in: studentIds },
     },
-    select: { studentId: true },
+    select: { studentId: true, instructorId: true },
   });
 
-  const assignedIds = new Set(assignedStudents.map((item) => item.studentId));
-  if (assignedIds.size !== studentIds.length) {
+  const assignedToOtherInstructor = activeAssignments.some(
+    (assignment) => assignment.instructorId !== authResult.instructorId,
+  );
+
+  if (assignedToOtherInstructor) {
     return Response.json({ error: "FORBIDDEN" }, { status: 403 });
   }
 

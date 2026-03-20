@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { SectionHeader } from "@/app/_components/dashboard/section-header";
+import { formatPlDateTimeMedium } from "@/app/_lib/date-format";
 
 type AttendanceStatus = "ENROLLED" | "PRESENT" | "ABSENT";
 
@@ -17,13 +18,6 @@ type LectureItem = {
     durationMinutes: number;
   };
 };
-
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("pl-PL", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
 
 function getStatusLabel(status: AttendanceStatus) {
   if (status === "PRESENT") return "Obecny";
@@ -120,7 +114,7 @@ export function WykladyPageContent() {
               <span className="text-xs font-semibold uppercase tracking-wider text-red-600">{lecture.session.topicType}</span>
               <h3 className="text-lg font-semibold text-stone-900">{lecture.session.title}</h3>
               <p className="mt-1 text-sm text-stone-500">
-                {formatDateTime(lecture.session.startsAt)} ({Math.floor(lecture.session.durationMinutes / 60)}h)
+                {formatPlDateTimeMedium(lecture.session.startsAt)} ({Math.floor(lecture.session.durationMinutes / 60)}h)
               </p>
             </div>
 

@@ -18,8 +18,15 @@ export async function GET(request: Request) {
     user?: {
       findUnique: (args: {
         where: { clerkId: string };
-        select: { id: true; role: true };
-      }) => Promise<{ id: string; role: "ADMINISTRATOR" | "INSTRUKTOR" | "USER" } | null>;
+        select: { id: true; role: true; canTeachPractice: true };
+      }) => Promise<
+        | {
+            id: string;
+            role: "ADMINISTRATOR" | "INSTRUKTOR" | "USER";
+            canTeachPractice: boolean;
+          }
+        | null
+      >;
       findMany: (args: {
         where: {
           role: "USER";
@@ -80,10 +87,10 @@ export async function GET(request: Request) {
 
   const instructor = await userDelegate.findUnique({
     where: { clerkId: userId },
-    select: { id: true, role: true },
+    select: { id: true, role: true, canTeachPractice: true },
   });
 
-  if (!instructor || instructor.role !== "INSTRUKTOR") {
+  if (!instructor || instructor.role !== "INSTRUKTOR" || !instructor.canTeachPractice) {
     return Response.json({ error: "FORBIDDEN" }, { status: 403 });
   }
 

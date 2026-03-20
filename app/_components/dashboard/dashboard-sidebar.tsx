@@ -64,6 +64,21 @@ export function DashboardSidebar({ config }: DashboardSidebarProps) {
           const isActive = isNavItemActive(pathname, item.href);
           const Icon = iconByName[item.icon];
 
+          if (item.disabled) {
+            return (
+              <div
+                key={item.href}
+                aria-disabled
+                className="flex cursor-not-allowed items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-600/80"
+              >
+                <span className="text-stone-700/70">
+                  <Icon className="h-5 w-5" />
+                </span>
+                {item.label}
+              </div>
+            );
+          }
+
           return (
             <Link
               key={item.href}

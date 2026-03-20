@@ -24,6 +24,8 @@ export async function getPanelUser({
     select: {
       id: true,
       role: true,
+      canTeachPractice: true,
+      canTeachTheory: true,
       trainingCategory: true,
       isAccountActive: true,
       isRegistrationComplete: true,

@@ -3,6 +3,11 @@ const DATE_TIME_SHORT_FORMATTER = new Intl.DateTimeFormat("pl-PL", {
   timeStyle: "short",
 });
 
+const DATE_TIME_MEDIUM_FORMATTER = new Intl.DateTimeFormat("pl-PL", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
 const DATE_FULL_FORMATTER = new Intl.DateTimeFormat("pl-PL", {
   dateStyle: "full",
 });
@@ -23,6 +28,10 @@ function toDate(value: Date | string) {
 
 export function formatPlDateTimeShort(value: Date | string) {
   return DATE_TIME_SHORT_FORMATTER.format(toDate(value));
+}
+
+export function formatPlDateTimeMedium(value: Date | string) {
+  return DATE_TIME_MEDIUM_FORMATTER.format(toDate(value));
 }
 
 export function formatPlDateFull(value: Date | string) {

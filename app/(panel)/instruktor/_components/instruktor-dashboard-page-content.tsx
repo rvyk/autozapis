@@ -7,8 +7,12 @@ import { Button } from "@/components/ui/button";
 type DashboardStats = {
   assignedStudentsCount: number;
   todayRidesCount: number;
+  todayLecturesCount: number;
   plannedRidesCount: number;
+  plannedLecturesCount: number;
   completedRidesCount: number;
+  canTeachPractice: boolean;
+  canTeachTheory: boolean;
 };
 
 type TodayRide = {
@@ -39,9 +43,9 @@ export function InstruktorDashboardPageContent({
       unit: "zaplanowane",
     },
     {
-      label: "Jazdy planowane",
-      value: String(stats.plannedRidesCount),
-      unit: "oczekujące",
+      label: "Wyklady dzisiaj",
+      value: String(stats.todayLecturesCount),
+      unit: "zaplanowane",
     },
     {
       label: "Jazdy zrealizowane",
@@ -61,7 +65,7 @@ export function InstruktorDashboardPageContent({
         }
       />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
         {dashboardStats.map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-medium text-stone-500">{stat.label}</p>
@@ -70,6 +74,14 @@ export function InstruktorDashboardPageContent({
           </div>
         ))}
       </div>
+
+      {!stats.canTeachPractice || !stats.canTeachTheory ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          Ograniczone uprawnienia: {!stats.canTeachPractice ? "jazdy" : null}
+          {!stats.canTeachPractice && !stats.canTeachTheory ? " i " : null}
+          {!stats.canTeachTheory ? "wyklady" : null}. Niedozwolone sekcje sa wyszarzone i niedostepne.
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="col-span-1 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm lg:col-span-2">

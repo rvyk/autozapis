@@ -11,6 +11,7 @@ export type DashboardNavItem = {
   href: string;
   label: string;
   icon: DashboardIconName;
+  disabled?: boolean;
 };
 
 export type DashboardSidebarConfig = {

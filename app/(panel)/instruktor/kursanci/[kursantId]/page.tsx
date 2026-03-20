@@ -10,6 +10,10 @@ export default async function InstruktorKursantDetailsPage({
 }) {
   const instructor = await getPanelUser({ accessTarget: "instruktor" });
 
+  if (!instructor.canTeachPractice) {
+    notFound();
+  }
+
   const { kursantId } = await params;
 
   const hydratedStudent = await getInstructorKursantDetailsData({

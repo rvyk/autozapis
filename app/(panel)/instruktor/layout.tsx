@@ -7,7 +7,18 @@ export default async function InstruktorLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await getPanelUser({ accessTarget: "instruktor" });
+  const instructor = await getPanelUser({ accessTarget: "instruktor" });
 
-  return <DashboardShell sidebar={<InstruktorSidebar />}>{children}</DashboardShell>;
+  return (
+    <DashboardShell
+      sidebar={
+        <InstruktorSidebar
+          canTeachPractice={Boolean(instructor.canTeachPractice)}
+          canTeachTheory={Boolean(instructor.canTeachTheory)}
+        />
+      }
+    >
+      {children}
+    </DashboardShell>
+  );
 }
