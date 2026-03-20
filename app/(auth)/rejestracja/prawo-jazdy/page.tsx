@@ -1,14 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { ProfileRedirect } from "./_components/profile-redirect";
 
 export default function RejestracjaPrawoJazdyPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/rejestracja/profil");
-  }, [router]);
-
-  return null;
+  return <ProfileRedirect />;
 }

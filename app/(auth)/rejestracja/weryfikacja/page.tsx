@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { AuthCard, AuthCardHeader, VerificationForm } from "@/components/auth";
+import { RegistrationVerificationCard } from "./_components/registration-verification-card";
 
 export default function RejestracjaWeryfikacjaPage() {
   const { signUp, errors, fetchStatus } = useSignUp();
@@ -52,18 +52,11 @@ export default function RejestracjaWeryfikacjaPage() {
   }
 
   return (
-    <AuthCard>
-      <AuthCardHeader
-        title="Potwierdź email"
-        description="Wpisz kod z wiadomości email, aby kontynuować do uzupełniania prawa jazdy."
-      />
-
-      <VerificationForm
-        onSubmit={handleVerify}
-        onResend={handleResend}
-        error={errors.fields.code?.message}
-        isLoading={fetchStatus === "fetching" || isVerifying}
-      />
-    </AuthCard>
+    <RegistrationVerificationCard
+      onVerify={handleVerify}
+      onResend={handleResend}
+      error={errors.fields.code?.message}
+      isLoading={fetchStatus === "fetching" || isVerifying}
+    />
   );
 }

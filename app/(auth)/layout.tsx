@@ -1,4 +1,6 @@
-import { cn } from "@/lib/utils";
+import { AuthAside } from "./_components/auth-aside";
+import { AuthBackground } from "./_components/auth-background";
+import { AuthContent } from "./_components/auth-content";
 
 export default function AuthLayout({
   children,
@@ -7,86 +9,11 @@ export default function AuthLayout({
 }) {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-stone-50">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_25%,rgba(220,38,38,0.07),transparent_40%),radial-gradient(circle_at_90%_15%,rgba(251,113,133,0.06),transparent_35%),radial-gradient(circle_at_70%_85%,rgba(220,38,38,0.05),transparent_40%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-linear-to-b from-white/60 to-transparent" />
+      <AuthBackground />
 
       <div className="relative mx-auto flex min-h-dvh w-full max-w-7xl items-start gap-0 px-4 py-8 sm:px-6 lg:items-center lg:gap-12 lg:px-8 lg:py-10">
-        <aside className="hidden w-100 shrink-0 self-stretch overflow-hidden rounded-3xl bg-linear-to-br from-stone-900 via-stone-900 to-stone-950 p-10 shadow-2xl lg:flex lg:flex-col lg:justify-between">
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/10 px-4 py-1.5">
-              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
-                OSK Leżajsk
-              </span>
-            </div>
-
-            {/* Title */}
-            <div className="space-y-3">
-              <h2 className="text-balance text-3xl font-bold leading-tight text-white">
-                Twoje przyszłe
-                <br />
-                prawo jazdy{" "}
-                <span className="text-red-400">zaczyna się tutaj.</span>
-              </h2>
-              <p className="text-pretty text-sm leading-relaxed text-stone-400">
-                Przejdź proces rejestracji, uzupełnij dane bezpośrednio na
-                makiecie prawa jazdy i prześlij PKK do akceptacji.
-              </p>
-            </div>
-
-            <div className="h-px bg-linear-to-r from-red-500/30 via-stone-700 to-transparent" />
-
-            <div className="space-y-5">
-              {[
-                {
-                  n: 1,
-                  title: "Utwórz konto",
-                  desc: "Email, hasło i weryfikacja",
-                },
-                {
-                  n: 2,
-                  title: "Wypełnij prawo jazdy",
-                  desc: "Dane bezpośrednio na dokumencie",
-                },
-                {
-                  n: 3,
-                  title: "Wyślij PKK",
-                  desc: "Zdjęcie lub skan dokumentu",
-                },
-              ].map((step) => (
-                <div key={step.n} className="flex items-start gap-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600/20 text-sm font-bold text-red-400 ring-1 ring-red-500/30">
-                    {step.n}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-white">
-                      {step.title}
-                    </p>
-                    <p className="mt-0.5 text-xs text-stone-500">{step.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-10 border-t border-stone-800 pt-6">
-            <p className="text-xs font-medium text-stone-600">
-              © 2026 OSK Józefa Majkuta
-            </p>
-            <p className="mt-0.5 text-xs text-stone-700">
-              Leżajsk, woj. podkarpackie
-            </p>
-          </div>
-        </aside>
-
-        <div
-          className={cn(
-            "mx-auto w-full max-w-xl lg:mx-0 lg:max-w-2xl",
-            "animate-in fade-in duration-300 ease-out",
-          )}
-        >
-          {children}
-        </div>
+        <AuthAside />
+        <AuthContent>{children}</AuthContent>
       </div>
     </div>
   );

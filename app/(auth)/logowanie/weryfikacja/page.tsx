@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { AuthCard, AuthCardHeader, VerificationForm } from "@/components/auth";
 import { useAuthNavigation } from "@/hooks";
+import { LoginVerificationCard } from "./_components/login-verification-card";
 
 export default function LogowanieWeryfikacjaPage() {
   const { signIn, errors, fetchStatus } = useSignIn();
@@ -36,31 +36,15 @@ export default function LogowanieWeryfikacjaPage() {
   }
 
   return (
-    <AuthCard>
-      <AuthCardHeader
-        title="Zweryfikuj swoje konto"
-        description="Wprowadź kod weryfikacyjny wysłany na Twój adres email."
-      />
-
-      <VerificationForm
-        onSubmit={handleVerify}
-        onResend={handleResend}
-        error={errors.fields.code?.message}
-        isLoading={fetchStatus === "fetching"}
-      />
-
-      <div className="flex justify-center">
-        <button
-          type="button"
-          onClick={() => {
-            signIn.reset();
-            router.push("/logowanie");
-          }}
-          className="text-sm font-medium text-red-700 transition-colors hover:text-red-900"
-        >
-          Zacznij od nowa
-        </button>
-      </div>
-    </AuthCard>
+    <LoginVerificationCard
+      onVerify={handleVerify}
+      onResend={handleResend}
+      error={errors.fields.code?.message}
+      isLoading={fetchStatus === "fetching"}
+      onRestart={() => {
+        signIn.reset();
+        router.push("/logowanie");
+      }}
+    />
   );
 }
