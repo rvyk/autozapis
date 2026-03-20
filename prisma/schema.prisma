@@ -20,6 +20,7 @@ model User {
   lastName  String?
   birthDate DateTime?
   role      UserRole @default(USER)
+  trainingCategory      TrainingCategory @default(B)
   isAccountActive       Boolean @default(false)
   isRegistrationComplete Boolean @default(false)
   imageUrl  String?
@@ -34,6 +35,31 @@ enum UserRole {
   USER
   ADMINISTRATOR
   INSTRUKTOR
+}
+
+enum TrainingCategory {
+  A
+  B
+}
+
+enum AnnouncementAudience {
+  ALL_KURSANCI
+  KURSANCI_KAT_A
+  KURSANCI_KAT_B
+  KURSANCI_OCZEKUJACY
+  INSTRUKTORZY
+}
+
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  content    String
+  target     AnnouncementAudience @default(ALL_KURSANCI)
+  authorName String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model PkkFile {

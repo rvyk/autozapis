@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 type LicenseFormData = {
   lastName: string;
   firstName: string;
+  trainingCategory: "A" | "B";
   birthDay: string;
   birthMonth: string;
   birthYear: string;
@@ -65,6 +66,24 @@ export function LicenseFormFields({
           autoComplete="given-name"
           required
         />
+      </Field>
+
+      <Field className="space-y-2 sm:col-span-3">
+        <FieldLabel>Kategoria kursu</FieldLabel>
+        <select
+          value={formData.trainingCategory}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              trainingCategory: e.target.value as "A" | "B",
+            }))
+          }
+          required
+          className="flex h-10 w-full appearance-none rounded-xl border border-stone-300 bg-background px-3 py-2 text-sm text-foreground transition-colors duration-150 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="B">Kategoria B</option>
+          <option value="A">Kategoria A</option>
+        </select>
       </Field>
 
       <Field className="space-y-2 sm:col-span-3">

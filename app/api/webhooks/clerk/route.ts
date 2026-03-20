@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+type TrainingCategory = "A" | "B";
+
 function parseBirthDate(value: unknown) {
   if (typeof value !== "string" || value.length === 0) {
     return null;
@@ -11,6 +13,10 @@ function parseBirthDate(value: unknown) {
 
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function parseTrainingCategory(value: unknown): TrainingCategory {
+  return value === "A" ? "A" : "B";
 }
 
 function getPrimaryEmail(data: {
@@ -37,6 +43,9 @@ export async function POST(request: NextRequest) {
       case "user.updated": {
         const user = event.data;
         const birthDate = parseBirthDate(user.unsafe_metadata?.birthDate);
+        const trainingCategory = parseTrainingCategory(
+          user.unsafe_metadata?.trainingCategory,
+        );
 
         await prisma.user.upsert({
           where: { clerkId: user.id },
@@ -46,6 +55,7 @@ export async function POST(request: NextRequest) {
             firstName: user.first_name,
             lastName: user.last_name,
             birthDate,
+            trainingCategory,
             isRegistrationComplete: false,
             imageUrl: user.image_url,
           },
@@ -54,6 +64,7 @@ export async function POST(request: NextRequest) {
             firstName: user.first_name,
             lastName: user.last_name,
             birthDate,
+            trainingCategory,
             imageUrl: user.image_url,
           },
         });

@@ -56,6 +56,8 @@ export default function RejestracjaProfilPage() {
     return {
       lastName: user?.lastName ?? "",
       firstName: user?.firstName ?? "",
+      trainingCategory:
+        metadata.trainingCategory === "A" ? "A" : "B",
       birthDay: dateParts.length === 3 ? dateParts[2] : "",
       birthMonth: dateParts.length === 3 ? dateParts[1] : "",
       birthYear: dateParts.length === 3 ? dateParts[0] : "",
@@ -84,6 +86,7 @@ export default function RejestracjaProfilPage() {
         lastName: formData.lastName,
         unsafeMetadata: {
           ...user.unsafeMetadata,
+          trainingCategory: formData.trainingCategory,
           birthDate: `${formData.birthYear}-${formData.birthMonth.padStart(2, "0")}-${formData.birthDay.padStart(2, "0")}`,
         },
       });

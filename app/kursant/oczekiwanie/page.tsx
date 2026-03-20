@@ -14,6 +14,7 @@ export default async function PanelOczekiwaniePage() {
     where: { clerkId: userId },
     select: {
       role: true,
+      trainingCategory: true,
       isAccountActive: true,
       isRegistrationComplete: true,
       birthDate: true,
@@ -39,6 +40,50 @@ export default async function PanelOczekiwaniePage() {
   if (dbUser?.isAccountActive) {
     redirect("/kursant");
   }
+
+  const prismaDelegates = prisma as unknown as {
+    announcement?: {
+      findMany: (args: {
+        where: {
+          target: {
+            in: Array<"ALL_KURSANCI" | "KURSANCI_KAT_A" | "KURSANCI_KAT_B" | "KURSANCI_OCZEKUJACY">;
+          };
+        };
+        orderBy: { createdAt: "desc" };
+        take: number;
+        select: {
+          id: true;
+          title: true;
+          content: true;
+          createdAt: true;
+        };
+      }) => Promise<Array<{ id: string; title: string; content: string; createdAt: Date }>>;
+    };
+  };
+
+  const allowedTargets: Array<
+    "ALL_KURSANCI" | "KURSANCI_KAT_A" | "KURSANCI_KAT_B" | "KURSANCI_OCZEKUJACY"
+  > = ["ALL_KURSANCI", "KURSANCI_OCZEKUJACY"];
+
+  if (dbUser?.trainingCategory === "A") {
+    allowedTargets.push("KURSANCI_KAT_A");
+  } else {
+    allowedTargets.push("KURSANCI_KAT_B");
+  }
+
+  const latestAnnouncements = prismaDelegates.announcement
+    ? await prismaDelegates.announcement.findMany({
+        where: { target: { in: allowedTargets } },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+        },
+      })
+    : [];
 
   return (
     <main className="mx-auto flex min-h-[70dvh] w-full max-w-3xl items-center px-4 py-10">
@@ -76,6 +121,28 @@ export default async function PanelOczekiwaniePage() {
             Proces akceptacji trwa zazwyczaj do 24 godzin. Odśwież stronę, aby
             sprawdzić aktualny status.
           </p>
+        </div>
+
+        <div className="rounded-2xl border border-stone-200 bg-white p-4">
+          <h2 className="text-base font-semibold text-stone-900">Ogłoszenia dla Ciebie</h2>
+          <div className="mt-3 space-y-3">
+            {latestAnnouncements.length === 0 ? (
+              <p className="text-sm text-stone-500">Brak ogłoszeń.</p>
+            ) : (
+              latestAnnouncements.map((announcement) => (
+                <article key={announcement.id} className="rounded-xl border border-stone-100 bg-stone-50/80 p-3">
+                  <p className="text-sm font-semibold text-stone-900">{announcement.title}</p>
+                  <p className="mt-1 line-clamp-2 text-xs text-stone-600">{announcement.content}</p>
+                  <p className="mt-2 text-[11px] text-stone-500">
+                    {new Intl.DateTimeFormat("pl-PL", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    }).format(announcement.createdAt)}
+                  </p>
+                </article>
+              ))
+            )}
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3">

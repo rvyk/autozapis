@@ -14,6 +14,7 @@ export default async function PanelPage() {
     where: { clerkId: userId },
     select: {
       role: true,
+      trainingCategory: true,
       isAccountActive: true,
       isRegistrationComplete: true,
       birthDate: true,
@@ -40,6 +41,70 @@ export default async function PanelPage() {
   if (!dbUser?.isAccountActive) {
     redirect("/kursant/oczekiwanie");
   }
+
+  const prismaDelegates = prisma as unknown as {
+    announcement?: {
+      findMany: (args: {
+        where: {
+          target: {
+            in: Array<
+              | "ALL_KURSANCI"
+              | "KURSANCI_KAT_A"
+              | "KURSANCI_KAT_B"
+              | "KURSANCI_OCZEKUJACY"
+            >;
+          };
+        };
+        orderBy: { createdAt: "desc" };
+        take: number;
+        select: {
+          id: true;
+          title: true;
+          content: true;
+          target: true;
+          createdAt: true;
+        };
+      }) => Promise<
+        Array<{
+          id: string;
+          title: string;
+          content: string;
+          target:
+            | "ALL_KURSANCI"
+            | "KURSANCI_KAT_A"
+            | "KURSANCI_KAT_B"
+            | "KURSANCI_OCZEKUJACY"
+            | "INSTRUKTORZY";
+          createdAt: Date;
+        }>
+      >;
+    };
+  };
+
+  const allowedTargets: Array<
+    "ALL_KURSANCI" | "KURSANCI_KAT_A" | "KURSANCI_KAT_B" | "KURSANCI_OCZEKUJACY"
+  > = ["ALL_KURSANCI"];
+
+  if (dbUser.trainingCategory === "A") {
+    allowedTargets.push("KURSANCI_KAT_A");
+  } else {
+    allowedTargets.push("KURSANCI_KAT_B");
+  }
+
+  const latestAnnouncements = prismaDelegates.announcement
+    ? await prismaDelegates.announcement.findMany({
+        where: { target: { in: allowedTargets } },
+        orderBy: { createdAt: "desc" },
+        take: 4,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          target: true,
+          createdAt: true,
+        },
+      })
+    : [];
 
   return (
     <div className="flex flex-col gap-8 w-full animate-in fade-in duration-300 ease-out">
@@ -124,6 +189,35 @@ export default async function PanelPage() {
         </div>
 
         <div className="col-span-1 flex flex-col gap-4">
+          <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-stone-900">Najnowsze ogłoszenia</h2>
+            <div className="mt-4 space-y-4">
+              {latestAnnouncements.length === 0 ? (
+                <p className="text-sm text-stone-500">Brak nowych ogłoszeń.</p>
+              ) : (
+                latestAnnouncements.map((announcement) => (
+                  <div
+                    key={announcement.id}
+                    className="rounded-xl border border-stone-100 bg-stone-50/80 p-3"
+                  >
+                    <p className="text-sm font-semibold text-stone-900">
+                      {announcement.title}
+                    </p>
+                    <p className="mt-1 line-clamp-2 text-xs text-stone-600">
+                      {announcement.content}
+                    </p>
+                    <p className="mt-2 text-[11px] text-stone-500">
+                      {new Intl.DateTimeFormat("pl-PL", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      }).format(announcement.createdAt)}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
           <div className="rounded-2xl border border-red-100 bg-red-50 p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-red-900">
               Egzamin wewnętrzny
