@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { KursanciFilterTabs } from "./kursanci-filter-tabs";
 import { KursanciTable } from "./kursanci-table";
+import { KursanciPaymentDialog } from "./kursanci-payment-dialog";
 import type {
   KursantListItem,
   KursantResolvedStatus,
@@ -27,6 +28,8 @@ export function KursanciPageContent({
   const [filter, setFilter] = useState<KursantStatusFilter>(initialFilter);
   const [kursanci, setKursanci] = useState<KursantListItem[]>(initialKursanci);
   const [error, setError] = useState<string | null>(null);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedKursantForPayment, setSelectedKursantForPayment] = useState<KursantListItem | null>(null);
 
   const filteredKursanci = useMemo(
     () =>
@@ -184,6 +187,45 @@ export function KursanciPageContent({
     }
   }
 
+  function handleOpenPaymentDialog(kursantId: string) {
+    const kursant = kursanci.find(k => k.id === kursantId);
+    if (kursant) {
+      setSelectedKursantForPayment(kursant);
+      setPaymentDialogOpen(true);
+    }
+  }
+
+  async function handleSavePayment(kursantId: string, coursePrice: number, amountPaid: number) {
+    setError(null);
+    setIsMutating(true);
+
+    try {
+      const response = await fetch(`/api/admin/kursanci/${kursantId}/payment`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coursePrice, amountPaid }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        setError(getErrorMessage(payload?.error ?? "UNKNOWN"));
+        return;
+      }
+
+      setKursanci((current) =>
+        current.map((kursant) =>
+          kursant.id === kursantId
+            ? { ...kursant, coursePrice, amountPaid }
+            : kursant,
+        ),
+      );
+    } catch {
+      setError(getErrorMessage("UNKNOWN"));
+    } finally {
+      setIsMutating(false);
+    }
+  }
+
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <SectionHeader
@@ -210,6 +252,14 @@ export function KursanciPageContent({
         onOpenPkk={openPkkFile}
         onChangeStatus={changeAccountStatus}
         onRemovePkk={removePkkFile}
+        onEditPayment={handleOpenPaymentDialog}
+      />
+
+      <KursanciPaymentDialog
+        isOpen={paymentDialogOpen}
+        onClose={() => setPaymentDialogOpen(false)}
+        kursant={selectedKursantForPayment}
+        onSave={handleSavePayment}
       />
     </div>
   );

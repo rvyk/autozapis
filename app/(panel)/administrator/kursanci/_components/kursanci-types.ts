@@ -15,6 +15,8 @@ export type KursantListItem = {
   email: string;
   registeredAt: string;
   trainingCategory: "A" | "B";
+  coursePrice: number;
+  amountPaid: number;
   status: KursantResolvedStatus;
   pkkFile: {
     originalFileName: string;
@@ -49,4 +51,5 @@ export type RequestError =
   | "UPDATE_FAILED"
   | "DELETE_FAILED"
   | "INVALID_USER"
+  | "INVALID_INPUT"
   | "UNKNOWN";

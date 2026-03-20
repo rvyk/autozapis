@@ -34,6 +34,8 @@ export async function getPanelUser({
       trainingHoursCompleted: true,
       trainingHoursRequired: true,
       theoryHoursRequired: true,
+      coursePrice: true,
+      amountPaid: true,
     },
   });
 

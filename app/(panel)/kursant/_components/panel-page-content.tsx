@@ -18,6 +18,7 @@ export function PanelPageContent({
   latestAnnouncements,
   stats,
   nextLesson,
+  amountDue,
 }: {
   firstName?: string | null;
   latestAnnouncements: Announcement[];
@@ -32,6 +33,7 @@ export function PanelPageContent({
     date: Date;
     topic: string;
   } | null;
+  amountDue: number;
 }) {
   const panelStats = [
     { label: "Wykłady teoretyczne", value: `${stats.theoryCompleted}/${stats.theoryRequired}`, unit: "godz." },
@@ -41,7 +43,7 @@ export function PanelPageContent({
       value: nextLesson ? DATE_FORMATTER.format(nextLesson.date) : "-", 
       unit: nextLesson ? nextLesson.topic : "Brak" 
     },
-    { label: "Pozostało do zapłaty", value: "0", unit: "zł" }, // Todo: add payment system
+    { label: "Pozostało do zapłaty", value: `${amountDue}`, unit: "zł" },
   ];
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">

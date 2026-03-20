@@ -53,6 +53,8 @@ export default async function KursanciPage({
       isAccountActive: true,
       isRegistrationComplete: true,
       trainingCategory: true,
+      coursePrice: true,
+      amountPaid: true,
       pkkFile: {
         select: {
           id: true,
@@ -76,6 +78,8 @@ export default async function KursanciPage({
       email: kursant.email ?? "Brak e-mail",
       registeredAt: kursant.createdAt.toISOString(),
       trainingCategory: kursant.trainingCategory,
+      coursePrice: kursant.coursePrice,
+      amountPaid: kursant.amountPaid,
       status: mapKursantStatus(kursant),
       pkkFile: kursant.pkkFile
         ? {

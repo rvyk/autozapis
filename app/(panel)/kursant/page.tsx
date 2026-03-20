@@ -68,12 +68,17 @@ export default async function PanelPage() {
     topic: upcomingLesson.topic,
   } : null;
 
+  const coursePrice = dbUser.coursePrice ?? 3000;
+  const amountPaid = dbUser.amountPaid ?? 0;
+  const amountDue = Math.max(0, coursePrice - amountPaid);
+
   return (
     <PanelPageContent
       firstName={dbUser?.firstName}
       latestAnnouncements={latestAnnouncements}
       stats={stats}
       nextLesson={nextLesson}
+      amountDue={amountDue}
     />
   );
 }

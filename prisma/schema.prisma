@@ -26,6 +26,8 @@ model User {
   trainingCategory      TrainingCategory @default(B)
   isAccountActive       Boolean @default(false)
   isRegistrationComplete Boolean @default(false)
+  coursePrice          Int      @default(3000)
+  amountPaid           Int      @default(0)
   trainingHoursCompleted Int @default(0)
   trainingHoursRequired  Int @default(30)
   theoryHoursRequired    Int @default(30)

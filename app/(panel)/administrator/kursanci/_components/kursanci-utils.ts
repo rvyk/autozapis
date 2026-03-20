@@ -29,7 +29,10 @@ export function getFilterCountClass(
   return "bg-stone-200 text-stone-700";
 }
 
-export function getFilterCount(stats: KursantStats, filterValue: KursantStatusFilter) {
+export function getFilterCount(
+  stats: KursantStats,
+  filterValue: KursantStatusFilter,
+) {
   if (filterValue === "WSZYSCY") return stats.all;
   if (filterValue === "OCZEKUJACY") return stats.oczekujacy;
   if (filterValue === "AKTYWNY") return stats.aktywni;
@@ -37,12 +40,13 @@ export function getFilterCount(stats: KursantStats, filterValue: KursantStatusFi
 }
 
 export function getErrorMessage(code: RequestError) {
-  if (code === "FORBIDDEN") return "Brak uprawnien do wykonania tej operacji.";
+  if (code === "FORBIDDEN") return "Brak uprawnień do wykonania tej operacji.";
   if (code === "NOT_FOUND") return "Nie znaleziono kursanta lub dokumentu PKK.";
   if (code === "INVALID_STATUS") return "Niepoprawny status kursanta.";
-  if (code === "DELETE_FAILED") return "Nie udalo sie usunac dokumentu PKK.";
-  if (code === "INVALID_USER") return "Operacja dostepna tylko dla kursanta.";
-  return "Nie udalo sie zapisac zmian. Sprobuj ponownie.";
+  if (code === "DELETE_FAILED") return "Nie udało się usunąć dokumentu PKK.";
+  if (code === "INVALID_USER") return "Operacja dostępna tylko dla kursanta.";
+  if (code === "INVALID_INPUT") return "Nieprawidłowe dane wejściowe.";
+  return "Nie udało się zapisać zmian. Spróbuj ponownie.";
 }
 
 export function filterToQueryValue(filter: KursantStatusFilter) {

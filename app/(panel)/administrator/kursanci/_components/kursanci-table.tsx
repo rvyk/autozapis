@@ -15,6 +15,7 @@ export function KursanciTable({
   onOpenPkk,
   onChangeStatus,
   onRemovePkk,
+  onEditPayment,
 }: {
   kursanci: KursantListItem[];
   disabled: boolean;
@@ -24,6 +25,7 @@ export function KursanciTable({
     status: Extract<KursantStatusFilter, "AKTYWNY" | "OCZEKUJACY">,
   ) => void;
   onRemovePkk: (id: string) => void;
+  onEditPayment: (id: string) => void;
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
@@ -35,6 +37,7 @@ export function KursanciTable({
               <th scope="col" className="px-6 py-4 font-semibold">Email</th>
               <th scope="col" className="px-6 py-4 font-semibold">Data zapisu</th>
               <th scope="col" className="px-6 py-4 font-semibold">Kategoria</th>
+              <th scope="col" className="px-6 py-4 font-semibold">Płatności</th>
               <th scope="col" className="px-6 py-4 font-semibold">PKK</th>
               <th scope="col" className="px-6 py-4 font-semibold">Status</th>
               <th scope="col" className="px-6 py-4 text-right font-semibold">Akcje</th>
@@ -55,6 +58,16 @@ export function KursanciTable({
                 <td className="whitespace-nowrap px-6 py-4">{kursant.email}</td>
                 <td className="whitespace-nowrap px-6 py-4">{formatDate(kursant.registeredAt)}</td>
                 <td className="whitespace-nowrap px-6 py-4">kat. {kursant.trainingCategory}</td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  <div className="flex flex-col gap-1 text-xs">
+                    <span className="text-stone-600">Zapłacono: <span className="font-semibold">{kursant.amountPaid} zł</span></span>
+                    {kursant.coursePrice - kursant.amountPaid > 0 ? (
+                      <span className="text-red-600 font-medium">Zaległość: {kursant.coursePrice - kursant.amountPaid} zł</span>
+                    ) : (
+                      <span className="text-green-600 font-medium">Opłacono całość</span>
+                    )}
+                  </div>
+                </td>
                 <td className="px-6 py-4">
                   {kursant.pkkFile ? (
                     <div className="flex flex-col gap-1">
@@ -79,6 +92,14 @@ export function KursanciTable({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={disabled}
+                      onClick={() => onEditPayment(kursant.id)}
+                    >
+                      Płatności
+                    </Button>
                     <Button
                       variant="secondary"
                       size="sm"

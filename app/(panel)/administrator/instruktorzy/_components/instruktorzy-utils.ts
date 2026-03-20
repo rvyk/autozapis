@@ -27,18 +27,23 @@ export function getFilterLabel(filter: InstructorFilter) {
   return "Wszyscy";
 }
 
-export function getFilterCount(stats: InstructorsStats, filter: InstructorFilter) {
+export function getFilterCount(
+  stats: InstructorsStats,
+  filter: InstructorFilter,
+) {
   if (filter === "AKTYWNI") return stats.active;
   if (filter === "NIEAKTYWNI") return stats.inactive;
   return stats.all;
 }
 
 export function getErrorMessage(error: string | null) {
-  if (error === "FORBIDDEN") return "Brak uprawnien do wykonania tej operacji.";
+  if (error === "FORBIDDEN") return "Brak uprawnień do wykonania tej operacji.";
   if (error === "NOT_FOUND") return "Nie znaleziono instruktora.";
   if (error === "INVALID_STATUS") return "Niepoprawny status.";
   if (error === "INVALID_EMAIL") return "Podaj poprawny adres e-mail.";
-  if (error === "ALREADY_INSTRUCTOR") return "Ten uzytkownik jest juz instruktorem.";
-  if (error === "INVALID_USER") return "Wybrany uzytkownik nie jest instruktorem.";
-  return "Nie udalo sie zapisac zmian. Sprobuj ponownie.";
+  if (error === "ALREADY_INSTRUCTOR")
+    return "Ten użytkownik jest już instruktorem.";
+  if (error === "INVALID_USER")
+    return "Wybrany użytkownik nie jest instruktorem.";
+  return "Nie udało się zapisać zmian. Spróbuj ponownie.";
 }
