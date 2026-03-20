@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { Button } from "@/components/ui/button";
 
 type Announcement = {
   id: string;
@@ -75,12 +76,13 @@ function AnnouncementDialog({
   if (!open || typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[120] overflow-y-auto p-4">
-      <button
+    <div className="fixed inset-0 z-120 overflow-y-auto p-4">
+      <Button
         type="button"
         aria-label="Zamknij"
         onClick={onClose}
-        className="absolute inset-0 bg-stone-950/45 backdrop-blur-[2px]"
+        variant="ghost"
+        className="absolute inset-0 h-auto w-auto rounded-none bg-stone-950/45 backdrop-blur-[2px] hover:bg-stone-950/45"
       />
 
       <div className="relative mx-auto my-10 w-full max-w-2xl rounded-3xl border border-red-100/80 bg-white p-6 shadow-[0_24px_80px_-30px_rgba(220,38,38,0.4)] animate-in zoom-in-95 fade-in duration-200">
@@ -96,10 +98,12 @@ function AnnouncementDialog({
             </p>
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
+            variant="ghost"
+            size="sm"
+            className="rounded-lg p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
             aria-label="Zamknij okno"
           >
             <svg
@@ -115,7 +119,7 @@ function AnnouncementDialog({
                 d="M6 6l12 12M18 6L6 18"
               />
             </svg>
-          </button>
+          </Button>
         </div>
 
         <div className="space-y-4">
@@ -189,18 +193,18 @@ function AnnouncementDialog({
           ) : null}
 
           <div className="flex items-center justify-end gap-3 pt-2">
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="h-10 rounded-xl border border-stone-300 px-4 text-sm font-semibold text-stone-700 transition-colors hover:bg-stone-100"
+              variant="secondary"
               disabled={pending}
             >
               Anuluj
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={onSubmit}
-              className="h-10 rounded-xl bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              variant="primary"
               disabled={pending}
             >
               {pending
@@ -208,7 +212,7 @@ function AnnouncementDialog({
                 : mode === "create"
                   ? "Opublikuj ogłoszenie"
                   : "Zapisz zmiany"}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -217,7 +221,7 @@ function AnnouncementDialog({
   );
 }
 
-export function AnnouncementsManager({
+export function OgloszeniaPageContent({
   initialAnnouncements,
 }: {
   initialAnnouncements: Announcement[];
@@ -286,7 +290,9 @@ export function AnnouncementsManager({
         return;
       }
 
-      setAnnouncements((current) => [payload.announcement, ...current]);
+      const createdAnnouncement = payload.announcement;
+
+      setAnnouncements((current) => [createdAnnouncement, ...current]);
       closeDialog();
     } catch {
       setError("Nie udało się dodać ogłoszenia. Spróbuj ponownie.");
@@ -323,9 +329,11 @@ export function AnnouncementsManager({
         return;
       }
 
+      const updatedAnnouncement = payload.announcement;
+
       setAnnouncements((current) =>
         current.map((item) =>
-          item.id === payload.announcement?.id ? payload.announcement : item,
+          item.id === updatedAnnouncement.id ? updatedAnnouncement : item,
         ),
       );
       closeDialog();
@@ -388,12 +396,9 @@ export function AnnouncementsManager({
           </p>
         </div>
         <div>
-          <button
-            onClick={openCreate}
-            className="inline-flex items-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700"
-          >
+          <Button onClick={openCreate} variant="primary">
             Utwórz nową wiadomość
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -441,19 +446,23 @@ export function AnnouncementsManager({
                 <span className="inline-flex items-center rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">
                   Odbiorcy: {TARGET_LABELS[post.target]}
                 </span>
-                <button
-                  className="rounded-lg border border-stone-200 px-3 py-1.5 text-xs font-semibold text-stone-700 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-lg border-stone-200 px-3 py-1.5 text-xs hover:border-red-200 hover:bg-red-50 hover:text-red-700"
                   onClick={() => openEdit(post)}
                 >
                   Edytuj
-                </button>
-                <button
-                  className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:opacity-60"
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="rounded-lg px-3 py-1.5 text-xs disabled:opacity-60"
                   onClick={() => deleteAnnouncement(post.id)}
                   disabled={pending}
                 >
                   Usuń
-                </button>
+                </Button>
               </div>
             </div>
 

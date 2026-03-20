@@ -5,7 +5,13 @@ import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "destructive"
+    | "destructiveOutline";
   size?: "sm" | "md" | "lg";
   asChild?: boolean;
 }
@@ -33,12 +39,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           "focus:outline-none focus:ring-2 focus:ring-offset-2",
           "disabled:pointer-events-none disabled:opacity-50",
           {
-            "bg-linear-to-b from-red-600 to-red-700 text-white shadow-[0_1px_3px_rgba(220,38,38,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:from-red-700 hover:to-red-800 hover:-translate-y-0.5 hover:shadow-[0_4px_14px_rgba(220,38,38,0.35)] active:translate-y-0 focus:ring-red-500":
+            "bg-linear-to-b from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 focus:ring-red-500":
               variant === "primary",
-            "border border-red-200 bg-transparent text-stone-700 hover:bg-red-50 hover:text-red-700 focus:ring-red-500":
+            "border border-stone-300 bg-white text-stone-700 shadow-sm hover:bg-stone-100 focus:ring-red-500":
               variant === "secondary",
+            "border border-red-200 bg-red-50 text-red-700 shadow-sm hover:bg-red-100 focus:ring-red-500":
+              variant === "outline",
             "text-stone-600 hover:bg-red-50 hover:text-red-700 focus:ring-red-500":
               variant === "ghost",
+            "bg-red-600 text-white shadow-sm hover:bg-red-700 focus:ring-red-500":
+              variant === "destructive",
+            "border border-red-200 bg-white text-red-700 shadow-sm hover:bg-red-50 focus:ring-red-500":
+              variant === "destructiveOutline",
           },
           {
             "h-8 px-3 text-sm": size === "sm",

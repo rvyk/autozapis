@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { AnnouncementsManager } from "./_components/announcements-manager";
+import { OgloszeniaPageContent } from "./_components/ogloszenia-page-content";
 
 type AnnouncementRecord = {
   id: string;
@@ -37,7 +37,7 @@ export default async function OgloszeniaPage() {
   const announcementDelegate = prismaDelegates.announcement;
 
   if (!announcementDelegate) {
-    return <AnnouncementsManager initialAnnouncements={[]} />;
+    return <OgloszeniaPageContent initialAnnouncements={[]} />;
   }
 
   const announcements = await announcementDelegate.findMany({
@@ -54,7 +54,7 @@ export default async function OgloszeniaPage() {
   });
 
   return (
-    <AnnouncementsManager
+    <OgloszeniaPageContent
       initialAnnouncements={announcements.map((announcement) => ({
         ...announcement,
         createdAt: announcement.createdAt.toISOString(),

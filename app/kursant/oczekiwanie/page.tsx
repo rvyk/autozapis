@@ -1,89 +1,27 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
+import { getPanelUser } from "@/app/_lib/get-panel-user";
+import { Button } from "@/components/ui/button";
+import {
+  getAnnouncementTargetsForKursant,
+  getLatestKursantAnnouncements,
+} from "../_lib/announcements";
 
 export default async function PanelOczekiwaniePage() {
-  const { userId } = await auth();
-
-  if (!userId) {
-    redirect("/logowanie");
-  }
-
-  const dbUser = await prisma.user.findUnique({
-    where: { clerkId: userId },
-    select: {
-      role: true,
-      trainingCategory: true,
-      isAccountActive: true,
-      isRegistrationComplete: true,
-      birthDate: true,
-    },
-  });
-
-  if (dbUser?.role === "ADMINISTRATOR") {
-    redirect("/administrator");
-  }
-
-  if (dbUser?.role === "INSTRUKTOR") {
-    redirect("/");
-  }
-
-  if (!dbUser?.isRegistrationComplete) {
-    if (dbUser?.birthDate) {
-      redirect("/rejestracja/dokument");
-    }
-
-    redirect("/rejestracja/prawo-jazdy");
-  }
+  const dbUser = await getPanelUser({ accessTarget: "kursant" });
 
   if (dbUser?.isAccountActive) {
     redirect("/kursant");
   }
 
-  const prismaDelegates = prisma as unknown as {
-    announcement?: {
-      findMany: (args: {
-        where: {
-          target: {
-            in: Array<"ALL_KURSANCI" | "KURSANCI_KAT_A" | "KURSANCI_KAT_B" | "KURSANCI_OCZEKUJACY">;
-          };
-        };
-        orderBy: { createdAt: "desc" };
-        take: number;
-        select: {
-          id: true;
-          title: true;
-          content: true;
-          createdAt: true;
-        };
-      }) => Promise<Array<{ id: string; title: string; content: string; createdAt: Date }>>;
-    };
-  };
-
-  const allowedTargets: Array<
-    "ALL_KURSANCI" | "KURSANCI_KAT_A" | "KURSANCI_KAT_B" | "KURSANCI_OCZEKUJACY"
-  > = ["ALL_KURSANCI", "KURSANCI_OCZEKUJACY"];
-
-  if (dbUser?.trainingCategory === "A") {
-    allowedTargets.push("KURSANCI_KAT_A");
-  } else {
-    allowedTargets.push("KURSANCI_KAT_B");
-  }
-
-  const latestAnnouncements = prismaDelegates.announcement
-    ? await prismaDelegates.announcement.findMany({
-        where: { target: { in: allowedTargets } },
-        orderBy: { createdAt: "desc" },
-        take: 3,
-        select: {
-          id: true,
-          title: true,
-          content: true,
-          createdAt: true,
-        },
-      })
-    : [];
+  const allowedTargets = getAnnouncementTargetsForKursant(
+    dbUser?.trainingCategory,
+    true,
+  );
+  const latestAnnouncements = await getLatestKursantAnnouncements(
+    allowedTargets,
+    3,
+  );
 
   return (
     <main className="mx-auto flex min-h-[70dvh] w-full max-w-3xl items-center px-4 py-10">
@@ -146,12 +84,9 @@ export default async function PanelOczekiwaniePage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Link
-            href="/"
-            className="inline-flex items-center rounded-xl bg-linear-to-b from-red-600 to-red-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_1px_3px_rgba(220,38,38,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-150 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-800 hover:shadow-[0_4px_14px_rgba(220,38,38,0.35)]"
-          >
-            Odśwież status
-          </Link>
+          <Button asChild>
+            <Link href="/">Odśwież status</Link>
+          </Button>
         </div>
       </section>
     </main>
