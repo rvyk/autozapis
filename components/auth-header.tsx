@@ -1,12 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
 export function AuthHeader() {
   const { isSignedIn, signOut } = useAuth();
   const { user } = useUser();
+  const pathname = usePathname();
+
+  if (
+    pathname?.startsWith("/administrator") ||
+    pathname?.startsWith("/kursant")
+  ) {
+    return null;
+  }
 
   return (
     <header className="flex items-center justify-between gap-4 px-6 py-4">
