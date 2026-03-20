@@ -1,20 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-type StudentRide = {
-  id: string;
-  startsAt: string;
-  durationHours: number;
-  topic: string;
-  route: string;
-  instructorNote: string;
-  status: "PLANOWANA" | "ZREALIZOWANA" | "ODWOLANA";
-  instructorName: string;
-};
+import type { StudentRide } from "./jazdy-types";
 
 function formatDateTime(value: string) {
   if (!value) return "Do umowienia";
@@ -24,53 +14,15 @@ function formatDateTime(value: string) {
   }).format(new Date(value));
 }
 
-export function JazdyPageContent() {
-  const [rides, setRides] = useState<StudentRide[]>([]);
-  const [hoursDone, setHoursDone] = useState(0);
-  const [hoursTarget, setHoursTarget] = useState(30);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadRides() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch("/api/student/lessons", {
-          cache: "no-store",
-        });
-
-        const payload = (await response.json().catch(() => null)) as {
-          rides?: StudentRide[];
-          hoursDone?: number;
-          hoursTarget?: number;
-        } | null;
-
-        if (!response.ok || !payload?.rides) {
-          setError("Nie udalo sie pobrac jazd. Sprobuj odswiezyc strone.");
-          setRides([]);
-          return;
-        }
-
-        setRides(payload.rides);
-        setHoursDone(
-          typeof payload.hoursDone === "number" ? payload.hoursDone : 0,
-        );
-        setHoursTarget(
-          typeof payload.hoursTarget === "number" ? payload.hoursTarget : 30,
-        );
-      } catch {
-        setError("Nie udalo sie pobrac jazd. Sprobuj odswiezyc strone.");
-        setRides([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    void loadRides();
-  }, []);
-
+export function JazdyPageContent({
+  rides,
+  hoursDone,
+  hoursTarget,
+}: {
+  rides: StudentRide[];
+  hoursDone: number;
+  hoursTarget: number;
+}) {
   const sortedRides = useMemo(
     () =>
       [...rides].sort((a, b) => {
@@ -120,12 +72,6 @@ export function JazdyPageContent() {
         </div>
       </div>
 
-      {error ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      ) : null}
-
       <div
         className={cn(
           "relative flex flex-col gap-6",
@@ -134,13 +80,7 @@ export function JazdyPageContent() {
             : "before:hidden",
         )}
       >
-        {loading ? (
-          <div className="rounded-2xl border border-stone-200 bg-white p-5 text-sm text-stone-500 shadow-sm">
-            Ladowanie jazd...
-          </div>
-        ) : null}
-
-        {!loading && sortedRides.length === 0 ? (
+        {sortedRides.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-6 py-10 text-center shadow-sm">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-stone-500 shadow-sm">
               <svg
