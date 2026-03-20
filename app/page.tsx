@@ -22,7 +22,7 @@ export default async function HomePage() {
     }
 
     if (dbUser?.role === "INSTRUKTOR") {
-      redirect("/");
+      redirect("/instruktor");
     }
 
     if (!dbUser?.isRegistrationComplete) {

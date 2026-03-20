@@ -63,3 +63,16 @@ export const KURSANT_SIDEBAR_CONFIG: DashboardSidebarConfig = {
     },
   ],
 };
+
+export const INSTRUKTOR_SIDEBAR_CONFIG: DashboardSidebarConfig = {
+  badgeLabel: "Instruktor",
+  title: "Panel Instruktora",
+  description: "Prowadz kursantow i jazdy",
+  footerPrimary: "© 2026 OSK Jozef Majkut",
+  footerSecondary: "Lezajsk, woj. podkarpackie",
+  navItems: [
+    { href: "/instruktor", label: "Dashboard", icon: "grid" },
+    { href: "/instruktor/kursanci", label: "Moi kursanci", icon: "users" },
+    { href: "/instruktor/jazdy", label: "Moj harmonogram", icon: "car" },
+  ],
+};

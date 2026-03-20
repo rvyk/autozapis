@@ -1,0 +1,234 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type {
+  TrainingRide,
+  TrainingStudent,
+} from "@/app/(panel)/_lib/mock-driving-data";
+
+function formatDateTime(value: string) {
+  if (!value) return "Do umówienia";
+  return new Intl.DateTimeFormat("pl-PL", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function makeRideId() {
+  return `r-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+export function InstruktorKursantDetailsPageContent({
+  initialStudent,
+}: {
+  initialStudent: TrainingStudent;
+}) {
+  const [student, setStudent] = useState(initialStudent);
+
+  const sortedRides = useMemo(
+    () =>
+      [...student.rides].sort((a, b) => {
+        if (!a.startsAt && !b.startsAt) return 0;
+        if (!a.startsAt) return -1;
+        if (!b.startsAt) return 1;
+        return new Date(b.startsAt).getTime() - new Date(a.startsAt).getTime();
+      }),
+    [student.rides],
+  );
+
+  function updateRide(rideId: string, patch: Partial<TrainingRide>) {
+    setStudent((current) => ({
+      ...current,
+      rides: current.rides.map((ride) =>
+        ride.id === rideId ? { ...ride, ...patch } : ride,
+      ),
+    }));
+  }
+
+  function addRide() {
+    setStudent((current) => ({
+      ...current,
+      rides: [
+        {
+          id: makeRideId(),
+          startsAt: "",
+          durationHours: 1,
+          topic: "Nowa jazda",
+          route: "",
+          status: "PLANOWANA",
+          instructorNote: "",
+          routeScore: 3,
+        },
+        ...current.rides,
+      ],
+    }));
+  }
+
+  function removeRide(rideId: string) {
+    setStudent((current) => ({
+      ...current,
+      rides: current.rides.filter((ride) => ride.id !== rideId),
+    }));
+  }
+
+  function updateHours(delta: number) {
+    setStudent((current) => ({
+      ...current,
+      hoursDone: Math.max(0, current.hoursDone + delta),
+    }));
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Profil kursanta
+          </p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-stone-900">
+            {student.fullName}
+          </h1>
+          <p className="mt-2 text-stone-500">
+            kat. {student.category} • tel. {student.phone}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/instruktor/kursanci">Powrot do listy</Link>
+          </Button>
+          <Button size="sm" onClick={addRide}>Dodaj jazde</Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Godziny</p>
+          <p className="mt-2 text-2xl font-bold text-stone-900">
+            {student.hoursDone}/{student.hoursTarget}h
+          </p>
+          <div className="mt-3 flex gap-2">
+            <Button size="sm" variant="ghost" onClick={() => updateHours(-1)}>
+              -1h
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => updateHours(1)}>
+              +1h
+            </Button>
+          </div>
+        </div>
+        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:col-span-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Opinia ogolna</p>
+          <textarea
+            rows={3}
+            value={student.note}
+            onChange={(event) =>
+              setStudent((current) => ({ ...current, note: event.target.value }))
+            }
+            className="mt-2 w-full rounded-xl border border-stone-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {sortedRides.map((ride) => (
+          <div key={ride.id} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  {formatDateTime(ride.startsAt)} • {ride.durationHours}h
+                </p>
+                <input
+                  value={ride.topic}
+                  onChange={(event) => updateRide(ride.id, { topic: event.target.value })}
+                  className="mt-1 h-10 w-full rounded-lg border border-stone-300 px-3 text-sm font-semibold text-stone-900 outline-none focus:border-red-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant={ride.status === "PLANOWANA" ? "primary" : "ghost"}
+                  onClick={() => updateRide(ride.id, { status: "PLANOWANA" })}
+                >
+                  Planowana
+                </Button>
+                <Button
+                  size="sm"
+                  variant={ride.status === "ZREALIZOWANA" ? "primary" : "ghost"}
+                  onClick={() => updateRide(ride.id, { status: "ZREALIZOWANA" })}
+                >
+                  Zrealizowana
+                </Button>
+                <Button size="sm" variant="destructiveOutline" onClick={() => removeRide(ride.id)}>
+                  Usun
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  Termin
+                </label>
+                <input
+                  type="datetime-local"
+                  value={ride.startsAt}
+                  onChange={(event) => updateRide(ride.id, { startsAt: event.target.value })}
+                  className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  Trasa
+                </label>
+                <input
+                  value={ride.route}
+                  onChange={(event) => updateRide(ride.id, { route: event.target.value })}
+                  className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-stone-500">Ocena trasy</p>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((score) => (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => updateRide(ride.id, { routeScore: score as TrainingRide["routeScore"] })}
+                    className={cn(
+                      "h-8 w-8 rounded-full text-xs font-semibold transition-colors",
+                      ride.routeScore >= score
+                        ? "bg-red-100 text-red-700"
+                        : "bg-stone-100 text-stone-500 hover:bg-stone-200",
+                    )}
+                  >
+                    {score}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+                Opinia po jezdzie
+              </label>
+              <textarea
+                rows={3}
+                value={ride.instructorNote}
+                onChange={(event) =>
+                  updateRide(ride.id, { instructorNote: event.target.value })
+                }
+                className="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm outline-none focus:border-red-500"
+                placeholder="Wpisz ocene i zalecenia dla kursanta..."
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

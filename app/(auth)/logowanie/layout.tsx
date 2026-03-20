@@ -20,7 +20,7 @@ export default async function LogowanieLayout({
     }
 
     if (dbUser?.role === "INSTRUKTOR") {
-      redirect("/");
+      redirect("/instruktor");
     }
 
     if (dbUser?.isRegistrationComplete || dbUser?.isAccountActive) {

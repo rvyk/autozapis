@@ -22,7 +22,7 @@ export default async function RejestracjaPage() {
     }
 
     if (dbUser?.role === "INSTRUKTOR") {
-      redirect("/");
+      redirect("/instruktor");
     }
 
     if (dbUser?.isAccountActive) {
