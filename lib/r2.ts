@@ -1,8 +1,10 @@
 import {
+  GetObjectCommand,
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const MAX_PKK_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
@@ -71,5 +73,29 @@ export async function deletePrivateObject(key: string) {
       Bucket: config.bucketName,
       Key: key,
     }),
+  );
+}
+
+export async function getPrivateObjectSignedUrl(
+  key: string,
+  expiresInSeconds = 60 * 5,
+) {
+  const config = getR2Config();
+  const r2Client = new S3Client({
+    region: "auto",
+    endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+  });
+
+  return getSignedUrl(
+    r2Client,
+    new GetObjectCommand({
+      Bucket: config.bucketName,
+      Key: key,
+    }),
+    { expiresIn: expiresInSeconds },
   );
 }
