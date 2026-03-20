@@ -1,99 +1,136 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 
-const MOCK_LECTURES = [
-  {
-    id: 1,
-    topic: "Przepisy o ruchu drogowym cz. 1",
-    date: "24.03.2026, 17:00",
-    duration: "2 godz.",
-    status: "Zapisany",
-    type: "Teoria podstawowa",
-  },
-  {
-    id: 2,
-    topic: "Znaki i sygnalizacja",
-    date: "26.03.2026, 17:00",
-    duration: "2 godz.",
-    status: "Dostępny",
-    type: "Teoria podstawowa",
-  },
-  {
-    id: 3,
-    topic: "Pierwsza pomoc",
-    date: "28.03.2026, 16:00",
-    duration: "4 godz.",
-    status: "Ukończony",
-    type: "Szkolenie specjalne",
-  },
-] as const;
+type AttendanceStatus = "ENROLLED" | "PRESENT" | "ABSENT";
+
+type LectureItem = {
+  attendanceId: string;
+  status: AttendanceStatus;
+  creditedMinutes: number;
+  session: {
+    id: string;
+    title: string;
+    topicType: string;
+    startsAt: string;
+    durationMinutes: number;
+  };
+};
+
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat("pl-PL", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function getStatusLabel(status: AttendanceStatus) {
+  if (status === "PRESENT") return "Obecny";
+  if (status === "ABSENT") return "Nieobecny";
+  return "Zapisany";
+}
+
+function getStatusClass(status: AttendanceStatus) {
+  if (status === "PRESENT") return "bg-green-100 text-green-800";
+  if (status === "ABSENT") return "bg-stone-100 text-stone-700";
+  return "border border-red-200 bg-red-50 text-red-700";
+}
 
 export function WykladyPageContent() {
+  const [lectures, setLectures] = useState<LectureItem[]>([]);
+  const [theoryHoursDone, setTheoryHoursDone] = useState(0);
+  const [theoryHoursRequired, setTheoryHoursRequired] = useState(30);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadLectures() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/student/lectures", { cache: "no-store" });
+        const payload = (await response.json().catch(() => null)) as {
+          lectures?: LectureItem[];
+          theoryHoursDone?: number;
+          theoryHoursRequired?: number;
+        } | null;
+
+        if (!response.ok || !payload?.lectures) {
+          setError("Nie udało się pobrać wykładów.");
+          setLectures([]);
+          return;
+        }
+
+        setLectures(payload.lectures);
+        setTheoryHoursDone(payload.theoryHoursDone ?? 0);
+        setTheoryHoursRequired(payload.theoryHoursRequired ?? 30);
+      } catch {
+        setError("Nie udało się pobrać wykładów.");
+        setLectures([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    void loadLectures();
+  }, []);
+
+  const orderedLectures = useMemo(
+    () => [...lectures].sort((a, b) => new Date(a.session.startsAt).getTime() - new Date(b.session.startsAt).getTime()),
+    [lectures],
+  );
+
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">
-            Harmonogram wykładów
-          </h1>
-          <p className="text-stone-500">
-            Bierz udział w zajęciach teoretycznych i zdobądź wymaganą wiedzę.
-          </p>
-        </div>
+      <SectionHeader
+        title="Harmonogram wykładów"
+        description="Bierz udział w zajęciach teoretycznych i buduj postęp godzin teorii."
+      />
+
+      <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Postęp teorii</p>
+        <p className="mt-2 text-2xl font-bold text-stone-900">
+          {theoryHoursDone}/{theoryHoursRequired}h
+        </p>
+        <p className="mt-1 text-xs text-stone-500">Zaliczane są tylko wykłady oznaczone przez instruktora jako obecne.</p>
       </div>
 
+      {error ? (
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      ) : null}
+
       <div className="flex flex-col gap-4">
-        {MOCK_LECTURES.map((lecture) => (
+        {loading ? <p className="text-sm text-stone-500">Ładowanie wykładów...</p> : null}
+
+        {!loading && orderedLectures.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-6 py-10 text-center">
+            <p className="text-sm font-medium text-stone-900">Brak zapisanych wykładów.</p>
+            <p className="mt-1 text-sm text-stone-500">Poczekaj na przypisanie przez instruktora.</p>
+          </div>
+        ) : null}
+
+        {orderedLectures.map((lecture) => (
           <div
-            key={lecture.id}
+            key={lecture.attendanceId}
             className="group flex flex-col justify-between gap-4 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:items-center"
           >
-            <div className="w-full sm:w-1/2">
-              <div className="flex flex-col gap-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-red-600">
-                  {lecture.type}
-                </span>
-                <h3 className="text-lg font-semibold text-stone-900">
-                  {lecture.topic}
-                </h3>
-                <p className="mt-1 flex items-center gap-2 text-sm text-stone-500">
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {lecture.date} ({lecture.duration})
-                </p>
-              </div>
+            <div className="w-full sm:w-2/3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-red-600">{lecture.session.topicType}</span>
+              <h3 className="text-lg font-semibold text-stone-900">{lecture.session.title}</h3>
+              <p className="mt-1 text-sm text-stone-500">
+                {formatDateTime(lecture.session.startsAt)} ({Math.floor(lecture.session.durationMinutes / 60)}h)
+              </p>
             </div>
 
-            <div className="mt-4 flex w-full items-center justify-end gap-4 sm:mt-0 sm:w-auto">
-              <span
-                className={cn(
-                  "inline-flex min-w-25 items-center justify-center rounded-full px-2.5 py-1 text-xs font-medium",
-                  lecture.status === "Ukończony"
-                    ? "bg-stone-100 text-stone-600"
-                    : lecture.status === "Zapisany"
-                      ? "bg-green-100 text-green-800"
-                      : "border border-red-200 bg-red-50 text-red-700",
-                )}
-              >
-                {lecture.status}
+            <div className="flex w-full items-center justify-end gap-3 sm:w-auto">
+              <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(lecture.status)}`}>
+                {getStatusLabel(lecture.status)}
               </span>
-
-              {lecture.status === "Dostępny" ? (
-                <Button>Zapisz się</Button>
-              ) : null}
+              <span className="rounded-full border border-stone-200 px-2.5 py-1 text-xs font-medium text-stone-600">
+                Zaliczone: {Math.floor(lecture.creditedMinutes / 60)}h
+              </span>
             </div>
           </div>
         ))}

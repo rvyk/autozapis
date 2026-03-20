@@ -21,11 +21,14 @@ model User {
   phoneNumber String?
   birthDate DateTime?
   role      UserRole @default(USER)
+  canTeachPractice    Boolean @default(true)
+  canTeachTheory      Boolean @default(true)
   trainingCategory      TrainingCategory @default(B)
   isAccountActive       Boolean @default(false)
   isRegistrationComplete Boolean @default(false)
   trainingHoursCompleted Int @default(0)
   trainingHoursRequired  Int @default(30)
+  theoryHoursRequired    Int @default(30)
   imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -34,6 +37,9 @@ model User {
   instructorAssignmentsAsStudent InstructorStudentAssignment[] @relation("StudentAssignments")
   drivingLessonsAsInstructor DrivingLesson[] @relation("InstructorLessons")
   drivingLessonsAsStudent DrivingLesson[] @relation("StudentLessons")
+  lectureSessionsAsInstructor LectureSession[] @relation("LectureInstructor")
+  lectureAttendances LectureAttendance[]
+  announcementReadStates AnnouncementReadState[]
 
   @@index([clerkId])
 }
@@ -77,8 +83,23 @@ model Announcement {
   authorName String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  readStates AnnouncementReadState[]
 
   @@index([createdAt])
+}
+
+model AnnouncementReadState {
+  id             String   @id @default(cuid())
+  userId         String
+  announcementId String
+  readAt         DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, announcementId])
+  @@index([userId, readAt])
+  @@index([announcementId])
 }
 
 model PkkFile {
@@ -157,4 +178,44 @@ model DrivingLesson {
   @@index([studentId, startsAt])
   @@index([instructorId, startsAt])
   @@index([status])
+}
+
+enum LectureAttendanceStatus {
+  ENROLLED
+  PRESENT
+  ABSENT
+}
+
+model LectureSession {
+  id              String   @id @default(cuid())
+  instructorId    String
+  title           String
+  topicType       String
+  startsAt        DateTime
+  durationMinutes Int      @default(120)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  instructor User @relation("LectureInstructor", fields: [instructorId], references: [id], onDelete: Cascade)
+  attendances LectureAttendance[]
+
+  @@index([instructorId, startsAt])
+}
+
+model LectureAttendance {
+  id              String                 @id @default(cuid())
+  lectureSessionId String
+  studentId       String
+  status          LectureAttendanceStatus @default(ENROLLED)
+  creditedMinutes Int                    @default(0)
+  markedAt        DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  lectureSession LectureSession @relation(fields: [lectureSessionId], references: [id], onDelete: Cascade)
+  student        User           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([lectureSessionId, studentId])
+  @@index([studentId, status])
+  @@index([lectureSessionId, status])
 }

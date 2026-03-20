@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
 import {
   EMPTY_COURSE_DRAFT,
@@ -233,17 +234,15 @@ export function KursyPageContent({ initialCourses }: { initialCourses: CourseIte
 
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">Kursy szkoleniowe</h1>
-          <p className="mt-2 text-stone-500">Zarządzaj ofertą, cennikiem i dostępnością kursów na prawo jazdy.</p>
-        </div>
-        <div>
+      <SectionHeader
+        title="Kursy szkoleniowe"
+        description="Zarządzaj ofertą, cennikiem i dostępnością kursów na prawo jazdy."
+        actions={
           <Button onClick={openCreateDialog} disabled={Boolean(pendingCourseId)}>
             Dodaj nowy kurs
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       <KursyFilterTabs filter={filter} stats={stats} onChange={setFilter} />
 

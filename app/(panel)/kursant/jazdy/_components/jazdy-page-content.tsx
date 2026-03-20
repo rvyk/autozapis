@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
 
 type StudentRide = {
@@ -83,15 +84,10 @@ export function JazdyPageContent() {
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
       <div className="border-b border-stone-200 pb-6 sm:flex sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">
-            Historia Jazd Praktycznych
-          </h1>
-          <p className="text-stone-500">
-            Przeglądaj swój postęp w jazdach, weryfikuj trasy i czytaj opinie
-            instruktora.
-          </p>
-        </div>
+        <SectionHeader
+          title="Historia Jazd Praktycznych"
+          description="Przeglądaj swój postęp w jazdach, weryfikuj trasy i czytaj opinie instruktora."
+        />
         <div className="mt-4 flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:mt-0">
           <div className="flex flex-col items-center">
             <span className="text-xs font-semibold uppercase tracking-wider text-stone-500">

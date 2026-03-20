@@ -11,6 +11,8 @@ export default async function InstruktorzyPage() {
       lastName: true,
       email: true,
       isAccountActive: true,
+      canTeachPractice: true,
+      canTeachTheory: true,
       createdAt: true,
     },
     orderBy: { createdAt: "desc" },
@@ -27,6 +29,8 @@ export default async function InstruktorzyPage() {
       fullName: fullName || "Brak danych",
       email: item.email ?? "Brak e-mail",
       status: item.isAccountActive ? "AKTYWNY" : "NIEAKTYWNY",
+      canTeachPractice: item.canTeachPractice,
+      canTeachTheory: item.canTeachTheory,
       joinedAt: item.createdAt.toISOString(),
     };
   });

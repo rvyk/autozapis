@@ -41,7 +41,9 @@ export function InstruktorKursantDetailsPageContent({
   const [student, setStudent] = useState(initialStudent);
   const [saving, setSaving] = useState(false);
   const [savingRideId, setSavingRideId] = useState<string | null>(null);
-  const [dirtyRideIds, setDirtyRideIds] = useState<Set<string>>(() => new Set());
+  const [dirtyRideIds, setDirtyRideIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [error, setError] = useState<string | null>(null);
 
   const sortedRides = useMemo(
@@ -58,7 +60,7 @@ export function InstruktorKursantDetailsPageContent({
   const completedHours = useMemo(
     () =>
       student.rides.reduce((total, ride) => {
-        if (ride.status === "ODWOLANA") return total;
+        if (ride.status !== "ZREALIZOWANA") return total;
         return total + Math.max(0, ride.durationHours);
       }, 0),
     [student.rides],
@@ -87,7 +89,7 @@ export function InstruktorKursantDetailsPageContent({
       setStudent((current) => ({
         ...current,
         rides: current.rides.map((ride) =>
-          ride.id === nextRide.id ? payload.ride ?? ride : ride,
+          ride.id === nextRide.id ? (payload.ride ?? ride) : ride,
         ),
       }));
 
@@ -131,16 +133,19 @@ export function InstruktorKursantDetailsPageContent({
     setError(null);
 
     try {
-      const response = await fetch(`/api/instructor/students/${student.id}/lessons`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          startsAt: new Date().toISOString().slice(0, 16),
-          durationHours: 1,
-          topic: "Nowa jazda",
-          route: "",
-        }),
-      });
+      const response = await fetch(
+        `/api/instructor/students/${student.id}/lessons`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            startsAt: new Date().toISOString().slice(0, 16),
+            durationHours: 1,
+            topic: "Nowa jazda",
+            route: "",
+          }),
+        },
+      );
 
       const payload = (await response.json().catch(() => null)) as {
         ride?: TrainingRide;
@@ -210,7 +215,9 @@ export function InstruktorKursantDetailsPageContent({
           <Button asChild variant="ghost" size="sm">
             <Link href="/instruktor/kursanci">Powrót do listy</Link>
           </Button>
-          <Button size="sm" onClick={addRide} disabled={saving}>Dodaj jazdę</Button>
+          <Button size="sm" onClick={addRide} disabled={saving}>
+            Dodaj jazdę
+          </Button>
         </div>
       </div>
 
@@ -222,17 +229,41 @@ export function InstruktorKursantDetailsPageContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Postep godzin</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Postep godzin
+          </p>
           <p className="mt-2 text-2xl font-bold text-stone-900">
             {completedHours}/{student.hoursTarget}h
           </p>
-          <p className="mt-2 text-xs text-stone-500">Godziny sa liczone automatycznie z dodanych jazd (z wyjatkiem odwolanych).</p>
+          <p className="mt-2 text-xs text-stone-500">
+            Godziny sa liczone automatycznie tylko z jazd oznaczonych jako
+            zrealizowane.
+          </p>
         </div>
       </div>
 
       <div className="space-y-4">
+        {sortedRides.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-stone-300 bg-white px-6 py-10 text-center shadow-sm">
+            <p className="text-base font-semibold text-stone-900">
+              Brak jazd dla tego kursanta
+            </p>
+            <p className="mt-2 text-sm text-stone-500">
+              Dodaj pierwszą jazdę, aby ustawić termin, trasę i liczbę godzin.
+            </p>
+            <div className="mt-5 flex justify-center">
+              <Button size="sm" onClick={addRide} disabled={saving}>
+                Dodaj pierwszą jazdę
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
         {sortedRides.map((ride) => (
-          <div key={ride.id} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+          <div
+            key={ride.id}
+            className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm"
+          >
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
@@ -240,7 +271,9 @@ export function InstruktorKursantDetailsPageContent({
                 </p>
                 <input
                   value={ride.topic}
-                  onChange={(event) => updateRide(ride.id, { topic: event.target.value })}
+                  onChange={(event) =>
+                    updateRide(ride.id, { topic: event.target.value })
+                  }
                   className="mt-1 h-10 w-full rounded-lg border border-stone-300 px-3 text-sm font-semibold text-stone-900 outline-none focus:border-red-500"
                 />
               </div>
@@ -258,19 +291,32 @@ export function InstruktorKursantDetailsPageContent({
                   size="sm"
                   variant={ride.status === "ZREALIZOWANA" ? "primary" : "ghost"}
                   disabled={saving || savingRideId === ride.id}
-                  onClick={() => updateRide(ride.id, { status: "ZREALIZOWANA" })}
+                  onClick={() =>
+                    updateRide(ride.id, { status: "ZREALIZOWANA" })
+                  }
                 >
                   Zrealizowana
                 </Button>
                 <Button
                   size="sm"
                   variant="secondary"
-                  disabled={saving || savingRideId === ride.id || !dirtyRideIds.has(ride.id)}
+                  disabled={
+                    saving ||
+                    savingRideId === ride.id ||
+                    !dirtyRideIds.has(ride.id)
+                  }
                   onClick={() => saveRide(ride.id)}
                 >
-                  {savingRideId === ride.id ? "Zapisywanie..." : "Zapisz zmiany"}
+                  {savingRideId === ride.id
+                    ? "Zapisywanie..."
+                    : "Zapisz zmiany"}
                 </Button>
-                <Button size="sm" variant="destructiveOutline" disabled={saving || savingRideId === ride.id} onClick={() => removeRide(ride.id)}>
+                <Button
+                  size="sm"
+                  variant="destructiveOutline"
+                  disabled={saving || savingRideId === ride.id}
+                  onClick={() => removeRide(ride.id)}
+                >
                   Usuń
                 </Button>
               </div>
@@ -284,7 +330,9 @@ export function InstruktorKursantDetailsPageContent({
                 <input
                   type="datetime-local"
                   value={ride.startsAt}
-                  onChange={(event) => updateRide(ride.id, { startsAt: event.target.value })}
+                  onChange={(event) =>
+                    updateRide(ride.id, { startsAt: event.target.value })
+                  }
                   className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
                 />
               </div>
@@ -314,20 +362,28 @@ export function InstruktorKursantDetailsPageContent({
                 </label>
                 <input
                   value={ride.route}
-                  onChange={(event) => updateRide(ride.id, { route: event.target.value })}
+                  onChange={(event) =>
+                    updateRide(ride.id, { route: event.target.value })
+                  }
                   className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm outline-none focus:border-red-500"
                 />
               </div>
             </div>
 
             <div className="mt-4">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-stone-500">Ocena trasy</p>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                Ocena trasy
+              </p>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((score) => (
                   <button
                     key={score}
                     type="button"
-                    onClick={() => updateRide(ride.id, { routeScore: score as TrainingRide["routeScore"] })}
+                    onClick={() =>
+                      updateRide(ride.id, {
+                        routeScore: score as TrainingRide["routeScore"],
+                      })
+                    }
                     className={cn(
                       "h-8 w-8 rounded-full text-xs font-semibold transition-colors",
                       ride.routeScore >= score
@@ -358,7 +414,9 @@ export function InstruktorKursantDetailsPageContent({
 
             {dirtyRideIds.has(ride.id) ? (
               <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                <p className="text-xs font-medium text-amber-700">Masz niezapisane zmiany w tej jezdzie.</p>
+                <p className="text-xs font-medium text-amber-700">
+                  Masz niezapisane zmiany w tej jezdzie.
+                </p>
               </div>
             ) : null}
           </div>

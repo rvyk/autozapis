@@ -1,37 +1,68 @@
 "use client";
 
 import Link from "next/link";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
 
-const DASHBOARD_STATS = [
-  { label: "Moi kursanci", value: "18", unit: "aktywnych" },
-  { label: "Jazdy dzisiaj", value: "6", unit: "zaplanowane" },
-  { label: "Wolne miejsca", value: "4", unit: "w tym tygodniu" },
-  { label: "Godziny do uzupelnienia", value: "9", unit: "raportow" },
-] as const;
+type DashboardStats = {
+  assignedStudentsCount: number;
+  todayRidesCount: number;
+  plannedRidesCount: number;
+  completedRidesCount: number;
+};
 
-const TODAY_RIDES = [
-  { id: 1, time: "09:00", kursant: "Jan Kowalski", type: "Plac manewrowy" },
-  { id: 2, time: "11:30", kursant: "Anna Nowak", type: "Miasto - ronda" },
-  { id: 3, time: "15:00", kursant: "Piotr Wrobel", type: "Trasa egzaminacyjna" },
-] as const;
+type TodayRide = {
+  id: string;
+  time: string;
+  kursant: string;
+  type: string;
+};
 
 export function InstruktorDashboardPageContent({
   firstName,
+  stats,
+  todayRides,
 }: {
   firstName?: string | null;
+  stats: DashboardStats;
+  todayRides: TodayRide[];
 }) {
+  const dashboardStats = [
+    {
+      label: "Moi kursanci",
+      value: String(stats.assignedStudentsCount),
+      unit: "aktywnych przypisań",
+    },
+    {
+      label: "Jazdy dzisiaj",
+      value: String(stats.todayRidesCount),
+      unit: "zaplanowane",
+    },
+    {
+      label: "Jazdy planowane",
+      value: String(stats.plannedRidesCount),
+      unit: "oczekujące",
+    },
+    {
+      label: "Jazdy zrealizowane",
+      value: String(stats.completedRidesCount),
+      unit: "łącznie",
+    },
+  ] as const;
+
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900">Dashboard instruktora</h1>
-        <p className="text-stone-500">
-          Cześć{firstName ? `, ${firstName}` : ""}. Sprawdź plan jazd i szybkie działania na dziś.
-        </p>
-      </div>
+      <SectionHeader
+        title="Dashboard instruktora"
+        description={
+          <>
+            Cześć{firstName ? `, ${firstName}` : ""}. Sprawdź plan jazd i szybkie działania na dziś.
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {DASHBOARD_STATS.map((stat) => (
+        {dashboardStats.map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-medium text-stone-500">{stat.label}</p>
             <p className="mt-2 text-3xl font-bold text-stone-900">{stat.value}</p>
@@ -45,20 +76,26 @@ export function InstruktorDashboardPageContent({
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-stone-900">Dzisiejszy plan jazd</h2>
             <Button asChild variant="secondary" size="sm">
-              <Link href="/instruktor/jazdy">Otworz harmonogram</Link>
+              <Link href="/instruktor/jazdy">Otwórz harmonogram</Link>
             </Button>
           </div>
 
           <div className="mt-5 space-y-3">
-            {TODAY_RIDES.map((ride) => (
-              <div key={ride.id} className="rounded-xl border border-stone-200 px-4 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-stone-900">{ride.kursant}</p>
-                  <span className="text-xs font-medium text-red-600">{ride.time}</span>
-                </div>
-                <p className="mt-1 text-sm text-stone-600">{ride.type}</p>
+            {todayRides.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 px-4 py-5 text-sm text-stone-500">
+                Brak jazd zaplanowanych na dzisiaj.
               </div>
-            ))}
+            ) : (
+              todayRides.map((ride) => (
+                <div key={ride.id} className="rounded-xl border border-stone-200 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-stone-900">{ride.kursant}</p>
+                    <span className="text-xs font-medium text-red-600">{ride.time}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-stone-600">{ride.type}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -66,14 +103,14 @@ export function InstruktorDashboardPageContent({
           <div className="rounded-2xl border border-red-100 bg-red-50/60 p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-red-900">Szybkie akcje</h2>
             <p className="mt-2 text-sm text-red-800/80">
-              Przypisz kursanta, dodaj kolejna jazde i uzupelnij opinie po przejezdzie.
+              Przypisz kursanta, dodaj kolejną jazdę i uzupełnij opinię po przejeździe.
             </p>
             <div className="mt-4 flex flex-col gap-2">
               <Button asChild>
                 <Link href="/instruktor/kursanci">Przypisz kursanta</Link>
               </Button>
               <Button asChild variant="secondary">
-                <Link href="/instruktor/jazdy">Sprawdz harmonogram</Link>
+                <Link href="/instruktor/jazdy">Sprawdź harmonogram</Link>
               </Button>
             </div>
           </div>

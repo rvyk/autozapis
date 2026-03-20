@@ -7,9 +7,16 @@ type InstructorRow = {
   id: string;
   role: "ADMINISTRATOR" | "INSTRUKTOR" | "USER";
   isAccountActive: boolean;
+  canTeachPractice: boolean;
+  canTeachTheory: boolean;
 };
 
 type PayloadStatus = "AKTYWNY" | "NIEAKTYWNY";
+
+type PayloadPermissions = {
+  canTeachPractice?: unknown;
+  canTeachTheory?: unknown;
+};
 
 function parseStatus(value: unknown): PayloadStatus | null {
   if (value === "AKTYWNY" || value === "NIEAKTYWNY") {
@@ -30,10 +37,15 @@ export async function PATCH(
 
   const payload = (await request.json().catch(() => null)) as {
     status?: unknown;
-  } | null;
+  } & PayloadPermissions | null;
 
   const status = parseStatus(payload?.status);
-  if (!status) {
+  const hasStatus = Boolean(status);
+  const hasPermissions =
+    typeof payload?.canTeachPractice === "boolean" ||
+    typeof payload?.canTeachTheory === "boolean";
+
+  if (!hasStatus && !hasPermissions) {
     return Response.json({ error: "INVALID_STATUS" }, { status: 400 });
   }
 
@@ -43,13 +55,33 @@ export async function PATCH(
     user?: {
       findUnique: (args: {
         where: { id: string };
-        select: { id: true; role: true; isAccountActive: true };
+        select: {
+          id: true;
+          role: true;
+          isAccountActive: true;
+          canTeachPractice: true;
+          canTeachTheory: true;
+        };
       }) => Promise<InstructorRow | null>;
       update: (args: {
         where: { id: string };
-        data: { isAccountActive: boolean };
-        select: { id: true; isAccountActive: true };
-      }) => Promise<{ id: string; isAccountActive: boolean }>;
+        data: {
+          isAccountActive?: boolean;
+          canTeachPractice?: boolean;
+          canTeachTheory?: boolean;
+        };
+        select: {
+          id: true;
+          isAccountActive: true;
+          canTeachPractice: true;
+          canTeachTheory: true;
+        };
+      }) => Promise<{
+        id: string;
+        isAccountActive: boolean;
+        canTeachPractice: boolean;
+        canTeachTheory: boolean;
+      }>;
     };
   };
 
@@ -66,7 +98,13 @@ export async function PATCH(
 
   const instructor = await userDelegate.findUnique({
     where: { id: instruktorId },
-    select: { id: true, role: true, isAccountActive: true },
+    select: {
+      id: true,
+      role: true,
+      isAccountActive: true,
+      canTeachPractice: true,
+      canTeachTheory: true,
+    },
   });
 
   if (!instructor) {
@@ -78,10 +116,33 @@ export async function PATCH(
   }
 
   try {
+    const dataToUpdate: {
+      isAccountActive?: boolean;
+      canTeachPractice?: boolean;
+      canTeachTheory?: boolean;
+    } = {};
+
+    if (status) {
+      dataToUpdate.isAccountActive = status === "AKTYWNY";
+    }
+
+    if (typeof payload?.canTeachPractice === "boolean") {
+      dataToUpdate.canTeachPractice = payload.canTeachPractice;
+    }
+
+    if (typeof payload?.canTeachTheory === "boolean") {
+      dataToUpdate.canTeachTheory = payload.canTeachTheory;
+    }
+
     const updated = await userDelegate.update({
       where: { id: instruktorId },
-      data: { isAccountActive: status === "AKTYWNY" },
-      select: { id: true, isAccountActive: true },
+      data: dataToUpdate,
+      select: {
+        id: true,
+        isAccountActive: true,
+        canTeachPractice: true,
+        canTeachTheory: true,
+      },
     });
 
     return Response.json({
@@ -89,6 +150,8 @@ export async function PATCH(
       instruktor: {
         id: updated.id,
         status: updated.isAccountActive ? "AKTYWNY" : "NIEAKTYWNY",
+        canTeachPractice: updated.canTeachPractice,
+        canTeachTheory: updated.canTeachTheory,
       },
     });
   } catch {

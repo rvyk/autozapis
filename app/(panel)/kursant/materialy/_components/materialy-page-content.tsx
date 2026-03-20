@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { cn } from "@/lib/utils";
 
 const MODULES = [
@@ -16,10 +17,10 @@ const FILES = ["Instrukcja Plac Manewrowy.pdf", "Opis świateł w Hyundai i20.pd
 export function MaterialyPageContent() {
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900">Materiały Edukacyjne</h1>
-        <p className="text-stone-500">Ucz się teorii, testuj swoj wiedzę i przygotowuj do egzaminu państwowego.</p>
-      </div>
+      <SectionHeader
+        title="Materiały Edukacyjne"
+        description="Ucz się teorii, testuj swoj wiedzę i przygotowuj do egzaminu państwowego."
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">

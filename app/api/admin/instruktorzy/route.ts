@@ -10,6 +10,8 @@ type UserRow = {
   lastName: string | null;
   email: string | null;
   isAccountActive: boolean;
+  canTeachPractice: boolean;
+  canTeachTheory: boolean;
   createdAt: Date;
 };
 
@@ -44,6 +46,8 @@ export async function POST(request: Request) {
           lastName: true;
           email: true;
           isAccountActive: true;
+          canTeachPractice: true;
+          canTeachTheory: true;
           createdAt: true;
         };
       }) => Promise<UserRow | null>;
@@ -53,6 +57,8 @@ export async function POST(request: Request) {
           role: "INSTRUKTOR";
           isRegistrationComplete: boolean;
           isAccountActive: boolean;
+          canTeachPractice: boolean;
+          canTeachTheory: boolean;
         };
         select: {
           id: true;
@@ -61,6 +67,8 @@ export async function POST(request: Request) {
           lastName: true;
           email: true;
           isAccountActive: true;
+          canTeachPractice: true;
+          canTeachTheory: true;
           createdAt: true;
         };
       }) => Promise<UserRow>;
@@ -87,6 +95,8 @@ export async function POST(request: Request) {
       lastName: true,
       email: true,
       isAccountActive: true,
+      canTeachPractice: true,
+      canTeachTheory: true,
       createdAt: true,
     },
   });
@@ -109,6 +119,8 @@ export async function POST(request: Request) {
       role: "INSTRUKTOR",
       isRegistrationComplete: true,
       isAccountActive: true,
+      canTeachPractice: true,
+      canTeachTheory: true,
     },
     select: {
       id: true,
@@ -117,6 +129,8 @@ export async function POST(request: Request) {
       lastName: true,
       email: true,
       isAccountActive: true,
+      canTeachPractice: true,
+      canTeachTheory: true,
       createdAt: true,
     },
   });
@@ -133,6 +147,8 @@ export async function POST(request: Request) {
         fullName: fullName || "Brak danych",
         email: updated.email ?? email,
         status: updated.isAccountActive ? "AKTYWNY" : "NIEAKTYWNY",
+        canTeachPractice: updated.canTeachPractice,
+        canTeachTheory: updated.canTeachTheory,
         joinedAt: updated.createdAt.toISOString(),
       },
     },

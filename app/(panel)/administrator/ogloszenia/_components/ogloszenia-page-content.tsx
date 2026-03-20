@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
 
 type Announcement = {
@@ -386,21 +387,15 @@ export function OgloszeniaPageContent({
 
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">
-            Ogłoszenia
-          </h1>
-          <p className="mt-2 text-stone-500">
-            Wysyłaj wiadomości i powiadomienia do swoich kursantów.
-          </p>
-        </div>
-        <div>
+      <SectionHeader
+        title="Ogłoszenia"
+        description="Wysyłaj wiadomości i powiadomienia do swoich kursantów."
+        actions={
           <Button onClick={openCreate} variant="primary">
             Utwórz nową wiadomość
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="flex flex-col gap-6">
         {announcements.length === 0 ? (

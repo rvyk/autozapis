@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { InstruktorzyAddForm } from "./instruktorzy-add-form";
 import { InstruktorzyFilterTabs } from "./instruktorzy-filter-tabs";
 import { InstruktorzyTable } from "./instruktorzy-table";
@@ -16,9 +17,8 @@ export function InstruktorzyPageContent({
 }: {
   initialInstructors: InstructorListItem[];
 }) {
-  const [instructors, setInstructors] = useState<InstructorListItem[]>(
-    initialInstructors,
-  );
+  const [instructors, setInstructors] =
+    useState<InstructorListItem[]>(initialInstructors);
   const [filter, setFilter] = useState<InstructorFilter>("WSZYSCY");
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -74,7 +74,11 @@ export function InstruktorzyPageContent({
       );
 
       const payload = (await response.json().catch(() => null)) as {
-        instruktor?: { status: InstructorStatus };
+        instruktor?: {
+          status: InstructorStatus;
+          canTeachPractice?: boolean;
+          canTeachTheory?: boolean;
+        };
         error?: string;
       } | null;
 
@@ -86,7 +90,14 @@ export function InstruktorzyPageContent({
       setInstructors((current) =>
         current.map((item) =>
           item.id === instructor.id
-            ? { ...item, status: payload.instruktor?.status ?? item.status }
+            ? {
+                ...item,
+                status: payload.instruktor?.status ?? item.status,
+                canTeachPractice:
+                  payload.instruktor?.canTeachPractice ?? item.canTeachPractice,
+                canTeachTheory:
+                  payload.instruktor?.canTeachTheory ?? item.canTeachTheory,
+              }
             : item,
         ),
       );
@@ -124,7 +135,10 @@ export function InstruktorzyPageContent({
         return;
       }
 
-      setInstructors((current) => [payload.instructor as InstructorListItem, ...current]);
+      setInstructors((current) => [
+        payload.instructor as InstructorListItem,
+        ...current,
+      ]);
       setNewInstructorEmail("");
     } catch {
       setError(getErrorMessage(null));
@@ -133,21 +147,71 @@ export function InstruktorzyPageContent({
     }
   }
 
+  async function toggleInstructorPermission(
+    instructor: InstructorListItem,
+    permission: "canTeachPractice" | "canTeachTheory",
+  ) {
+    setError(null);
+    setPendingId(instructor.id);
+
+    const nextValue = !instructor[permission];
+
+    try {
+      const response = await fetch(
+        `/api/admin/instruktorzy/${instructor.id}/status`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ [permission]: nextValue }),
+        },
+      );
+
+      const payload = (await response.json().catch(() => null)) as {
+        instruktor?: {
+          status: InstructorStatus;
+          canTeachPractice: boolean;
+          canTeachTheory: boolean;
+        };
+        error?: string;
+      } | null;
+
+      if (!response.ok || !payload?.instruktor) {
+        setError(getErrorMessage(payload?.error ?? null));
+        return;
+      }
+
+      const updatedInstruktor = payload.instruktor;
+
+      setInstructors((current) =>
+        current.map((item) =>
+          item.id === instructor.id
+            ? {
+                ...item,
+                status: updatedInstruktor.status,
+                canTeachPractice: updatedInstruktor.canTeachPractice,
+                canTeachTheory: updatedInstruktor.canTeachTheory,
+              }
+            : item,
+        ),
+      );
+    } catch {
+      setError(getErrorMessage(null));
+    } finally {
+      setPendingId(null);
+    }
+  }
+
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">
-            Instruktorzy
-          </h1>
-          <p className="mt-2 text-stone-500">
-            Zarzadzaj zespolem instruktorow prowadzacych jazdy i wyklady.
-          </p>
-        </div>
-        <div className="text-sm text-stone-500">
-          Aktywni: {stats.active} / {stats.all}
-        </div>
-      </div>
+      <SectionHeader
+        title="Instruktorzy"
+        description="Zarządzaj zespołem instruktorów prowadzących jazdy i wykłady."
+        actions={
+          <div className="text-sm text-stone-500">
+            Aktywni: {stats.active} / {stats.all}
+          </div>
+        }
+      />
 
       <InstruktorzyAddForm
         email={newInstructorEmail}
@@ -173,6 +237,7 @@ export function InstruktorzyPageContent({
         instructors={filteredInstructors}
         pendingId={pendingId}
         onToggleStatus={toggleInstructorStatus}
+        onTogglePermission={toggleInstructorPermission}
       />
     </div>
   );

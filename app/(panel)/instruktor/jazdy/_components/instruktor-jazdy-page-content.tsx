@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -79,14 +80,14 @@ export function InstruktorJazdyPageContent() {
         } | null;
 
         if (!response.ok || !payload?.rides) {
-          setError("Nie udalo sie pobrac harmonogramu jazd.");
+          setError("Nie udało się pobrać harmonogramu jazd.");
           setPlannedRides([]);
           return;
         }
 
         setPlannedRides(payload.rides);
       } catch {
-        setError("Nie udalo sie pobrac harmonogramu jazd.");
+        setError("Nie udało się pobrać harmonogramu jazd.");
         setPlannedRides([]);
       } finally {
         setLoading(false);
@@ -127,37 +128,44 @@ export function InstruktorJazdyPageContent() {
 
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">Moj harmonogram</h1>
-          <p className="mt-2 text-stone-500">
-            Przegladaj kalendarz jazd i klikaj dzien, aby zobaczyc szczegoly zaplanowanych spotkan.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() =>
-              setDisplayDate(
-                (current) => new Date(current.getFullYear(), current.getMonth() - 1, 1),
-              )
-            }
-          >
-            Poprzedni
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() =>
-              setDisplayDate(
-                (current) => new Date(current.getFullYear(), current.getMonth() + 1, 1),
-              )
-            }
-          >
-            Nastepny
-          </Button>
-        </div>
+      <SectionHeader
+        title="Mój harmonogram"
+        description="Przeglądaj kalendarz jazd i klikaj dzień, aby zobaczyć szczegóły zaplanowanych spotkań."
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                setDisplayDate(
+                  (current) => new Date(current.getFullYear(), current.getMonth() - 1, 1),
+                )
+              }
+            >
+              Poprzedni
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                setDisplayDate(
+                  (current) => new Date(current.getFullYear(), current.getMonth() + 1, 1),
+                )
+              }
+            >
+              Następny
+            </Button>
+          </div>
+        }
+      />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-stone-200 bg-white px-3 py-1 text-xs font-semibold text-stone-700">
+          Zaplanowane jazdy: {plannedRides.length}
+        </span>
+        <span className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+          Kliknij dzień, aby zobaczyć szczegóły
+        </span>
       </div>
 
       {error ? (
@@ -178,7 +186,7 @@ export function InstruktorJazdyPageContent() {
 
           <div className="mt-2 grid grid-cols-7 gap-2">
             {Array.from({ length: leadingEmpty }).map((_, index) => (
-              <div key={`empty-${index}`} className="h-22 rounded-xl bg-stone-50" />
+              <div key={`empty-${index}`} className="h-24 rounded-xl bg-stone-50" />
             ))}
 
             {days.map((day) => {
@@ -193,9 +201,9 @@ export function InstruktorJazdyPageContent() {
                   type="button"
                   onClick={() => setSelectedDateKey(key)}
                   className={cn(
-                    "h-22 rounded-xl border p-2 text-left transition-colors",
+                    "h-24 rounded-xl border p-2 text-left transition-colors",
                     isSelected
-                      ? "border-red-300 bg-red-50"
+                      ? "border-red-300 bg-red-50 ring-2 ring-red-100"
                       : "border-stone-200 bg-white hover:bg-stone-50",
                   )}
                 >
@@ -226,14 +234,14 @@ export function InstruktorJazdyPageContent() {
             })}
           </div>
 
-          {loading ? <p className="mt-3 text-sm text-stone-500">Ladowanie jazd...</p> : null}
+          {loading ? <p className="mt-3 text-sm text-stone-500">Ładowanie jazd...</p> : null}
         </div>
 
         <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-stone-900">Szczegoly dnia</h2>
+          <h2 className="text-lg font-semibold text-stone-900">Szczegóły dnia</h2>
           {!selectedDateKey ? (
             <p className="mt-3 text-sm text-stone-500">
-              Kliknij dzien w kalendarzu, aby zobaczyc zaplanowane jazdy.
+              Kliknij dzień w kalendarzu, aby zobaczyć zaplanowane jazdy.
             </p>
           ) : null}
 
@@ -260,7 +268,7 @@ export function InstruktorJazdyPageContent() {
                     ) : null}
                     <div className="mt-2">
                       <Button asChild size="sm" variant="secondary">
-                        <Link href={`/instruktor/kursanci/${ride.studentId}`}>Przejdz do profilu</Link>
+                        <Link href={`/instruktor/kursanci/${ride.studentId}`}>Przejdź do profilu</Link>
                       </Button>
                     </div>
                   </div>

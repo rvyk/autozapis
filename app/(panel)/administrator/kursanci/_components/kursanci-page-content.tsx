@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import { KursanciFilterTabs } from "./kursanci-filter-tabs";
 import { KursanciTable } from "./kursanci-table";
 import type {
@@ -185,16 +186,10 @@ export function KursanciPageContent({
 
   return (
     <div className="flex w-full flex-col gap-8 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">
-            Kursanci
-          </h1>
-          <p className="mt-2 text-stone-500">
-            Zarządzaj listą zapisanych osób i akceptuj ich dokumenty PKK.
-          </p>
-        </div>
-      </div>
+      <SectionHeader
+        title="Kursanci"
+        description="Zarządzaj listą zapisanych osób i akceptuj ich dokumenty PKK."
+      />
 
       <KursanciFilterTabs
         filter={filter}

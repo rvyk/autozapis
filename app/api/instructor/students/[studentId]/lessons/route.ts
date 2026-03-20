@@ -232,7 +232,7 @@ export async function GET(
   }
 
   const hoursDone = lessons.reduce((total, lesson) => {
-    if (lesson.status === "ODWOLANA") return total;
+    if (lesson.status !== "ZREALIZOWANA") return total;
     return total + Math.max(0, lesson.durationMinutes / 60);
   }, 0);
 

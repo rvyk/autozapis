@@ -124,6 +124,7 @@ export async function GET(request: Request) {
       ? await lessonDelegate.findMany({
         where: {
           studentId: { in: studentIds },
+          status: "ZREALIZOWANA",
         },
         select: {
           studentId: true,
@@ -136,7 +137,6 @@ export async function GET(request: Request) {
   const completedHoursByStudent = new Map<string, number>();
 
   for (const lesson of completedLessons) {
-    if (lesson.status === "ODWOLANA") continue;
     const previous = completedHoursByStudent.get(lesson.studentId) ?? 0;
     const next = previous + Math.max(0, lesson.durationMinutes / 60);
     completedHoursByStudent.set(lesson.studentId, next);

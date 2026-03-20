@@ -5,6 +5,8 @@ export type InstructorListItem = {
   fullName: string;
   email: string;
   status: InstructorStatus;
+  canTeachPractice: boolean;
+  canTeachTheory: boolean;
   joinedAt: string;
 };
 

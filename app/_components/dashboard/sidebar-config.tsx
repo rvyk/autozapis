@@ -29,7 +29,7 @@ export const ADMIN_SIDEBAR_CONFIG: DashboardSidebarConfig = {
   footerPrimary: "© 2026 OSK Józef Majkut",
   footerSecondary: "Leżajsk, woj. podkarpackie",
   navItems: [
-    { href: "/administrator", label: "Dashboard", icon: "grid" },
+    { href: "/administrator", label: "Strona główna", icon: "grid" },
     { href: "/administrator/kursanci", label: "Kursanci", icon: "users" },
     {
       href: "/administrator/instruktorzy",
@@ -52,7 +52,7 @@ export const KURSANT_SIDEBAR_CONFIG: DashboardSidebarConfig = {
   footerPrimary: "© 2026 OSK Józef Majkut",
   footerSecondary: "Leżajsk, woj. podkarpackie",
   navItems: [
-    { href: "/kursant", label: "Panel główny", icon: "grid" },
+    { href: "/kursant", label: "Strona główna", icon: "grid" },
     { href: "/kursant/wyklady", label: "Wykłady", icon: "book-open" },
     { href: "/kursant/instruktorzy", label: "Instruktorzy", icon: "users" },
     { href: "/kursant/jazdy", label: "Jazdy praktyczne", icon: "ticket" },
@@ -67,12 +67,13 @@ export const KURSANT_SIDEBAR_CONFIG: DashboardSidebarConfig = {
 export const INSTRUKTOR_SIDEBAR_CONFIG: DashboardSidebarConfig = {
   badgeLabel: "Instruktor",
   title: "Panel Instruktora",
-  description: "Prowadz kursantow i jazdy",
-  footerPrimary: "© 2026 OSK Jozef Majkut",
-  footerSecondary: "Lezajsk, woj. podkarpackie",
+  description: "Prowadź kursantów i jazdy",
+  footerPrimary: "© 2026 OSK Józef Majkut",
+  footerSecondary: "Leżajsk, woj. podkarpackie",
   navItems: [
-    { href: "/instruktor", label: "Dashboard", icon: "grid" },
+    { href: "/instruktor", label: "Strona główna", icon: "grid" },
     { href: "/instruktor/kursanci", label: "Moi kursanci", icon: "users" },
-    { href: "/instruktor/jazdy", label: "Moj harmonogram", icon: "car" },
+    { href: "/instruktor/jazdy", label: "Mój harmonogram", icon: "car" },
+    { href: "/instruktor/wyklady", label: "Wykłady", icon: "book-open" },
   ],
 };

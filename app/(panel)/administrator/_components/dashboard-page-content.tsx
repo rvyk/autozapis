@@ -4,6 +4,7 @@ import { DashboardActivityList } from "./dashboard-activity-list";
 import { DashboardAnalyticsCard } from "./dashboard-analytics-card";
 import { DashboardRightRail } from "./dashboard-right-rail";
 import { DashboardStatCard } from "./dashboard-stat-card";
+import { SectionHeader } from "@/app/_components/dashboard/section-header";
 import type {
   ActivityItem,
   AnalyticsPayload,
@@ -56,12 +57,15 @@ export function DashboardPageContent({
 
   return (
     <div className="flex w-full flex-col gap-6 animate-in fade-in duration-300 ease-out">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900">Dashboard</h1>
-        <p className="text-stone-500">
-          Cześć{firstName ? `, ${firstName}` : ""}. Oto podsumowanie Twojego ośrodka na dziś.
-        </p>
-      </div>
+      <SectionHeader
+        title="Strona główna"
+        description={
+          <>
+            Cześć{firstName ? `, ${firstName}` : ""}. Oto podsumowanie Twojego
+            ośrodka na dziś.
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
