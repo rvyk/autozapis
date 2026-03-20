@@ -26,7 +26,7 @@ export const ADMIN_SIDEBAR_CONFIG: DashboardSidebarConfig = {
   badgeLabel: "Administrator",
   title: "Panel OSK",
   description: "Zarządzaj ośrodkiem szkolenia",
-  footerPrimary: "© 2026 OSK Józefa Majkuta",
+  footerPrimary: "© 2026 OSK Józef Majkut",
   footerSecondary: "Leżajsk, woj. podkarpackie",
   navItems: [
     { href: "/administrator", label: "Dashboard", icon: "grid" },
@@ -49,8 +49,8 @@ export const KURSANT_SIDEBAR_CONFIG: DashboardSidebarConfig = {
   badgeLabel: "Kursant",
   title: "Twój Panel",
   description: "Śledź postępy i nauke",
-  footerPrimary: "OSK Leżajsk",
-  footerSecondary: "Twój wirtualny garaż",
+  footerPrimary: "© 2026 OSK Józef Majkut",
+  footerSecondary: "Leżajsk, woj. podkarpackie",
   navItems: [
     { href: "/kursant", label: "Panel główny", icon: "grid" },
     { href: "/kursant/wyklady", label: "Wykłady", icon: "book-open" },
