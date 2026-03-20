@@ -50,6 +50,18 @@ enum AnnouncementAudience {
   INSTRUKTORZY
 }
 
+enum CourseCategory {
+  A
+  B
+  DOSZKALANIE
+}
+
+enum CourseStatus {
+  NABOR
+  PLANOWANY
+  STALA_OFERTA
+}
+
 model Announcement {
   id         String   @id @default(cuid())
   title      String
@@ -76,4 +88,21 @@ model PkkFile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Course {
+  id            String       @id @default(cuid())
+  title         String
+  category      CourseCategory
+  startDate     DateTime?
+  duration      String
+  pricePln      Int
+  enrolledCount Int          @default(0)
+  capacity      Int?
+  status        CourseStatus @default(NABOR)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([createdAt])
+  @@index([status])
 }
