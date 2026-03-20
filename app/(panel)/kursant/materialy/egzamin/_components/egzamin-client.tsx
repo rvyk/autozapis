@@ -18,7 +18,7 @@ type Question = {
 };
 
 const EXAM_DURATION_SECONDS = 25 * 60;
-const PASS_THRESHOLD = 52;
+const PASS_THRESHOLD = 68;
 
 function formatTime(totalSeconds: number) {
   const m = Math.floor(totalSeconds / 60);
@@ -79,12 +79,6 @@ export function EgzaminClient({
       setCurrentIndex((prev) => prev + 1);
     } else {
       finishExam();
-    }
-  }
-
-  function handlePrev() {
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
     }
   }
 
@@ -251,7 +245,7 @@ export function EgzaminClient({
             Egzamin Próbny — kat. {category}
           </h1>
           <p className="text-sm text-stone-500">
-            20 podstawowych + 12 specjalistycznych
+            20 podstawowych (2 pkt) + 12 specjalistycznych (3 pkt) = 74 pkt
           </p>
         </div>
 
@@ -318,7 +312,7 @@ export function EgzaminClient({
             {getScopeLabel(q.scope)}
           </span>
           <span className="text-xs text-stone-500">
-            {q.points ?? 1} {q.points === 1 ? "punkt" : "punktów"}
+            {q.points ?? 1} {q.points === 1 ? "punkt" : "punkty"}
           </span>
         </div>
 
@@ -388,26 +382,16 @@ export function EgzaminClient({
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <Button
-          variant="secondary"
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
-        >
-          Poprzednie
-        </Button>
-
-        <div className="flex gap-2">
-          {currentIndex === initialQuestions.length - 1 ? (
-            <Button onClick={finishExam} size="lg">
-              Zakończ egzamin
-            </Button>
-          ) : (
-            <Button onClick={handleNext} size="lg">
-              Następne
-            </Button>
-          )}
-        </div>
+      <div className="flex items-center justify-end">
+        {currentIndex === initialQuestions.length - 1 ? (
+          <Button onClick={finishExam} size="lg">
+            Zakończ egzamin
+          </Button>
+        ) : (
+          <Button onClick={handleNext} size="lg">
+            Następne
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getRandomQuestions } from "@/app/_actions/questions";
@@ -16,6 +17,12 @@ type Question = {
   scope: string | null;
   points: number | null;
 };
+
+function getScopeLabel(scope: string | null) {
+  if (scope === "PODSTAWOWY") return "Podstawowe";
+  if (scope === "SPECJALISTYCZNY") return "Specjalistyczne";
+  return "Inne";
+}
 
 export function CwiczeniaClient({
   initialQuestion,
@@ -54,61 +61,83 @@ export function CwiczeniaClient({
     });
   }
 
-  function getAnswerButtonClass(ans: string) {
-    if (!isAnswered) {
-      return selectedAnswer === ans
-        ? "border-stone-400 bg-stone-100"
-        : "border-stone-200 hover:bg-stone-50";
-    }
-
-    if (ans === question.correctAnswer) {
-      return "border-green-300 bg-green-50";
-    }
-
-    if (ans === selectedAnswer && ans !== question.correctAnswer) {
-      return "border-red-300 bg-red-50";
-    }
-
-    return "border-stone-200 opacity-50";
-  }
-
-  function getAnswerLabelClass(ans: string) {
-    if (!isAnswered) {
-      return "bg-stone-100 text-stone-600";
-    }
-
-    if (ans === question.correctAnswer) {
-      return "bg-green-100 text-green-700";
-    }
-
-    if (ans === selectedAnswer && ans !== question.correctAnswer) {
-      return "bg-red-100 text-red-700";
-    }
-
-    return "bg-stone-100 text-stone-400";
-  }
-
   return (
-    <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-stone-500">
-          Pytanie #{question.questionId}
-        </span>
-        <span className="rounded-full bg-stone-100 px-3 py-1 text-sm font-medium text-stone-600">
-          Wynik: {score.correct}/{score.total}
-        </span>
+    <div className="flex w-full flex-col gap-6">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-stone-900">
+            Ćwiczenia — kat. {category}
+          </h1>
+          <p className="text-sm text-stone-500">
+            Ucz się w swoim tempie, po jednym pytaniu na raz.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-stone-200 bg-white px-5 py-3 text-center shadow-sm">
+          <p className="text-2xl font-bold text-stone-900">
+            {score.correct}<span className="text-lg text-stone-400">/{score.total}</span>
+          </p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+            Wynik
+          </p>
+        </div>
       </div>
 
+      {/* Question card */}
       <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center gap-2">
+          <span
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase",
+              question.scope === "PODSTAWOWY"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-purple-100 text-purple-700",
+            )}
+          >
+            {getScopeLabel(question.scope)}
+          </span>
+          <span className="text-xs text-stone-500">
+            {question.points ?? 1} {question.points === 1 ? "punkt" : "punkty"}
+          </span>
+          <span className="ml-auto text-xs text-stone-400">
+            #{question.questionId}
+          </span>
+        </div>
+
         <h2 className="mb-6 text-lg font-semibold leading-relaxed text-stone-900">
           {question.content}
         </h2>
 
+        {/* Answers */}
         {!isTrueFalse ? (
           <div className="flex flex-col gap-3">
             {(["A", "B", "C"] as const).map((ans) => {
-              const text = ans === "A" ? question.ansA : ans === "B" ? question.ansB : question.ansC;
+              const text =
+                ans === "A"
+                  ? question.ansA
+                  : ans === "B"
+                    ? question.ansB
+                    : question.ansC;
               if (!text) return null;
+
+              let borderClass = "border-stone-200 hover:bg-stone-50";
+              let labelClass = "bg-stone-100 text-stone-600";
+
+              if (isAnswered) {
+                if (ans === question.correctAnswer) {
+                  borderClass = "border-green-300 bg-green-50";
+                  labelClass = "bg-green-100 text-green-700";
+                } else if (ans === selectedAnswer) {
+                  borderClass = "border-red-300 bg-red-50";
+                  labelClass = "bg-red-100 text-red-700";
+                } else {
+                  borderClass = "border-stone-200 opacity-50";
+                  labelClass = "bg-stone-100 text-stone-400";
+                }
+              } else if (selectedAnswer === ans) {
+                borderClass = "border-stone-400 bg-stone-100";
+              }
 
               return (
                 <button
@@ -118,13 +147,13 @@ export function CwiczeniaClient({
                   disabled={isAnswered}
                   className={cn(
                     "flex items-center gap-3 rounded-xl border p-4 text-left text-sm transition-colors",
-                    getAnswerButtonClass(ans),
+                    borderClass,
                   )}
                 >
                   <span
                     className={cn(
                       "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold",
-                      getAnswerLabelClass(ans),
+                      labelClass,
                     )}
                   >
                     {ans}
@@ -136,25 +165,40 @@ export function CwiczeniaClient({
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            {(["T", "N"] as const).map((ans) => (
-              <button
-                key={ans}
-                type="button"
-                onClick={() => handleAnswer(ans)}
-                disabled={isAnswered}
-                className={cn(
-                  "rounded-xl border p-4 text-center text-lg font-semibold transition-colors",
-                  getAnswerButtonClass(ans),
-                )}
-              >
-                <span className={cn("mr-2 text-xs font-bold", getAnswerLabelClass(ans))}>
+            {(["T", "N"] as const).map((ans) => {
+              let borderClass = "border-stone-200 hover:bg-stone-50";
+
+              if (isAnswered) {
+                if (ans === question.correctAnswer) {
+                  borderClass = "border-green-300 bg-green-50 text-green-700";
+                } else if (ans === selectedAnswer) {
+                  borderClass = "border-red-300 bg-red-50 text-red-700";
+                } else {
+                  borderClass = "border-stone-200 opacity-50";
+                }
+              } else if (selectedAnswer === ans) {
+                borderClass = "border-stone-400 bg-stone-100";
+              }
+
+              return (
+                <button
+                  key={ans}
+                  type="button"
+                  onClick={() => handleAnswer(ans)}
+                  disabled={isAnswered}
+                  className={cn(
+                    "rounded-xl border p-4 text-center text-lg font-semibold transition-colors",
+                    borderClass,
+                  )}
+                >
                   {ans === "T" ? "TAK" : "NIE"}
-                </span>
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         )}
 
+        {/* Feedback */}
         {isAnswered && (
           <div
             className={cn(
@@ -180,22 +224,24 @@ export function CwiczeniaClient({
           </div>
         )}
 
-        <div className="mt-6 flex justify-end">
-          {isAnswered && (
+        {/* Next button */}
+        {isAnswered && (
+          <div className="mt-6 flex justify-end">
             <Button onClick={loadNext} disabled={isPending} size="lg">
               {isPending ? "Ładowanie..." : "Następne pytanie"}
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
+      {/* Back link */}
       <div className="flex justify-center">
-        <a
+        <Link
           href="/kursant/materialy"
           className="text-sm text-stone-500 underline underline-offset-2 hover:text-stone-700"
         >
           Powrót do materiałów
-        </a>
+        </Link>
       </div>
     </div>
   );
