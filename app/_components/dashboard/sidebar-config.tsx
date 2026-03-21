@@ -62,6 +62,11 @@ export const KURSANT_SIDEBAR_CONFIG: DashboardSidebarConfig = {
       label: "Materiały do nauki",
       icon: "academic-cap",
     },
+    {
+      href: "/kursant/minigra",
+      label: "Minigra",
+      icon: "ticket",
+    },
   ],
 };
 
