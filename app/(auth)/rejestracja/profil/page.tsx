@@ -29,6 +29,12 @@ export default function RejestracjaProfilPage() {
   const { user, isLoaded: isUserLoaded } = useUser();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+    trainingCategory?: string;
+    birthDate?: string;
+  }>({});
 
   const isLoading = !isAuthLoaded || !isUserLoaded;
   const hasPendingProfileFlow =
@@ -79,6 +85,53 @@ export default function RejestracjaProfilPage() {
   async function handleSubmit() {
     if (!user) return;
 
+    const nextErrors: {
+      firstName?: string;
+      lastName?: string;
+      trainingCategory?: string;
+      birthDate?: string;
+    } = {};
+
+    if (!formData.firstName.trim()) {
+      nextErrors.firstName = "Podaj imię.";
+    }
+
+    if (!formData.lastName.trim()) {
+      nextErrors.lastName = "Podaj nazwisko.";
+    }
+
+    if (formData.trainingCategory !== "B") {
+      nextErrors.trainingCategory = "Obecnie prowadzimy zapisy tylko na kategorię B.";
+    }
+
+    const day = Number(formData.birthDay);
+    const month = Number(formData.birthMonth);
+    const year = Number(formData.birthYear);
+
+    if (!formData.birthDay || !formData.birthMonth || !formData.birthYear) {
+      nextErrors.birthDate = "Uzupełnij pełną datę urodzenia.";
+    } else {
+      const candidate = new Date(year, month - 1, day);
+      const validDate =
+        candidate.getFullYear() === year &&
+        candidate.getMonth() === month - 1 &&
+        candidate.getDate() === day;
+      const age = new Date().getFullYear() - year;
+
+      if (!validDate) {
+        nextErrors.birthDate = "Podaj poprawną datę urodzenia.";
+      } else if (age < 14 || age > 100) {
+        nextErrors.birthDate = "Sprawdź rok urodzenia.";
+      }
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setFieldErrors(nextErrors);
+      return;
+    }
+
+    setFieldErrors({});
+
     setIsSaving(true);
     try {
       await user.update({
@@ -104,8 +157,12 @@ export default function RejestracjaProfilPage() {
         description="Wpisz dane w formularz poniżej — zobaczysz je natychmiast na podglądzie dokumentu."
       />
 
-      <form action={handleSubmit} className="space-y-6">
-        <LicenseFormFields formData={formData} setFormData={setFormData} />
+      <form action={handleSubmit} noValidate className="space-y-6">
+        <LicenseFormFields
+          formData={formData}
+          setFormData={setFormData}
+          errors={fieldErrors}
+        />
 
         <LicensePreview
           formData={formData}

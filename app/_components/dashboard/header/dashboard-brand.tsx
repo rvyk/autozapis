@@ -5,7 +5,7 @@ export function DashboardBrand() {
     <div className="flex items-center gap-6">
       <Link
         href="/"
-        className="text-xl font-bold tracking-tight text-stone-900 transition-colors hover:text-red-600"
+        className="text-xl font-bold tracking-tight text-stone-900"
       >
         Auto<span className="text-red-600">Zapis</span>
       </Link>

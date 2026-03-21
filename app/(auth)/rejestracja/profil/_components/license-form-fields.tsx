@@ -13,6 +13,12 @@ type LicenseFormData = {
 type LicenseFormFieldsProps = {
   formData: LicenseFormData;
   setFormData: React.Dispatch<React.SetStateAction<LicenseFormData>>;
+  errors?: {
+    lastName?: string;
+    firstName?: string;
+    trainingCategory?: string;
+    birthDate?: string;
+  };
 };
 
 const MONTH_NAMES = [
@@ -33,7 +39,10 @@ const MONTH_NAMES = [
 export function LicenseFormFields({
   formData,
   setFormData,
+  errors,
 }: LicenseFormFieldsProps) {
+  const selectedCategory = formData.trainingCategory === "A" ? "B" : formData.trainingCategory;
+
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <Field className="space-y-2">
@@ -49,7 +58,10 @@ export function LicenseFormFields({
           placeholder="Kowalski"
           autoComplete="family-name"
           required
+          aria-invalid={Boolean(errors?.lastName)}
+          className={errors?.lastName ? "border-red-300 focus-visible:ring-red-500/30" : ""}
         />
+        {errors?.lastName ? <p className="text-sm text-red-600">{errors.lastName}</p> : null}
       </Field>
 
       <Field className="space-y-2">
@@ -65,13 +77,16 @@ export function LicenseFormFields({
           placeholder="Jan"
           autoComplete="given-name"
           required
+          aria-invalid={Boolean(errors?.firstName)}
+          className={errors?.firstName ? "border-red-300 focus-visible:ring-red-500/30" : ""}
         />
+        {errors?.firstName ? <p className="text-sm text-red-600">{errors.firstName}</p> : null}
       </Field>
 
       <Field className="space-y-2 sm:col-span-3">
         <FieldLabel>Kategoria kursu</FieldLabel>
         <select
-          value={formData.trainingCategory}
+          value={selectedCategory}
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
@@ -82,8 +97,13 @@ export function LicenseFormFields({
           className="flex h-10 w-full appearance-none rounded-xl border border-stone-300 bg-background px-3 py-2 text-sm text-foreground transition-colors duration-150 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="B">Kategoria B</option>
-          <option value="A">Kategoria A</option>
+          <option value="A" disabled>
+            Kategoria A (wkrótce)
+          </option>
         </select>
+        {errors?.trainingCategory ? (
+          <p className="text-sm text-red-600">{errors.trainingCategory}</p>
+        ) : null}
       </Field>
 
       <Field className="space-y-2 sm:col-span-3">
@@ -152,6 +172,7 @@ export function LicenseFormFields({
             ))}
           </select>
         </div>
+        {errors?.birthDate ? <p className="text-sm text-red-600">{errors.birthDate}</p> : null}
       </Field>
     </div>
   );

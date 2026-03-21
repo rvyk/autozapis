@@ -1,8 +1,10 @@
 type HomeHeroProps = {
   videoSrc: string;
+  brand: string;
+  locations: readonly string[];
 };
 
-export function HomeHero({ videoSrc }: HomeHeroProps) {
+export function HomeHero({ videoSrc, brand, locations }: HomeHeroProps) {
   const headingClass =
     "[font-family:var(--font-anton)] font-normal tracking-[0.01em] leading-[1.04]";
 
@@ -21,12 +23,12 @@ export function HomeHero({ videoSrc }: HomeHeroProps) {
       >
         <source src={videoSrc} type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-black/60" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/45 to-black/60" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_0%_100%,rgba(232,54,58,0.28),transparent_60%)]" />
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-36 pb-20 sm:px-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-red-300/40 bg-red-500/70 px-4 py-1.5 text-xs uppercase tracking-[0.16em] text-white">
           <span className="h-2 w-2 rounded-full bg-white" />
-          Ośrodek Szkolenia Pojazdów · Kategoria B
+          {brand} · Kategoria B
         </div>
         <h1
           className={`mt-7 max-w-4xl text-6xl text-white sm:text-7xl lg:text-8xl ${headingClass}`}
@@ -36,8 +38,8 @@ export function HomeHero({ videoSrc }: HomeHeroProps) {
           <span className="block">SWOJEJ PRZYSZŁOŚCI</span>
         </h1>
         <p className="mt-8 max-w-2xl text-xl leading-8 font-medium text-white/90">
-          Uczymy konkretnie, spokojnie i skutecznie — od pierwszych kilometrów
-          do pewnego zdania egzaminu państwowego.
+          Szkolimy kierowców skutecznie, spokojnie i profesjonalnie. Zajęcia
+          prowadzimy w: {locations.join(", ")}.
         </p>
         <div className="mt-10 flex flex-wrap gap-4">
           <a

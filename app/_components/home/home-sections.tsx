@@ -26,7 +26,11 @@ export function HomeTicker() {
   );
 }
 
-export function HomeCourses() {
+type HomeCoursesProps = {
+  brand: string;
+};
+
+export function HomeCourses({ brand }: HomeCoursesProps) {
   const headingClass =
     "[font-family:var(--font-anton)] font-normal tracking-[0.01em]";
 
@@ -39,7 +43,8 @@ export function HomeCourses() {
           </div>
           <h2 className={`mt-4 text-5xl ${headingClass}`}>Nasze kursy</h2>
           <p className="mx-auto mt-3 max-w-xl text-lg font-medium text-stone-600">
-            Wszystko czego potrzebujesz do zdobycia prawa jazdy kategorii B.
+            Oferta ośrodka {brand}. Wszystko czego potrzebujesz do zdobycia
+            prawa jazdy kategorii B.
           </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr_1fr]">
@@ -175,7 +180,7 @@ export function HomePricing() {
           {cards.map(([name, price, features, featured]) => (
             <article
               key={name}
-              className={`border-r border-stone-200 bg-white p-12 text-center last:border-r-0 ${featured ? "bg-gradient-to-br from-white to-red-50/60" : ""}`}
+              className={`border-r border-stone-200 bg-white p-12 text-center last:border-r-0 ${featured ? "bg-linear-to-br from-white to-red-50/60" : ""}`}
             >
               {featured ? (
                 <span className="mb-4 inline-flex rounded-full bg-red-600 px-4 py-1 text-xs uppercase text-white">
@@ -207,25 +212,31 @@ export function HomePricing() {
   );
 }
 
-export function HomeFooter() {
+type HomeFooterProps = {
+  brand: string;
+  locations: readonly string[];
+  phones: readonly string[];
+};
+
+export function HomeFooter({ brand, locations, phones }: HomeFooterProps) {
   return (
     <footer
       id="kontakt"
-      className="border-t-4 border-red-600 bg-gradient-to-br from-stone-900 via-stone-900 to-stone-950 pt-16 text-white/80"
+      className="border-t-4 border-red-600 bg-linear-to-br from-stone-900 via-stone-900 to-stone-950 pt-16 text-white/80"
     >
       <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 pb-12 sm:px-6 md:grid-cols-[2fr_1fr_1fr]">
         <div>
           <div className="text-2xl font-semibold tracking-tight text-white">
-            Auto<span className="text-red-500">Zapis</span>
+            {brand}
           </div>
           <p className="mt-4 text-sm text-white/55">
-            Nowoczesna szkoła jazdy w sercu miasta.
+            Lokalny ośrodek szkolenia kierowców.
             <br />
             Uczymy bezpiecznie, skutecznie i z pasją.
           </p>
         </div>
         <div>
-          <h4 className="mb-5 text-xs uppercase tracking-[0.1em] text-white/45">
+          <h4 className="mb-5 text-xs uppercase tracking-widest text-white/45">
             Nawigacja
           </h4>
           <ul className="space-y-2 text-sm text-white/65">
@@ -238,22 +249,25 @@ export function HomeFooter() {
             <li>
               <a href="#cennik">Cennik</a>
             </li>
+            <li>
+              <a href="#kontakt">Kontakt</a>
+            </li>
           </ul>
         </div>
         <div>
-          <h4 className="mb-5 text-xs uppercase tracking-[0.1em] text-white/45">
+          <h4 className="mb-5 text-xs uppercase tracking-widest text-white/45">
             Kontakt
           </h4>
           <ul className="space-y-2 text-sm text-white/65">
-            <li>ul. Kierownicza 12, Warszawa</li>
-            <li>+48 123 456 789</li>
-            <li>info@autozapis.pl</li>
+            <li>{locations.join(" · ")}</li>
+            <li>tel. {phones[0]}</li>
+            <li>tel. {phones[1]}</li>
             <li>Pon-Sob: 8:00-20:00</li>
           </ul>
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-xs text-white/40">
-        © 2026 AutoZapis. Wszelkie prawa zastrzeżone.
+        © 2026 {brand}. Wszelkie prawa zastrzeżone.
       </div>
     </footer>
   );

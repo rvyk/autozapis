@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { HomeHero } from "./home-hero";
 import { HomeNavbar } from "./home-navbar";
@@ -12,20 +11,22 @@ import {
   HomeTicker,
 } from "./home-sections";
 
-export function HomeLanding() {
-  const { isSignedIn } = useAuth();
-  const { user } = useUser();
+const BRAND = "Prawo Jazdy Józef Majkut";
+const LOCATIONS = [
+  "Grodzisko Górne",
+  "Grodzisko Dolne",
+  "Żołynia",
+  "Leżajsk",
+] as const;
+const PHONES = ["724 545 383", "661 420 887"] as const;
 
-  const [mobileOpen, setMobileOpen] = useState(false);
+export function HomeLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("#kursy");
-  const [videoSrc, setVideoSrc] = useState("/video.mp4");
+  const [videoSrc, setVideoSrc] = useState("/video2.mp4");
 
-  const videos = useMemo(
-    () => ["/video.mp4", "/hero-road.mp4", "/video2.mp4", "/video3.mp4"],
-    [],
-  );
+  const videos = useMemo(() => ["/video2.mp4", "/video3.mp4"], []);
 
   useEffect(() => {
     let lastY = 0;
@@ -104,21 +105,17 @@ export function HomeLanding() {
   return (
     <main className="bg-[#f2f3f7] text-[#111114]">
       <HomeNavbar
-        isSignedIn={Boolean(isSignedIn)}
-        userFirstName={user?.firstName}
         isScrolled={isScrolled}
         isHidden={isHidden}
         activeSection={activeSection}
-        mobileOpen={mobileOpen}
-        onToggleMobile={() => setMobileOpen((value) => !value)}
-        onCloseMobile={() => setMobileOpen(false)}
+        onAnchorNavigate={() => setIsHidden(false)}
       />
-      <HomeHero videoSrc={videoSrc} />
+      <HomeHero videoSrc={videoSrc} brand={BRAND} locations={LOCATIONS} />
       <HomeTicker />
-      <HomeCourses />
+      <HomeCourses brand={BRAND} />
       <HomeInstructors />
       <HomePricing />
-      <HomeFooter />
+      <HomeFooter brand={BRAND} locations={LOCATIONS} phones={PHONES} />
     </main>
   );
 }
