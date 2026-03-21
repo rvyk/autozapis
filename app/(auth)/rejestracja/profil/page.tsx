@@ -25,10 +25,11 @@ function formatBirthDate(formData: LicenseFormData) {
 }
 
 export default function RejestracjaProfilPage() {
-  const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
+  const { isSignedIn, isLoaded: isAuthLoaded, signOut } = useAuth();
   const { user, isLoaded: isUserLoaded } = useUser();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [isAborting, setIsAborting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{
     firstName?: string;
     lastName?: string;
@@ -150,6 +151,37 @@ export default function RejestracjaProfilPage() {
     }
   }
 
+  async function handleAbortRegistration() {
+    if (!user || isAborting) return;
+
+    const confirmed = window.confirm(
+      "To usunie konto i wszystkie dotychczasowe dane rejestracji. Tej operacji nie da sie cofnac. Czy kontynuowac?",
+    );
+
+    if (!confirmed) return;
+
+    setIsAborting(true);
+
+    try {
+      const response = await fetch("/api/registration/abort", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("ABORT_FAILED");
+      }
+
+      window.sessionStorage.removeItem("registration_profile_pending");
+      await signOut({ redirectUrl: "/rejestracja" });
+      window.location.assign("/rejestracja");
+    } catch {
+      setFieldErrors({
+        birthDate: "Nie udało się usunąć konta. Spróbuj ponownie za chwilę.",
+      });
+      setIsAborting(false);
+    }
+  }
+
   return (
     <AuthCard className="lg:max-w-3xl">
       <AuthCardHeader
@@ -171,7 +203,12 @@ export default function RejestracjaProfilPage() {
 
         <ProfileFlowNotice />
 
-        <ProfileSubmitButton disabled={isSaving || isLoading} isSaving={isSaving} />
+        <ProfileSubmitButton
+          disabled={isSaving || isLoading}
+          isSaving={isSaving}
+          isAborting={isAborting}
+          onAbort={() => void handleAbortRegistration()}
+        />
       </form>
     </AuthCard>
   );

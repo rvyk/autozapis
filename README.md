@@ -1,59 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AutoZapis — TechQuest 2026 (Leżajsk, 24h)
 
-## Getting Started
+Projekt stworzony na **TechQuest 2026** dla sponsora: **OSK Prawo Jazdy Józef Majkut**.
 
-First, run the development server:
+To pełny system do obsługi ośrodka szkolenia kierowców: rejestracja kursantów, panel administratora, panel instruktora, panel kursanta, obieg dokumentów PKK, ogłoszenia i harmonogramy.
+
+## Autorzy
+
+- Paweł Szymański
+- Klaudia Sopyła
+- Dawid Pysz
+- Dawid Winiarski
+
+## Dlaczego ten projekt
+
+- Cyfryzuje proces zapisu i weryfikacji kursanta.
+- Upraszcza pracę administracji i instruktorów.
+- Daje kursantowi przejrzysty podgląd postępów, materiałów i planu zajęć.
+
+## Moduły systemu
+
+- `Kursant`: rejestracja, materiały, jazdy, wykłady, status konta, powiadomienia.
+- `Instruktor`: przypisania kursantów, plan i historia jazd, wykłady i obecności.
+- `Administrator`: aktywacja kont, PKK, płatności, kursy, ogłoszenia, analityka.
+
+## Stack
+
+- Next.js 16 + React 19 + TypeScript
+- Prisma + PostgreSQL
+- Clerk (auth + webhook)
+- Cloudflare R2 (uploady PKK)
+- Tailwind CSS
+
+## Szybki start
+
+1. Zainstaluj zależności:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Environment variables
-
-Create a `.env` file with:
+2. Uzupełnij `.env`:
 
 ```bash
-DATABASE_URL=postgresql://...
-CLERK_WEBHOOK_SIGNING_SECRET=whsec_...
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+CLERK_WEBHOOK_SIGNING_SECRET=
 
-R2_ACCOUNT_ID=...
-R2_ACCESS_KEY_ID=...
-R2_SECRET_ACCESS_KEY=...
-R2_BUCKET_NAME=...
+DATABASE_URL=
+
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=
 ```
 
-## Prisma
-
-After schema changes, run:
+3. Uruchom bazę i seedy:
 
 ```bash
-pnpm prisma migrate dev --name add-pkk-file-upload
 pnpm prisma generate
+pnpm prisma db push
+pnpm seed:pwpw-questions
+pnpm seed:example-accounts
 ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Start aplikacji:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm dev
+```
 
-## Learn More
+## Konta demo
 
-To learn more about Next.js, take a look at the following resources:
+- `demo.admin@autozapis-demo.pl` / `Admin123!`
+- `demo.instruktor@autozapis-demo.pl` / `Instruktor123!`
+- `demo.kursant@autozapis-demo.pl` / `Kursant123!`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dokumentacja
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Szczegółowy setup: `docs/SETUP.md`
+- Wersja pod jury/sponsora: `docs/JURY-SPONSOR.md`

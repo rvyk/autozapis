@@ -61,15 +61,10 @@ async function main() {
     });
 
     if (existing) {
-      await prisma.question.update({
-        where: { questionId: qId },
-        data,
-      });
+      await prisma.question.update({ where: { questionId: qId }, data });
       updated += 1;
     } else {
-      await prisma.question.create({
-        data: { questionId: qId, ...data },
-      });
+      await prisma.question.create({ data: { questionId: qId, ...data } });
       created += 1;
     }
   }
