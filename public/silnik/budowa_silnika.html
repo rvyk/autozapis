@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silnik – mapa</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    color: #171717;
+    min-height: 100dvh;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 0 16px;
+}
+.tab {
+    padding: 10px 24px;
+    border: none;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+.tab.active { background: #dc2626; color: #ffffff; }
+.tab:hover:not(.active) { background: #e5e7eb; }
+
+.layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.engine-map {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: none;
+}
+.engine-map.active { display: block; }
+.engine-map img {
+    width: 100%;
+    display: block;
+    height: auto;
+    border-radius: 8px;
+}
+
+.hotspot-wrap {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.hotspot {
+    width: clamp(20px, 4vw, 40px);
+    height: clamp(20px, 4vw, 40px);
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.06);
+    border: 1.8px solid rgba(255,255,255,0.9);
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0,0,0,0.9);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    animation: pulse 2.2s ease-in-out infinite;
+}
+.hotspot:hover { transform: scale(1.2); box-shadow: 0 0 12px rgba(255,255,255,0.9); }
+.hotspot.selected {
+    background-color: rgba(245,99,99,0.4);
+    border-color: rgb(245,99,99);
+    box-shadow: 0 0 14px rgba(245,99,99,0.9);
+    animation: none;
+    transform: scale(1.2);
+}
+@keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+}
+
+.label {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, -8px);
+    padding: 5px 9px;
+    background: rgba(0,0,0,0.82);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 13px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+}
+.hotspot-wrap:hover .label { opacity: 1; }
+
+#info-panel {
+    width: 310px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 22px 18px;
+    min-height: 220px;
+    position: sticky;
+    top: 20px;
+    transition: opacity 0.2s;
+}
+#info-panel h2 {
+    font-size: 19px;
+    color: rgb(204, 24, 24);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+#info-panel .placeholder {
+    color: #666666;
+    font-size: 17px;
+    font-style: italic;
+}
+#info-desc {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #666666;
+}
+#info-tip {
+    display: none;
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: rgba(245,99,99,0.08);
+    border-left: 3px solid rgb(245,99,99);
+    border-radius: 4px;
+    font-size: 17px;
+    color: #f34747;
+    line-height: 1.6;
+}
+#info-tip strong { color: rgba(246, 5, 5, 0.797); }
+
+@media (max-width: 700px) {
+    .layout { flex-direction: column; }
+    #info-panel { width: 100%; position: static; }
+}
+</style>
+</head>
+<body>
+
+<div class="tabs">
+    <button class="tab active" data-tab="hyundai">Hyundai</button>
+    <button class="tab" data-tab="toyota">Toyota</button>
+    <button class="tab" data-tab="kia">Kia</button>
+</div>
+
+<div style="display:flex;justify-content:flex-end;width:90%;max-width:1300px;margin:0 auto;">
+    <button id="close-window" style="display:none;margin-bottom:8px;padding:8px 16px;border-radius:12px;border:1px solid #d1d5db;background:#ffffff;color:#374151;font-weight:600;cursor:pointer;box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);transition:all 0.15s;">✕ ZAMKNIJ</button>
+</div>
+
+<div class="layout">
+
+    <!-- HYUNDAI -->
+    <div class="engine-map active" id="hyundai">
+        <img src="/silnik/hyundai_engine.jpg" alt="Silnik Hyundai">
+        <div class="hotspot-wrap" style="top:23%;left:62%"><button class="hotspot" data-key="hamulcowy"></button><div class="label">Płyn hamulcowy</div></div>
+        <div class="hotspot-wrap" style="top:39%;left:29%"><button class="hotspot" data-key="olej-wlew"></button><div class="label">Wlew oleju</div></div>
+        <div class="hotspot-wrap" style="top:46%;left:39%"><button class="hotspot" data-key="olej-wskaznik"></button><div class="label">Wskaźnik poziomu oleju</div></div>
+        <div class="hotspot-wrap" style="top:66%;left:10%"><button class="hotspot" data-key="spryskiwacze"></button><div class="label">Płyn do spryskiwaczy</div></div>
+        <div class="hotspot-wrap" style="top:36%;left:14%"><button class="hotspot" data-key="chlodniczy"></button><div class="label">Płyn chłodniczy</div></div>
+        <div class="hotspot-wrap" style="top:35%;left:72%"><button class="hotspot" data-key="akumulator"></button><div class="label">Akumulator</div></div>
+    </div>
+
+    <!-- TOYOTA -->
+    <div class="engine-map" id="toyota">
+        <img src="/silnik/toyota_engine.jpg" alt="Silnik Toyota">
+        <div class="hotspot-wrap" style="top:41%;left:71%"><button class="hotspot" data-key="hamulcowy"></button><div class="label">Płyn hamulcowy</div></div>
+        <div class="hotspot-wrap" style="top:56%;left:32%"><button class="hotspot" data-key="olej-wlew"></button><div class="label">Wlew oleju</div></div>
+        <div class="hotspot-wrap" style="top:62%;left:41%"><button class="hotspot" data-key="olej-wskaznik"></button><div class="label">Wskaźnik poziomu oleju</div></div>
+        <div class="hotspot-wrap" style="top:69%;left:11%"><button class="hotspot" data-key="spryskiwacze"></button><div class="label">Płyn do spryskiwaczy</div></div>
+        <div class="hotspot-wrap" style="top:62%;left:17%"><button class="hotspot" data-key="chlodniczy"></button><div class="label">Płyn chłodniczy</div></div>
+        <div class="hotspot-wrap" style="top:54%;left:70%"><button class="hotspot" data-key="akumulator"></button><div class="label">Akumulator</div></div>
+    </div>
+
+    <!-- KIA -->
+    <div class="engine-map" id="kia">
+        <img src="/silnik/kia_engine.jpg" alt="Silnik Kia">
+        <div class="hotspot-wrap" style="top:25%;left:79%"><button class="hotspot" data-key="hamulcowy"></button><div class="label">Płyn hamulcowy</div></div>
+        <div class="hotspot-wrap" style="top:44%;left:34%"><button class="hotspot" data-key="olej-wlew"></button><div class="label">Wlew oleju</div></div>
+        <div class="hotspot-wrap" style="top:84%;left:40%"><button class="hotspot" data-key="olej-wskaznik"></button><div class="label">Wskaźnik poziomu oleju</div></div>
+        <div class="hotspot-wrap" style="top:75%;left:16%"><button class="hotspot" data-key="spryskiwacze"></button><div class="label">Płyn do spryskiwaczy</div></div>
+        <div class="hotspot-wrap" style="top:84%;left:77%"><button class="hotspot" data-key="chlodniczy"></button><div class="label">Płyn chłodniczy</div></div>
+        <div class="hotspot-wrap" style="top:44%;left:90%"><button class="hotspot" data-key="akumulator"></button><div class="label">Akumulator</div></div>
+    </div>
+
+    <div id="info-panel">
+        <h2 id="info-title">Wybierz element</h2>
+        <p id="info-desc" class="placeholder">Kliknij dowolny punkt na mapie silnika, aby zobaczyć opis.</p>
+        <div id="info-tip"></div>
+    </div>
+
+</div>
+
+<script>
+const INFO = {
+    "hamulcowy": {
+        title: "Płyn hamulcowy",
+        desc: "Płyn hamulcowy przenosi siłę nacisku pedału hamulca na zaciski przy kołach. Jest higroskopijny – pochłania wilgoć z otoczenia, co obniża jego temperaturę wrzenia i skuteczność hamowania. Zbiorniczek płynu hamulcowego jest zazwyczaj wykonany z półprzezroczystego tworzywa – poziom można sprawdzić bez otwierania pokrywy.",
+        tip: "<strong>Na egzaminie:</strong> Zbyt niski poziom płynu hamulcowego może świadczyć o nieszczelności układu hamulcowego lub o nadmiernym zużyciu klocków hamulcowych. Płyn należy wymieniać co 2 lata lub co 40 000 km, niezależnie od poziomu."
+    },
+    "olej-wlew": {
+        title: "Wlew oleju silnikowego",
+        desc: "Przez wlew oleju uzupełnia się lub wymienia olej silnikowy. Olej smaruje ruchome części silnika, odprowadza ciepło, chroni przed korozją i utrzymuje silnik w czystości. Wlew jest oznaczony symbolem olejniczki lub napisem OIL. Przed dolaniem oleju silnik powinien być wyłączony i chłodny.",
+        tip: "<strong>Na egzaminie:</strong> Kontrolkę oleju (olejniczka) należy sprawdzać przy każdym uruchomieniu. Jazda z niedoborem oleju grozi zatarciem silnika. Olej silnikowy wymienia się zazwyczaj co 10 000–15 000 km lub raz w roku."
+    },
+    "olej-wskaznik": {
+        title: "Wskaźnik (miarka) poziomu oleju",
+        desc: "Bagnet olejowy (dipstick) służy do sprawdzenia aktualnego poziomu oleju w silniku. Należy wyjąć go, przetrzeć do sucha, ponownie włożyć do oporu, a następnie wyjąć i odczytać poziom – olej powinien znajdować się między oznaczeniami MIN i MAX. Pomiar wykonuje się na poziomym podłożu, po wyłączeniu silnika i odczekaniu kilku minut.",
+        tip: "<strong>Na egzaminie:</strong> Poziom oleju sprawdza się przed każdą dłuższą trasą. Jeśli poziom jest przy MIN – należy dolać olej. Dolewa się wyłącznie olej o klasie zalecanej przez producenta pojazdu."
+    },
+    "spryskiwacze": {
+        title: "Płyn do spryskiwaczy",
+        desc: "Zbiornik płynu do spryskiwaczy zasila dysze spryskiwaczy szyby przedniej i tylnej. Płyn zawiera środki myjące i zapobiega zamarzaniu w niskich temperaturach. Zimą należy stosować płyn z odpowiednią temperaturą zamarzania (np. do –20°C lub –30°C). Nie wolno używać zwykłej wody – zamarza i może uszkodzić pompkę.",
+        tip: "<strong>Na egzaminie:</strong> Niedziałające spryskiwacze lub brak płynu to częsta przyczyna niezaliczenia przeglądu technicznego. Brudna szyba ogranicza widoczność i jest zagrożeniem bezpieczeństwa."
+    },
+    "chlodniczy": {
+        title: "Płyn chłodniczy",
+        desc: "Płyn chłodniczy (chłodziwo, potocznie: woda) odprowadza ciepło z silnika do chłodnicy, zapobiegając jego przegrzaniu. Zbiorniczek wyrównawczy jest przezroczysty – poziom płynu powinien być między oznaczeniami MIN i MAX. Płyn ma zwykle kolor zielony, niebieski lub różowy, zależnie od producenta. Nigdy nie wolno otwierać zbiornika ani chłodnicy na gorącym silniku – grozi to poparzeniem.",
+        tip: "<strong>Na egzaminie:</strong> Kontrolka temperatury silnika (termometr) sygnalizuje przegrzanie – należy natychmiast zatrzymać się i wyłączyć silnik. Płyn chłodniczy wymienia się co 2–4 lata. Niski poziom może oznaczać nieszczelność układu chłodzenia."
+    },
+    "akumulator": {
+        title: "Akumulator",
+        desc: "Akumulator dostarcza energię elektryczną do rozruchu silnika oraz zasila instalację elektryczną pojazdu gdy silnik nie pracuje. Standardowy akumulator samochodowy ma napięcie 12 V. Jego żywotność wynosi zazwyczaj 4–6 lat. Akumulator może rozładować się przez pozostawione włączone światła, długi postój lub niskie temperatury.",
+        tip: "<strong>Na egzaminie:</strong> Kontrolka akumulatora (symbol baterii) zapalona podczas jazdy oznacza awarię układu ładowania – alternator może nie ładować akumulatora. Nie wolno odłączać akumulatora przy pracującym silniku. Bieguny akumulatora mogą pokrywać się siarczanem – należy je czyścić."
+    }
+};
+
+// Zakładki
+document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".engine-map").forEach(m => m.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+        clearSelected();
+        resetPanel();
+    });
+});
+
+function clearSelected() {
+    document.querySelectorAll(".hotspot.selected").forEach(h => h.classList.remove("selected"));
+}
+
+function resetPanel() {
+    document.getElementById("info-title").textContent = "Wybierz element";
+    const desc = document.getElementById("info-desc");
+    desc.textContent = "Kliknij dowolny punkt na mapie silnika, aby zobaczyć opis.";
+    desc.classList.add("placeholder");
+    const tip = document.getElementById("info-tip");
+    tip.style.display = "none";
+    tip.innerHTML = "";
+}
+
+const closeWindowButton = document.getElementById("close-window");
+if (closeWindowButton) {
+    closeWindowButton.style.display = window.opener ? "inline-flex" : "none";
+    closeWindowButton.addEventListener("click", () => {
+        if (window.close) {
+            window.close();
+        } else {
+            alert("Zamknij kartę ręcznie. Skryptowe zamknięcie może być zablokowane.");
+        }
+    });
+}
+
+// Hotspoty – klik
+document.addEventListener("click", e => {
+    const btn = e.target.closest(".hotspot");
+    if (!btn) return;
+    const key = btn.dataset.key;
+    const data = INFO[key];
+    if (!data) return;
+
+    clearSelected();
+    btn.classList.add("selected");
+
+    document.getElementById("info-title").textContent = data.title;
+    const desc = document.getElementById("info-desc");
+    desc.textContent = data.desc;
+    desc.classList.remove("placeholder");
+
+    const tip = document.getElementById("info-tip");
+    tip.innerHTML = data.tip;
+    tip.style.display = "block";
+});
+
+// Zamykanie w nowym oknie
+const closeButton = document.getElementById("close-window");
+if (closeButton) {
+    closeButton.addEventListener("click", () => {
+        if (window.close) {
+            window.close();
+        } else {
+            alert("Zamknij kartę ręcznie. W niektórych środowiskach skryptowe zamykanie nie jest możliwe.");
+        }
+    });
+}
+
+</script>
+</body>
+</html>

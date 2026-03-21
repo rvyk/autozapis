@@ -103,6 +103,38 @@ export function MaterialyPageContent() {
               </Button>
             </Link>
           </div>
+
+          <div className="flex flex-col gap-3 rounded-xl border border-stone-200 p-5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+              <svg
+                className="h-5 w-5 text-emerald-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8c-1.657 0-3 1.343-3 3 0 .477.103.93.285 1.336l-3.08 4.18a1 1 0 00.8 1.516h10a1 1 0 00.8-1.516l-3.08-4.18A2.99 2.99 0 0015 11c0-1.657-1.343-3-3-3z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 12v5"
+                />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-stone-900">Budowa silnika</h3>
+            <p className="text-sm text-stone-500">
+              Interaktywny przewodnik po elementach silnika z opisami i hotspotami.
+            </p>
+            <Link href="/kursant/materialy/silnik">
+              <Button variant="secondary" className="w-full">
+                Otwórz przewodnik
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
