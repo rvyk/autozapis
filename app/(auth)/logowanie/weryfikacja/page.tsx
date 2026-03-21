@@ -11,7 +11,9 @@ export default function LogowanieWeryfikacjaPage() {
   const router = useRouter();
   const { navigate } = useAuthNavigation();
 
-  const shouldRedirect = signIn.status !== "needs_client_trust";
+  const shouldRedirect =
+    signIn.status !== "needs_client_trust" &&
+    signIn.status !== "needs_second_factor";
 
   useEffect(() => {
     if (shouldRedirect) {

@@ -49,6 +49,7 @@ export function LogowaniePageContent() {
     setSubmitErrors({});
 
     let error: unknown;
+    let status: string | undefined;
 
     try {
       const result = await signIn.password({
@@ -56,6 +57,7 @@ export function LogowaniePageContent() {
         password,
       });
       error = result.error;
+      status = result.status;
     } catch {
       setSubmitErrors({
         globalError: "Nie udało się zalogować. Spróbuj ponownie.",
@@ -70,10 +72,10 @@ export function LogowaniePageContent() {
       return;
     }
 
-    if (signIn.status === "complete") {
+    if (status === "complete") {
       await signIn.finalize({ navigate: navigate("/") });
       setIsSubmitting(false);
-    } else if (signIn.status === "needs_client_trust") {
+    } else if (status === "needs_client_trust" || status === "needs_second_factor") {
       const emailCodeFactor = signIn.supportedSecondFactors.find(
         (factor) => factor.strategy === "email_code",
       );
