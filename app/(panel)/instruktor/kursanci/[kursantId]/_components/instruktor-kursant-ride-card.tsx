@@ -57,6 +57,14 @@ export function InstruktorKursantRideCard({
           </Button>
           <Button
             size="sm"
+            variant={ride.status === "ODWOLANA" ? "destructiveOutline" : "ghost"}
+            disabled={saving || savingRideId === ride.id}
+            onClick={() => onUpdateRide(ride.id, { status: "ODWOLANA" })}
+          >
+            Odwolana
+          </Button>
+          <Button
+            size="sm"
             variant="secondary"
             disabled={saving || savingRideId === ride.id || !dirty}
             onClick={() => onSaveRide(ride.id)}

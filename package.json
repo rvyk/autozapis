@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed:pwpw-questions": "tsx prisma/seed-pwpw-questions.ts",
-    "seed:example-accounts": "tsx prisma/seed-example-accounts.ts"
+    "seed:example-accounts": "tsx prisma/seed-example-accounts.ts",
+    "seed:demo-data": "tsx prisma/seed-demo-data.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1013.0",
