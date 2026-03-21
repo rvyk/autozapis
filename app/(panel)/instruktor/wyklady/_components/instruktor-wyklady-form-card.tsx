@@ -129,7 +129,7 @@ export function InstruktorWykladyFormCard({
           {students.map((student) => (
             <label
               key={student.id}
-              className="flex items-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-sm"
+              className="group flex cursor-pointer items-center gap-3 rounded-lg border border-stone-200 px-3 py-2 text-sm transition-colors hover:border-red-200 hover:bg-red-50/40"
             >
               <input
                 type="checkbox"
@@ -137,8 +137,9 @@ export function InstruktorWykladyFormCard({
                 onChange={(event) =>
                   onToggleStudent(student.id, event.target.checked)
                 }
+                className="h-4 w-4 rounded border-stone-300 text-red-600 accent-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-1"
               />
-              <span>
+              <span className="text-stone-800 group-hover:text-stone-900">
                 {student.fullName}
                 <span className="ml-2 text-xs text-stone-500">
                   ({student.theoryHoursDone}/{student.theoryHoursRequired}h)
