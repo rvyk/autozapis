@@ -48,7 +48,7 @@ export async function getPanelUser({
       redirect("/rejestracja/dokument");
     }
 
-    redirect("/rejestracja/prawo-jazdy");
+    redirect("/rejestracja/profil");
   }
 
   if (accessTarget === "administrator") {

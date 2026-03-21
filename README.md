@@ -1,5 +1,7 @@
 # AutoZapis — TechQuest 2026 (Leżajsk, 24h)
 
+Nawigacja dokumentacji: [README](https://github.com/rvyk/techquest-2026-autozapis/blob/main/README.md) | [Setup techniczny](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/SETUP.md) | [Mapa podstron i ról](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/PAGES-AND-FLOWS.md) | [Wersja jury/sponsor](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/JURY-SPONSOR.md)
+
 Projekt stworzony na **TechQuest 2026** dla sponsora: **OSK Prawo Jazdy Józef Majkut**.
 
 To pełny system do obsługi ośrodka szkolenia kierowców: rejestracja kursantów, panel administratora, panel instruktora, panel kursanta, obieg dokumentów PKK, ogłoszenia i harmonogramy.
@@ -77,5 +79,6 @@ pnpm dev
 
 ## Dokumentacja
 
-- Szczegółowy setup: `docs/SETUP.md`
-- Wersja pod jury/sponsora: `docs/JURY-SPONSOR.md`
+- Szczegółowy setup: [docs/SETUP.md](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/SETUP.md)
+- Pełna mapa stron i flow ról: [docs/PAGES-AND-FLOWS.md](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/PAGES-AND-FLOWS.md)
+- Wersja pod jury/sponsora: [docs/JURY-SPONSOR.md](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/JURY-SPONSOR.md)

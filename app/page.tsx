@@ -37,7 +37,7 @@ export default async function HomePage() {
         redirect("/rejestracja/dokument");
       }
 
-      redirect("/rejestracja/prawo-jazdy");
+      redirect("/rejestracja/profil");
     }
 
     if (!dbUser?.isAccountActive) {

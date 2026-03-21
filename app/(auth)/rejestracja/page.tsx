@@ -47,7 +47,7 @@ export default async function RejestracjaPage() {
       redirect("/rejestracja/dokument");
     }
 
-    redirect("/rejestracja/prawo-jazdy");
+    redirect("/rejestracja/profil");
   }
 
   return <RejestracjaPageContent />;

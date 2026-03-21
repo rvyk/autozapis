@@ -1,5 +1,7 @@
 # TechQuest 2026 — prezentacja projektu dla jury i sponsora
 
+Nawigacja dokumentacji: [README](https://github.com/rvyk/techquest-2026-autozapis/blob/main/README.md) | [Setup techniczny](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/SETUP.md) | [Mapa podstron i ról](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/PAGES-AND-FLOWS.md) | [Wersja jury/sponsor](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/JURY-SPONSOR.md)
+
 ## Projekt
 
 **AutoZapis** to system stworzony dla OSK **Prawo Jazdy Józef Majkut** podczas 24-godzinnego hackathonu TechQuest 2026 w Leżajsku.
