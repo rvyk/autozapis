@@ -1,6 +1,6 @@
 # TechQuest 2026 — prezentacja projektu dla jury i sponsora
 
-Nawigacja dokumentacji: [README](https://github.com/rvyk/techquest-2026-autozapis/blob/main/README.md) | [Setup techniczny](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/SETUP.md) | [Mapa podstron i ról](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/PAGES-AND-FLOWS.md) | [Wersja jury/sponsor](https://github.com/rvyk/techquest-2026-autozapis/blob/main/docs/JURY-SPONSOR.md)
+Nawigacja dokumentacji: [README](https://github.com/rvyk/techquest-2026-autozapis/blob/master/README.md) | [Setup techniczny](https://github.com/rvyk/techquest-2026-autozapis/blob/master/docs/SETUP.md) | [Mapa podstron i ról](https://github.com/rvyk/techquest-2026-autozapis/blob/master/docs/PAGES-AND-FLOWS.md) | [Wersja jury/sponsor](https://github.com/rvyk/techquest-2026-autozapis/blob/master/docs/JURY-SPONSOR.md)
 
 ## Projekt
 
