@@ -10,11 +10,11 @@ export function InstruktorJazdyHeaderActions({
   onNext: () => void;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm" onClick={onPrevious}>
+    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+      <Button variant="ghost" size="sm" onClick={onPrevious} className="w-full sm:w-auto">
         Poprzedni
       </Button>
-      <Button variant="ghost" size="sm" onClick={onNext}>
+      <Button variant="ghost" size="sm" onClick={onNext} className="w-full sm:w-auto">
         Nastepny
       </Button>
     </div>

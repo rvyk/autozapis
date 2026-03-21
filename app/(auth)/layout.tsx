@@ -19,7 +19,7 @@ export default function AuthLayout({
     <div className="relative min-h-dvh overflow-hidden bg-stone-50">
       <AuthBackground />
 
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-7xl items-start gap-0 px-4 pt-28 pb-8 sm:px-6 lg:items-center lg:gap-12 lg:pt-24 lg:pb-10">
+      <div className="relative mx-auto flex min-h-dvh w-full max-w-7xl flex-col gap-4 px-4 pt-20 pb-6 sm:px-6 sm:pt-24 sm:pb-8 lg:flex-row lg:items-center lg:gap-12 lg:pt-24 lg:pb-10">
         <AuthAside />
         <AuthContent>{children}</AuthContent>
       </div>

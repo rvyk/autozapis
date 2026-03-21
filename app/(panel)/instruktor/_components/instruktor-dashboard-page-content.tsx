@@ -94,11 +94,11 @@ export function InstruktorDashboardPageContent({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="col-span-1 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm lg:col-span-2">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <h2 className="text-lg font-semibold text-stone-900">
               Dzisiejszy plan jazd
             </h2>
-            <Button asChild variant="secondary" size="sm">
+            <Button asChild variant="secondary" size="sm" className="w-full sm:w-auto">
               <Link href="/instruktor/jazdy">Otwórz harmonogram</Link>
             </Button>
           </div>

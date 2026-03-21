@@ -67,8 +67,14 @@ export default function RejestracjaDokumentPage() {
 
         if (payload?.error === "USER_NOT_SYNCED") {
           setError(
-            "Konto nie jest jeszcze zsynchronizowane. Spróbuj ponownie za chwilę.",
+            "Konto jest jeszcze aktywowane po weryfikacji. Odśwież stronę za kilka sekund i spróbuj ponownie.",
           );
+          return;
+        }
+
+        if (payload?.error === "REGISTRATION_ALREADY_COMPLETED") {
+          setError("Dokument PKK został już przesłany. Przekierowuję do panelu kursanta.");
+          router.push("/kursant");
           return;
         }
 

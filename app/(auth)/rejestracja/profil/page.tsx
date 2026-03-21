@@ -183,7 +183,7 @@ export default function RejestracjaProfilPage() {
   }
 
   return (
-    <AuthCard className="lg:max-w-3xl">
+    <AuthCard className="w-full lg:max-w-3xl">
       <AuthCardHeader
         title="Uzupełnij swoje przyszłe prawo jazdy"
         description="Wpisz dane w formularz poniżej — zobaczysz je natychmiast na podglądzie dokumentu."

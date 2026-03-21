@@ -24,9 +24,9 @@ export function DashboardShell({ sidebar, children }: DashboardShellProps) {
   return (
     <DashboardBackground>
       <DashboardHeader />
-      <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl gap-6 px-4 py-6 sm:px-6">
+      <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 sm:py-6 lg:flex-row lg:gap-6">
         {sidebar}
-        <main className="min-w-0 flex-1 rounded-3xl border border-red-100/80 bg-white/95 p-6 shadow-[0_24px_70px_-28px_rgba(220,38,38,0.14)] backdrop-blur-sm sm:p-8">
+        <main className="min-w-0 flex-1 rounded-3xl border border-red-100/80 bg-white/95 p-4 shadow-[0_24px_70px_-28px_rgba(220,38,38,0.14)] backdrop-blur-sm sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

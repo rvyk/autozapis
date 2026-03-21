@@ -22,14 +22,14 @@ export function NotificationsDropdown({
   onMarkAllAsRead,
 }: NotificationsDropdownProps) {
   return (
-    <div className="absolute right-0 z-100 mt-2 w-92 rounded-2xl border border-stone-200 bg-white p-3 shadow-xl">
-      <div className="mb-2 flex items-center justify-between gap-2 px-1">
+    <div className="fixed inset-x-3 top-18 z-100 rounded-2xl border border-stone-200 bg-white p-3 shadow-xl sm:absolute sm:top-auto sm:right-0 sm:left-auto sm:mt-2 sm:w-[23rem]">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 px-1">
         <p className="text-sm font-semibold text-stone-900">Ogłoszenia</p>
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="text-xs"
+          className="h-auto px-2 py-1 text-left text-xs whitespace-normal sm:whitespace-nowrap"
           onClick={onMarkAllAsRead}
           disabled={saving || unreadCount === 0}
         >
@@ -43,7 +43,7 @@ export function NotificationsDropdown({
         </p>
       ) : null}
 
-      <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
+      <div className="max-h-[min(70dvh,26rem)] space-y-2 overflow-y-auto pr-1 sm:max-h-96">
         {loading ? <p className="px-1 py-2 text-sm text-stone-500">Ładowanie...</p> : null}
 
         {!loading && notifications.length === 0 ? (

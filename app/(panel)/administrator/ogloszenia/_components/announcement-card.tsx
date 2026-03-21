@@ -17,10 +17,10 @@ export function AnnouncementCard({
 }) {
   return (
     <article className="flex flex-col gap-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-      <div className="flex items-start justify-between border-b border-stone-100 pb-4">
-        <div>
+      <div className="flex flex-col gap-3 border-b border-stone-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h3 className="text-lg font-bold text-stone-900">{post.title}</h3>
-          <div className="mt-1 flex items-center gap-3 text-sm text-stone-500">
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-stone-500">
             <span className="font-medium text-stone-700">
               {post.authorName}
             </span>
@@ -37,27 +37,29 @@ export function AnnouncementCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">
+        <div className="flex flex-col gap-2 sm:items-end">
+          <span className="inline-flex w-fit items-center rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">
             Odbiorcy: {TARGET_LABELS[post.target]}
           </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="rounded-lg border-stone-200 px-3 py-1.5 text-xs hover:border-red-200 hover:bg-red-50 hover:text-red-700"
-            onClick={() => onEdit(post)}
-          >
-            Edytuj
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            className="rounded-lg px-3 py-1.5 text-xs disabled:opacity-60"
-            onClick={() => onDelete(post.id)}
-            disabled={pending}
-          >
-            Usuń
-          </Button>
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-full rounded-lg border-stone-200 px-3 py-1.5 text-xs hover:border-red-200 hover:bg-red-50 hover:text-red-700 sm:w-auto"
+              onClick={() => onEdit(post)}
+            >
+              Edytuj
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-full rounded-lg px-3 py-1.5 text-xs disabled:opacity-60 sm:w-auto"
+              onClick={() => onDelete(post.id)}
+              disabled={pending}
+            >
+              Usuń
+            </Button>
+          </div>
         </div>
       </div>
 

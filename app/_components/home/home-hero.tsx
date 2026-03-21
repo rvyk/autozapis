@@ -58,30 +58,28 @@ export function HomeHero({ videoSrc, brand, locations }: HomeHeroProps) {
             Poznaj ofertę
           </a>
         </div>
-        <div className="mt-14 inline-flex overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md">
-          <div className="px-8 py-5">
-            <span className="block [font-family:var(--font-anton)] text-5xl font-normal text-white">
+        <div className="mt-14 grid w-full max-w-2xl grid-cols-3 overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md">
+          <div className="px-4 py-4 text-center sm:px-8 sm:py-5">
+            <span className="block [font-family:var(--font-anton)] text-3xl font-normal text-white sm:text-5xl">
               2400
             </span>
-            <span className="text-xs uppercase tracking-[0.06em] text-white/50">
+            <span className="text-[10px] uppercase tracking-[0.06em] text-white/60 sm:text-xs">
               Absolwentów
             </span>
           </div>
-          <div className="my-4 w-px bg-white/20" />
-          <div className="px-8 py-5">
-            <span className="block [font-family:var(--font-anton)] text-5xl font-normal text-white">
+          <div className="border-l border-white/20 px-4 py-4 text-center sm:px-8 sm:py-5">
+            <span className="block [font-family:var(--font-anton)] text-3xl font-normal text-white sm:text-5xl">
               97%
             </span>
-            <span className="text-xs uppercase tracking-[0.06em] text-white/50">
+            <span className="text-[10px] uppercase tracking-[0.06em] text-white/60 sm:text-xs">
               Zdawalność
             </span>
           </div>
-          <div className="my-4 w-px bg-white/20" />
-          <div className="px-8 py-5">
-            <span className="block [font-family:var(--font-anton)] text-5xl font-normal text-white">
+          <div className="border-l border-white/20 px-4 py-4 text-center sm:px-8 sm:py-5">
+            <span className="block [font-family:var(--font-anton)] text-3xl font-normal text-white sm:text-5xl">
               12
             </span>
-            <span className="text-xs uppercase tracking-[0.06em] text-white/50">
+            <span className="text-[10px] uppercase tracking-[0.06em] text-white/60 sm:text-xs">
               Lat doświadczenia
             </span>
           </div>

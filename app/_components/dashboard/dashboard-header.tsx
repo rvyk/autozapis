@@ -26,13 +26,13 @@ export function DashboardHeader() {
 
   return (
     <header className="relative z-50 w-full border-b border-red-100/50 bg-white/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <DashboardBrand />
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {canShowNotifications ? <DashboardNotifications /> : null}
 
-          <div className="h-6 w-px bg-stone-200" />
+          <div className="hidden h-6 w-px bg-stone-200 sm:block" />
 
           <DashboardUserProfile
             fullName={fullName}

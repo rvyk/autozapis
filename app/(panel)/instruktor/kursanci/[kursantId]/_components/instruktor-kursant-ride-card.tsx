@@ -38,12 +38,13 @@ export function InstruktorKursantRideCard({
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto lg:grid-cols-none lg:auto-cols-max lg:grid-flow-col lg:items-center">
           <Button
             size="sm"
             variant={ride.status === "PLANOWANA" ? "primary" : "ghost"}
             disabled={saving || savingRideId === ride.id}
             onClick={() => onUpdateRide(ride.id, { status: "PLANOWANA" })}
+            className="w-full lg:w-auto"
           >
             Planowana
           </Button>
@@ -52,6 +53,7 @@ export function InstruktorKursantRideCard({
             variant={ride.status === "ZREALIZOWANA" ? "primary" : "ghost"}
             disabled={saving || savingRideId === ride.id}
             onClick={() => onUpdateRide(ride.id, { status: "ZREALIZOWANA" })}
+            className="w-full lg:w-auto"
           >
             Zrealizowana
           </Button>
@@ -60,6 +62,7 @@ export function InstruktorKursantRideCard({
             variant={ride.status === "ODWOLANA" ? "destructiveOutline" : "ghost"}
             disabled={saving || savingRideId === ride.id}
             onClick={() => onUpdateRide(ride.id, { status: "ODWOLANA" })}
+            className="w-full lg:w-auto"
           >
             Odwolana
           </Button>
@@ -68,6 +71,7 @@ export function InstruktorKursantRideCard({
             variant="secondary"
             disabled={saving || savingRideId === ride.id || !dirty}
             onClick={() => onSaveRide(ride.id)}
+            className="w-full lg:w-auto"
           >
             {savingRideId === ride.id ? "Zapisywanie..." : "Zapisz zmiany"}
           </Button>
@@ -76,6 +80,7 @@ export function InstruktorKursantRideCard({
             variant="destructiveOutline"
             disabled={saving || savingRideId === ride.id}
             onClick={() => onRemoveRide(ride.id)}
+            className="w-full lg:w-auto"
           >
             Usuń
           </Button>

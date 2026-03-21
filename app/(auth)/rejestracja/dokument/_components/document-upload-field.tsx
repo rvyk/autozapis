@@ -19,11 +19,16 @@ export function DocumentUploadField({
   error,
   onFileChange,
 }: DocumentUploadFieldProps) {
+  const inputId = "pkk-file-input";
+
   return (
     <Field className="space-y-2">
       <FieldLabel>Plik dokumentu</FieldLabel>
 
-      <label className="group flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-red-200 bg-red-50/30 px-6 py-8 transition-all hover:border-red-400 hover:bg-red-50/60">
+      <label
+        htmlFor={inputId}
+        className="group flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-red-200 bg-red-50/30 px-6 py-8 transition-all hover:border-red-400 hover:bg-red-50/60"
+      >
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 transition-transform group-hover:scale-110">
           <svg
             className="h-6 w-6"
@@ -54,11 +59,11 @@ export function DocumentUploadField({
           )}
         </div>
         <Input
+          id={inputId}
           name="file"
           type="file"
           accept="application/pdf,image/jpeg,image/png,image/webp"
-          required
-          className="hidden"
+          className="sr-only"
           onChange={(e) => {
             const file = (e.target as HTMLInputElement).files?.[0];
             onFileChange(file?.name ?? null);

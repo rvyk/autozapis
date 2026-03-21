@@ -26,7 +26,7 @@ export function KursyTable({
   return (
     <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-stone-500">
+        <table className="min-w-[920px] w-full text-left text-sm text-stone-500">
           <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase text-stone-500">
             <tr>
               <th scope="col" className="px-6 py-4 font-semibold">Kurs</th>
@@ -58,8 +58,8 @@ export function KursyTable({
                     {statusToLabel(course.status)}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-right">
-                  <div className="flex justify-end gap-2">
+                <td className="px-6 py-4 text-right">
+                  <div className="flex flex-wrap justify-end gap-2">
                     <Button
                       variant="secondary"
                       size="sm"

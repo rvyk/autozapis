@@ -52,8 +52,8 @@ export async function POST(request: Request) {
     user?: {
       findUnique: (args: {
         where: { clerkId: string };
-        select: { id: true };
-      }) => Promise<{ id: string } | null>;
+        select: { id: true; isRegistrationComplete: true };
+      }) => Promise<{ id: string; isRegistrationComplete: boolean } | null>;
       update: (args: {
         where: { id: string };
         data: { isRegistrationComplete: boolean };
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
 
   const dbUser = await userDelegate.findUnique({
     where: { clerkId: userId },
-    select: { id: true },
+    select: { id: true, isRegistrationComplete: true },
   });
 
   if (!dbUser) {
@@ -106,6 +106,10 @@ export async function POST(request: Request) {
       { error: "USER_NOT_SYNCED", detail: "Run Clerk webhook sync first." },
       { status: 409 },
     );
+  }
+
+  if (dbUser.isRegistrationComplete) {
+    return Response.json({ error: "REGISTRATION_ALREADY_COMPLETED" }, { status: 409 });
   }
 
   const extension = getFileExtension(file.name, file.type);

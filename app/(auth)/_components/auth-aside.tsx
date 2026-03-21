@@ -18,7 +18,7 @@ const REGISTRATION_STEPS = [
 
 export function AuthAside() {
   return (
-    <aside className="hidden w-100 shrink-0 self-stretch overflow-hidden rounded-3xl bg-linear-to-br from-stone-900 via-stone-900 to-stone-950 p-10 shadow-2xl lg:flex lg:flex-col lg:justify-between">
+    <aside className="w-full shrink-0 overflow-hidden rounded-3xl bg-linear-to-br from-stone-900 via-stone-900 to-stone-950 p-6 shadow-2xl sm:p-8 lg:w-100 lg:self-stretch lg:p-10">
       <div className="space-y-8">
         <div className="inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/10 px-4 py-1.5">
           <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
@@ -28,7 +28,7 @@ export function AuthAside() {
         </div>
 
         <div className="space-y-3">
-          <h2 className="text-balance text-3xl font-bold leading-tight text-white">
+          <h2 className="text-balance text-2xl font-bold leading-tight text-white sm:text-3xl">
             Twoje przyszłe
             <br />
             prawo jazdy <span className="text-red-400">zaczyna się tutaj.</span>
@@ -41,7 +41,7 @@ export function AuthAside() {
 
         <div className="h-px bg-linear-to-r from-red-500/30 via-stone-700 to-transparent" />
 
-        <div className="space-y-5">
+        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 lg:gap-5">
           {REGISTRATION_STEPS.map((step) => (
             <div key={step.n} className="flex items-start gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600/20 text-sm font-bold text-red-400 ring-1 ring-red-500/30">
@@ -56,7 +56,7 @@ export function AuthAside() {
         </div>
       </div>
 
-      <div className="mt-10 border-t border-stone-800 pt-6">
+      <div className="mt-8 border-t border-stone-800 pt-5 lg:mt-10 lg:pt-6">
         <p className="text-xs font-medium text-stone-600">
           © 2026 OSK Józef Majkut
         </p>
