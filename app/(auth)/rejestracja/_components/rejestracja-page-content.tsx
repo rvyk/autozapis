@@ -96,7 +96,7 @@ export function RejestracjaPageContent() {
     <AuthCard>
       <AuthCardHeader
         title="Utwórz konto"
-        description="Podaj email i hasło, aby rozpocząć zapis na kurs prawa jazdy w Leżajsku."
+        description="Podaj email, numer telefonu i hasło, aby rozpocząć zapis na kurs prawa jazdy w Leżajsku."
       />
 
       <RegistrationForm

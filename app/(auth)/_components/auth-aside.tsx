@@ -58,7 +58,7 @@ export function AuthAside() {
 
       <div className="mt-10 border-t border-stone-800 pt-6">
         <p className="text-xs font-medium text-stone-600">
-          © 2026 OSK Józefa Majkuta
+          © 2026 OSK Józef Majkut
         </p>
         <p className="mt-0.5 text-xs text-stone-700">
           Leżajsk, woj. podkarpackie
