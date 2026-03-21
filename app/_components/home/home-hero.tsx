@@ -14,14 +14,17 @@ export function HomeHero({ videoSrc, brand, locations }: HomeHeroProps) {
       className="relative flex min-h-screen items-center overflow-hidden px-6"
     >
       <video
-        key={videoSrc}
+        key={`${process.env.NEXT_PUBLIC_CDN}/${videoSrc}`}
         autoPlay
         muted
         loop
         playsInline
         className="absolute inset-0 h-full w-full object-cover object-center"
       >
-        <source src={videoSrc} type="video/mp4" />
+        <source
+          src={`${process.env.NEXT_PUBLIC_CDN}/${videoSrc}`}
+          type="video/mp4"
+        />
       </video>
       <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/45 to-black/60" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_0%_100%,rgba(232,54,58,0.28),transparent_60%)]" />

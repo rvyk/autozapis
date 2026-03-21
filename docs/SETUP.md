@@ -72,6 +72,8 @@ Utwórz `.env` w root projektu:
 
 ```bash
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_CDN=
 CLERK_SECRET_KEY=
 CLERK_WEBHOOK_SIGNING_SECRET=
 
@@ -144,6 +146,10 @@ Smoke test:
 
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`:
   - Clerk Dashboard -> API Keys
+- `NEXT_PUBLIC_SITE_URL`:
+  - publiczny URL aplikacji (np. `https://twoja-domena.pl`)
+- `NEXT_PUBLIC_CDN`:
+  - publiczny URL CDN dla assetów statycznych (jeśli używasz)
 - `CLERK_WEBHOOK_SIGNING_SECRET`:
   - Clerk Dashboard -> Webhooks -> Signing Secret
 - `DATABASE_URL`:

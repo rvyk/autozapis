@@ -24,9 +24,9 @@ export function HomeLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("#kursy");
-  const [videoSrc, setVideoSrc] = useState("/video2.mp4");
+  const [videoSrc, setVideoSrc] = useState("bg-video-1.mp4");
 
-  const videos = useMemo(() => ["/video2.mp4", "/video3.mp4"], []);
+  const videos = useMemo(() => ["bg-video-1.mp4", "bg-video-2.mp4"], []);
 
   useEffect(() => {
     let lastY = 0;
