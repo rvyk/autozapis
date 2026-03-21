@@ -57,7 +57,7 @@ export function LogowaniePageContent() {
         password,
       });
       error = result.error;
-      status = result.status;
+      status = signIn.status;
     } catch {
       setSubmitErrors({
         globalError: "Nie udało się zalogować. Spróbuj ponownie.",
