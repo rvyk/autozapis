@@ -65,6 +65,7 @@ pnpm prisma generate
 pnpm prisma db push
 pnpm seed:pwpw-questions
 pnpm seed:example-accounts
+pnpm seed:demo-data
 ```
 
 4. Start aplikacji:

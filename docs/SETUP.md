@@ -93,6 +93,7 @@ pnpm prisma generate
 pnpm prisma db push
 pnpm seed:pwpw-questions
 pnpm seed:example-accounts
+pnpm seed:demo-data
 pnpm dev
 ```
 
@@ -124,6 +125,16 @@ Konta:
 - admin: `demo.admin@autozapis-demo.pl` / `Admin123!`
 - instruktor: `demo.instruktor@autozapis-demo.pl` / `Instruktor123!`
 - kursant: `demo.kursant@autozapis-demo.pl` / `Kursant123!`
+
+### 5.3 Dane demo (kursy, instruktorzy, kursanci, płatności)
+
+```bash
+pnpm seed:demo-data
+```
+
+Plik:
+
+- `prisma/seed-demo-data.ts`
 
 ## 9. Weryfikacja krok po kroku
 
