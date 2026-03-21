@@ -8,6 +8,7 @@ import {
   AcademicCapIcon,
   BookOpenIcon,
   CarIcon,
+  GamepadIcon,
   GridIcon,
   MegaphoneIcon,
   TicketIcon,
@@ -39,6 +40,7 @@ export function DashboardSidebar({ config }: DashboardSidebarProps) {
     megaphone: MegaphoneIcon,
     "book-open": BookOpenIcon,
     ticket: TicketIcon,
+    gamepad: GamepadIcon,
   } as const;
 
   return (

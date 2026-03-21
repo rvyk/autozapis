@@ -85,3 +85,17 @@ export function TicketIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function GamepadIcon(props: IconProps) {
+  return (
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M7 9.75h10a4 4 0 013.9 4.9l-.45 2.05a2.5 2.5 0 01-3.86 1.53l-2.37-1.58a4 4 0 00-4.44 0l-2.37 1.58a2.5 2.5 0 01-3.86-1.53l-.45-2.05A4 4 0 017 9.75z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.5 13.5h3m-1.5-1.5v3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 13.25h.01M17.25 14.75h.01" />
+    </svg>
+  );
+}

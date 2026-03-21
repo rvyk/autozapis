@@ -5,7 +5,8 @@ export type DashboardIconName =
   | "car"
   | "megaphone"
   | "book-open"
-  | "ticket";
+  | "ticket"
+  | "gamepad";
 
 export type DashboardNavItem = {
   href: string;
@@ -65,7 +66,7 @@ export const KURSANT_SIDEBAR_CONFIG: DashboardSidebarConfig = {
     {
       href: "/kursant/minigra",
       label: "Minigra",
-      icon: "ticket",
+      icon: "gamepad",
     },
   ],
 };
