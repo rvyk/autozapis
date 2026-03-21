@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RejestracjaPageContent } from "./_components/rejestracja-page-content";
+
+export const metadata: Metadata = {
+  title: "Rejestracja",
+  description: "Załóż konto i rozpocznij zapis na kurs prawa jazdy kat. B.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function RejestracjaPage() {
   const { userId } = await auth();

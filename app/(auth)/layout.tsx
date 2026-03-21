@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { AuthAside } from "./_components/auth-aside";
 import { AuthBackground } from "./_components/auth-background";
 import { AuthContent } from "./_components/auth-content";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function AuthLayout({
   children,

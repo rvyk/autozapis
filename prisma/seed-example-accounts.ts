@@ -20,8 +20,6 @@ type ClerkUser = {
   id: string;
 };
 
-type ClerkUsersResponse = ClerkUser[];
-
 type ClerkErrorResponse = {
   errors?: Array<{ message?: string; code?: string; long_message?: string }>;
 };
