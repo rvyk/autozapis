@@ -95,20 +95,15 @@ export function InstruktorKursanciPageContent() {
 
       setStudents((current) => {
         if (payload.assignedToMe) {
-          return current.map((item) => {
-            if (item.id === student.id) {
-              return {
-                ...item,
-                assignedToMe: true,
-                assignedToAnyone: true,
-              };
-            }
-
-            return {
-              ...item,
-              assignedToMe: false,
-            };
-          });
+          return current.map((item) =>
+            item.id === student.id
+              ? {
+                  ...item,
+                  assignedToMe: true,
+                  assignedToAnyone: true,
+                }
+              : item,
+          );
         }
 
         return current.map((item) =>

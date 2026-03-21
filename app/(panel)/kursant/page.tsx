@@ -22,6 +22,7 @@ export default async function PanelPage() {
     latestAnnouncements,
     theoryAttendances,
     upcomingLesson,
+    completedPracticeLessons,
   ] = await Promise.all([
     getLatestKursantAnnouncements(allowedTargets, 4),
     prisma.lectureAttendance.findMany({
@@ -50,15 +51,30 @@ export default async function PanelPage() {
         topic: true,
       },
     }),
+    prisma.drivingLesson.findMany({
+      where: {
+        studentId: dbUser.id,
+        status: "ZREALIZOWANA",
+      },
+      select: {
+        durationMinutes: true,
+      },
+    }),
   ]);
 
   const theoryMinutesCompleted = theoryAttendances.reduce((acc, curr) => acc + curr.creditedMinutes, 0);
   const theoryHoursCompleted = Math.floor(theoryMinutesCompleted / 60);
+  const practiceHoursCompleted = Math.floor(
+    completedPracticeLessons.reduce(
+      (acc, lesson) => acc + Math.max(0, lesson.durationMinutes / 60),
+      0,
+    ),
+  );
 
   const stats = {
     theoryCompleted: theoryHoursCompleted,
     theoryRequired: dbUser.theoryHoursRequired || 30,
-    practiceCompleted: dbUser.trainingHoursCompleted || 0,
+    practiceCompleted: practiceHoursCompleted,
     practiceRequired: dbUser.trainingHoursRequired || 30,
   };
 
