@@ -226,10 +226,21 @@ async function main() {
     ],
   });
 
-  await prisma.instructorStudentAssignment.create({
-    data: {
+  await prisma.instructorStudentAssignment.upsert({
+    where: {
+      instructorId_studentId: {
+        instructorId: instructor.id,
+        studentId: student.id,
+      },
+    },
+    create: {
       instructorId: instructor.id,
       studentId: student.id,
+      isActive: true,
+      note: `${DEMO.marker} Glowny kursant demo do testow panelu instruktora`,
+      assignedAt: at(-30, 12, 0),
+    },
+    update: {
       isActive: true,
       note: `${DEMO.marker} Glowny kursant demo do testow panelu instruktora`,
       assignedAt: at(-30, 12, 0),
