@@ -19,6 +19,10 @@ body {
   font-family: var(--font-geist-sans), sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @keyframes license-glow {
   0%,
   100% {
@@ -50,4 +54,13 @@ body {
 
 .animate-fade-up {
   animation: fade-up 0.5s ease-out both;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
