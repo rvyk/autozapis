@@ -144,7 +144,7 @@ export function InstruktorzyTable({
                       onToggle={() =>
                         onTogglePermission(instructor, "canTeachTheory")
                       }
-                      label={`Uprawnienie wyklady: ${instructor.fullName}`}
+                      label={`Uprawnienie wykłady: ${instructor.fullName}`}
                     />
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right">

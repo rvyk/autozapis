@@ -21,17 +21,30 @@ export function InstruktorKursanciTable({
         <table className="w-full text-left text-sm text-stone-500">
           <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase text-stone-500">
             <tr>
-              <th scope="col" className="px-6 py-4 font-semibold">Kursant</th>
-              <th scope="col" className="px-6 py-4 font-semibold">Kategoria</th>
-              <th scope="col" className="px-6 py-4 font-semibold">Godziny</th>
-              <th scope="col" className="px-6 py-4 font-semibold">Przypisanie</th>
-              <th scope="col" className="px-6 py-4 text-right font-semibold">Akcje</th>
+              <th scope="col" className="px-6 py-4 font-semibold">
+                Kursant
+              </th>
+              <th scope="col" className="px-6 py-4 font-semibold">
+                Kategoria
+              </th>
+              <th scope="col" className="px-6 py-4 font-semibold">
+                Godziny
+              </th>
+              <th scope="col" className="px-6 py-4 font-semibold">
+                Przypisanie
+              </th>
+              <th scope="col" className="px-6 py-4 text-right font-semibold">
+                Akcje
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-200">
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-sm text-stone-500">
+                <td
+                  colSpan={5}
+                  className="px-6 py-8 text-center text-sm text-stone-500"
+                >
                   Ladowanie kursantow...
                 </td>
               </tr>
@@ -39,7 +52,10 @@ export function InstruktorKursanciTable({
 
             {!loading && students.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-sm text-stone-500">
+                <td
+                  colSpan={5}
+                  className="px-6 py-8 text-center text-sm text-stone-500"
+                >
                   Brak kursantow dla wybranego filtra.
                 </td>
               </tr>
@@ -47,20 +63,36 @@ export function InstruktorKursanciTable({
 
             {!loading
               ? students.map((student) => (
-                  <tr key={student.id} className="transition-colors hover:bg-stone-50/50">
+                  <tr
+                    key={student.id}
+                    className="transition-colors hover:bg-stone-50/50"
+                  >
                     <td className="px-6 py-4">
-                      <p className="font-medium text-stone-900">{student.fullName}</p>
-                      <p className="text-xs text-stone-500">tel. {student.phone}</p>
+                      <p className="font-medium text-stone-900">
+                        {student.fullName}
+                      </p>
+                      <p className="text-xs text-stone-500">
+                        tel. {student.phone}
+                      </p>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">kat. {student.category}</td>
+                    <td className="whitespace-nowrap px-6 py-4">
+                      kat. {student.category}
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       {student.hoursDone}/{student.hoursTarget}h
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <Button
                         size="sm"
-                        variant={student.assignedToMe ? "destructiveOutline" : "secondary"}
-                        disabled={saving || (!student.assignedToMe && student.assignedToAnyone)}
+                        variant={
+                          student.assignedToMe
+                            ? "destructiveOutline"
+                            : "secondary"
+                        }
+                        disabled={
+                          saving ||
+                          (!student.assignedToMe && student.assignedToAnyone)
+                        }
                         onClick={() => onToggleAssignment(student)}
                       >
                         {student.assignedToMe
@@ -71,8 +103,14 @@ export function InstruktorKursanciTable({
                       </Button>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right">
-                      <Button asChild size="sm" disabled={!student.assignedToMe}>
-                        <Link href={`/instruktor/kursanci/${student.id}`}>Otworz profil</Link>
+                      <Button
+                        asChild
+                        size="sm"
+                        disabled={!student.assignedToMe}
+                      >
+                        <Link href={`/instruktor/kursanci/${student.id}`}>
+                          Otwórz profil
+                        </Link>
                       </Button>
                     </td>
                   </tr>

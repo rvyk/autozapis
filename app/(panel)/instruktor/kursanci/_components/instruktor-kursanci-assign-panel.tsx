@@ -24,13 +24,16 @@ export function InstruktorKursanciAssignPanel({
     <div className="rounded-2xl border border-red-100 bg-red-50/60 p-4 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-red-900">Przypisz kursanta</p>
+          <p className="text-sm font-semibold text-red-900">
+            Przypisz kursanta
+          </p>
           <p className="text-xs text-red-800/80">
-            Przy wiekszej liczbie osob skorzystaj z wyszukiwarki i listy przewijanej.
+            Przy większej liczbie osób skorzystaj z wyszukiwarki i listy
+            przewijanej.
           </p>
         </div>
         <Button size="sm" variant="secondary" onClick={onToggleOpen}>
-          {open ? "Ukryj liste" : "Otworz liste kursantow"}
+          {open ? "Ukryj listę" : "Otwórz listę kursantów"}
         </Button>
       </div>
 
@@ -45,7 +48,9 @@ export function InstruktorKursanciAssignPanel({
 
           <div className="mt-3 max-h-56 space-y-2 overflow-y-auto pr-1">
             {students.length === 0 ? (
-              <p className="text-xs font-medium text-stone-500">Brak kursantow do przypisania.</p>
+              <p className="text-xs font-medium text-stone-500">
+                Brak kursantow do przypisania.
+              </p>
             ) : null}
 
             {students.map((student) => (
@@ -54,10 +59,18 @@ export function InstruktorKursanciAssignPanel({
                 className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 px-3 py-2"
               >
                 <div>
-                  <p className="text-sm font-semibold text-stone-900">{student.fullName}</p>
-                  <p className="text-xs text-stone-500">tel. {student.phone} • kat. {student.category}</p>
+                  <p className="text-sm font-semibold text-stone-900">
+                    {student.fullName}
+                  </p>
+                  <p className="text-xs text-stone-500">
+                    tel. {student.phone} • kat. {student.category}
+                  </p>
                 </div>
-                <Button size="sm" disabled={saving} onClick={() => onAssign(student)}>
+                <Button
+                  size="sm"
+                  disabled={saving}
+                  onClick={() => onAssign(student)}
+                >
                   Przypisz
                 </Button>
               </div>

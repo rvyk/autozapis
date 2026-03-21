@@ -43,7 +43,7 @@ export function InstruktorDashboardPageContent({
       unit: "zaplanowane",
     },
     {
-      label: "Wyklady dzisiaj",
+      label: "Wykłady dzisiaj",
       value: String(stats.todayLecturesCount),
       unit: "zaplanowane",
     },
@@ -87,7 +87,7 @@ export function InstruktorDashboardPageContent({
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
           Ograniczone uprawnienia: {!stats.canTeachPractice ? "jazdy" : null}
           {!stats.canTeachPractice && !stats.canTeachTheory ? " i " : null}
-          {!stats.canTeachTheory ? "wyklady" : null}. Niedozwolone sekcje sa
+          {!stats.canTeachTheory ? "wykłady" : null}. Niedozwolone sekcje sa
           wyszarzone i niedostepne.
         </div>
       ) : null}

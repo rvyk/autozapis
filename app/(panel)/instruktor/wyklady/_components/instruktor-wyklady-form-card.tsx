@@ -1,7 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { LectureFormState, StudentOption } from "./instruktor-wyklady-types";
+import type {
+  LectureFormState,
+  StudentOption,
+} from "./instruktor-wyklady-types";
 
 export function InstruktorWykladyFormCard({
   form,
@@ -33,32 +36,40 @@ export function InstruktorWykladyFormCard({
       <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
         <div>
           <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
-            Temat wykladu
+            Temat wykładu
           </label>
           <input
             value={form.title}
-            onChange={(event) => onChange({ ...form, title: event.target.value })}
-            placeholder="Np. Skrzyzowania i pierwszenstwo"
+            onChange={(event) =>
+              onChange({ ...form, title: event.target.value })
+            }
+            placeholder="Np. Skrzyżowania i pierwszeństwo"
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm"
           />
         </div>
         <div>
           <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
-            Typ wykladu
+            Typ wykładu
           </label>
           <input
             value={form.topicType}
-            onChange={(event) => onChange({ ...form, topicType: event.target.value })}
+            onChange={(event) =>
+              onChange({ ...form, topicType: event.target.value })
+            }
             placeholder="Np. Teoria podstawowa"
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">Termin</label>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Termin
+          </label>
           <input
             type="datetime-local"
             value={form.startsAt}
-            onChange={(event) => onChange({ ...form, startsAt: event.target.value })}
+            onChange={(event) =>
+              onChange({ ...form, startsAt: event.target.value })
+            }
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm"
           />
         </div>
@@ -71,14 +82,18 @@ export function InstruktorWykladyFormCard({
             min={30}
             step={30}
             value={form.durationMinutes}
-            onChange={(event) => onChange({ ...form, durationMinutes: event.target.value })}
+            onChange={(event) =>
+              onChange({ ...form, durationMinutes: event.target.value })
+            }
             className="h-10 w-full rounded-lg border border-stone-300 px-3 text-sm"
           />
         </div>
       </div>
 
       <div className="mt-3">
-        <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">Notatki</label>
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-500">
+          Notatki
+        </label>
         <textarea
           value={form.notes}
           onChange={(event) => onChange({ ...form, notes: event.target.value })}
@@ -90,7 +105,9 @@ export function InstruktorWykladyFormCard({
 
       <div className="mt-3 rounded-xl border border-stone-200 p-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Kursanci</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Kursanci
+          </p>
           <Button
             type="button"
             size="sm"
@@ -98,11 +115,15 @@ export function InstruktorWykladyFormCard({
             onClick={onToggleSelectAllIncomplete}
             disabled={incompleteCount === 0}
           >
-            {allIncompleteSelected ? "Odznacz nieukonczonych" : "Zaznacz nieukonczonych"}
+            {allIncompleteSelected
+              ? "Odznacz nieukończonych"
+              : "Zaznacz nieukończonych"}
           </Button>
         </div>
 
-        <p className="mt-2 text-xs text-stone-500">Nieukonczone wyklady: {incompleteCount}</p>
+        <p className="mt-2 text-xs text-stone-500">
+          Nieukończone wykłady: {incompleteCount}
+        </p>
 
         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {students.map((student) => (
@@ -113,7 +134,9 @@ export function InstruktorWykladyFormCard({
               <input
                 type="checkbox"
                 checked={selectedSet.has(student.id)}
-                onChange={(event) => onToggleStudent(student.id, event.target.checked)}
+                onChange={(event) =>
+                  onToggleStudent(student.id, event.target.checked)
+                }
               />
               <span>
                 {student.fullName}
@@ -128,7 +151,7 @@ export function InstruktorWykladyFormCard({
 
       <div className="mt-3 flex justify-end">
         <Button onClick={onSubmit} disabled={saving}>
-          Dodaj wyklad
+          Dodaj wykład
         </Button>
       </div>
     </div>

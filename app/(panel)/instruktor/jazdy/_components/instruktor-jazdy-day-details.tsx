@@ -17,7 +17,9 @@ export function InstruktorJazdyDayDetails({
       <h2 className="text-lg font-semibold text-stone-900">Szczegoly dnia</h2>
 
       {!selectedDateKey ? (
-        <p className="mt-3 text-sm text-stone-500">Kliknij dzien w kalendarzu, aby zobaczyc zaplanowane jazdy.</p>
+        <p className="mt-3 text-sm text-stone-500">
+          Kliknij dzień w kalendarzu, aby zobaczyć zaplanowane jazdy.
+        </p>
       ) : null}
 
       {selectedDateKey ? (
@@ -27,19 +29,32 @@ export function InstruktorJazdyDayDetails({
           </p>
 
           <div className="mt-3 space-y-3">
-            {selectedItems.length === 0 ? <p className="text-sm text-stone-500">Brak zaplanowanych zajec w tym dniu.</p> : null}
+            {selectedItems.length === 0 ? (
+              <p className="text-sm text-stone-500">
+                Brak zaplanowanych zajec w tym dniu.
+              </p>
+            ) : null}
 
             {selectedItems.map((item) => (
-              <div key={`${item.kind}-${item.id}`} className="rounded-xl border border-stone-200 p-3">
-                <p className="text-sm font-semibold text-stone-900">{item.label}</p>
+              <div
+                key={`${item.kind}-${item.id}`}
+                className="rounded-xl border border-stone-200 p-3"
+              >
+                <p className="text-sm font-semibold text-stone-900">
+                  {item.label}
+                </p>
                 <p className="text-xs text-stone-500">
                   {formatPlTime(item.startsAt)} - {item.details}
                 </p>
-                {item.subtitle ? <p className="mt-1 text-sm text-stone-600">{item.subtitle}</p> : null}
+                {item.subtitle ? (
+                  <p className="mt-1 text-sm text-stone-600">{item.subtitle}</p>
+                ) : null}
                 <div className="mt-2">
                   <Button asChild size="sm" variant="secondary">
                     <Link href={item.href}>
-                      {item.kind === "ride" ? "Przejdz do profilu" : "Przejdz do wykladow"}
+                      {item.kind === "ride"
+                        ? "Przejdz do profilu"
+                        : "Przejdz do wykladow"}
                     </Link>
                   </Button>
                 </div>
